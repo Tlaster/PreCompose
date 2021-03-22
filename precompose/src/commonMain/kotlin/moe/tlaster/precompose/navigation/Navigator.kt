@@ -9,7 +9,7 @@ fun rememberNavigator(): Navigator {
 }
 
 class Navigator {
-    internal lateinit var stackManager: SceneStackManager
+    internal lateinit var stackManager: RouteStackManager
 
     fun navigate(route: String) {
         stackManager.navigate(route)

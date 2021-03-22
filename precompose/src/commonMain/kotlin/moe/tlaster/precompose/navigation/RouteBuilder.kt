@@ -5,19 +5,24 @@ import androidx.compose.runtime.Composable
 class RouteBuilder(
     private val initialRoute: String,
 ) {
-    private val scenes = mutableListOf<Scene>()
+    private val route = mutableListOf<Route>()
 
     fun scene(
         route: String,
-        arguments: List<String> = emptyList(),
-        content: @Composable () -> Unit,
+        content: @Composable (stack : RouteStackManager.Stack) -> Unit,
     ) {
-        scenes += Scene(
+        this.route += Route(
             route = route,
-            arguments = arguments,
             content = content,
         )
     }
 
-    fun build() = RouteGraph(initialRoute, scenes.toList())
+    fun dialog(
+        route: String,
+        content: @Composable () -> Unit,
+    ) {
+
+    }
+
+    fun build() = RouteGraph(initialRoute, route.toList())
 }

@@ -15,12 +15,13 @@ fun App() {
         val navigator = rememberNavigator()
         NavHost(
             navigator = navigator,
-            initialRoute = "home"
+            initialRoute = "/home"
         ) {
-            scene("home") {
+            scene("/home") {
+                var text2 by rememberSaveable { mutableStateOf("") }
                 Column {
                     Button(onClick = {
-                        navigator.navigate("detail")
+                        navigator.navigate("/detail/$text2")
                     }) {
                         Text("click me")
                     }
@@ -31,7 +32,6 @@ fun App() {
                             Text("go back !")
                         }
                     }
-                    var text2 by rememberSaveable { mutableStateOf("") }
                     OutlinedTextField(
                         value = text2,
                         onValueChange = {
@@ -40,7 +40,7 @@ fun App() {
                     )
                 }
             }
-            scene("detail") {
+            scene("/detail/{id:[0-9]+}") {
                 Column {
                     if (navigator.canGoBack) {
                         Button(onClick = {
@@ -50,10 +50,30 @@ fun App() {
                         }
                     }
                     Button(onClick = {
-                        navigator.navigate("home")
+                        navigator.navigate("/home")
                     }) {
                         Text("go home !")
                     }
+                    Text("number")
+                    Text(it.path("id"))
+                }
+            }
+            scene("/detail/{id:[a-z]+}") {
+                Column {
+                    if (navigator.canGoBack) {
+                        Button(onClick = {
+                            navigator.goBack()
+                        }) {
+                            Text("go back !")
+                        }
+                    }
+                    Button(onClick = {
+                        navigator.navigate("/home")
+                    }) {
+                        Text("go home !")
+                    }
+                    Text("string")
+                    Text(it.path("id"))
                 }
             }
         }

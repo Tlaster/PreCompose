@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 
+
 @Composable
 fun NavHost(
     navigator: Navigator,
@@ -17,14 +18,14 @@ fun NavHost(
         navigator,
     ) {
         val graph = RouteBuilder(initialRoute = initialRoute).apply(builder).build()
-        SceneStackManager(stateHolder, graph).apply {
+        RouteStackManager(stateHolder, graph).apply {
             navigator.stackManager = this
         }
     }
-    val currentScene = manager.currentScene
-    if (currentScene != null) {
-        stateHolder.SaveableStateProvider(currentScene.id) {
-            currentScene.scene.content.invoke()
+    val current = manager.current
+    if (current != null) {
+        stateHolder.SaveableStateProvider(current.id) {
+            current.route.content.invoke(current)
         }
     }
 }
