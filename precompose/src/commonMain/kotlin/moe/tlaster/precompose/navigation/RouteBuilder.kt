@@ -9,7 +9,7 @@ class RouteBuilder(
 
     fun scene(
         route: String,
-        content: @Composable (stack : RouteStackManager.Stack) -> Unit,
+        content: @Composable (BackStackEntry) -> Unit,
     ) {
         this.route += ComposeRoute(
             route = route,
