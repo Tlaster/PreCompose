@@ -19,6 +19,9 @@ kotlin {
         compilations.all {
             kotlinOptions.jvmTarget = "11"
         }
+        testRuns["test"].executionTask.configure {
+            useJUnitPlatform()
+        }
     }
     sourceSets {
         val commonMain by getting {
@@ -26,7 +29,30 @@ kotlin {
                 api(compose.foundation)
             }
         }
-        val commonTest by getting
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+            }
+        }
+        val androidMain by getting {
+            dependencies {
+            }
+        }
+        val androidTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+                implementation("junit:junit:4.13.2")
+            }
+        }
+        val desktopMain by getting
+        val desktopTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit5"))
+                implementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
+                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+            }
+        }
     }
 }
 

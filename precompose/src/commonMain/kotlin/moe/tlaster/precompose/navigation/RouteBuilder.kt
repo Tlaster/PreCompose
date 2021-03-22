@@ -5,13 +5,13 @@ import androidx.compose.runtime.Composable
 class RouteBuilder(
     private val initialRoute: String,
 ) {
-    private val route = mutableListOf<Route>()
+    private val route = mutableListOf<ComposeRoute>()
 
     fun scene(
         route: String,
         content: @Composable (stack : RouteStackManager.Stack) -> Unit,
     ) {
-        this.route += Route(
+        this.route += ComposeRoute(
             route = route,
             content = content,
         )

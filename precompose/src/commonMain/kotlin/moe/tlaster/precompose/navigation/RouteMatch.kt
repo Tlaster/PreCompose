@@ -2,9 +2,9 @@ package moe.tlaster.precompose.navigation
 
 import kotlin.math.min
 
-internal class RouterMatch {
+internal class RouteMatch {
     var matches = false
-    var route: Route? = null
+    var route: ComposeRoute? = null
     var vars = arrayListOf<String>()
     var pathMap = linkedMapOf<String, String>()
     fun key(keys: List<String>) {
@@ -30,7 +30,7 @@ internal class RouterMatch {
         }
     }
 
-    fun found(route: Route): RouterMatch {
+    fun found(route: ComposeRoute): RouteMatch {
         this.route = route
         matches = true
         return this

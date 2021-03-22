@@ -11,7 +11,7 @@ class RouteStackManager(
 ) {
     data class Stack(
         val id: Int,
-        val route: Route,
+        val route: ComposeRoute,
         val pathMap: Map<String, String>,
     ) {
         fun path(path: String, default: String = ""): String {
@@ -50,13 +50,13 @@ class RouteStackManager(
     }
 
     fun navigate(path: String) {
-        val routerMatch = routeParser.find(path = path)
-        val route = routerMatch?.route
-        require(route != null)
+        val matchResult = routeParser.find(path = path)
+        require(matchResult != null)
+        require(matchResult.route is ComposeRoute)
         val stack = Stack(
             id = (_stacks.lastOrNull()?.id ?: 0) + 1,
-            route = route,
-            pathMap = routerMatch.pathMap,
+            route = matchResult.route,
+            pathMap = matchResult.pathMap,
         )
         _stacks.add(stack)
     }

@@ -220,7 +220,7 @@ internal class RouteParser {
 
         // Recursive edge traversal by checking all nodeTyp groups along the way.
         // It's like searching through a multi-dimensional radix trie.
-        fun findRoute(rctx: RouterMatch, path: String): Route? {
+        fun findRoute(rctx: RouteMatch, path: String): Route? {
             for (ntyp in 0 until NODE_SIZE) {
                 val nds = children[ntyp]
                 if (nds == null) {
@@ -275,7 +275,7 @@ internal class RouteParser {
                             xsearch = xsearch.substring(p)
                             if (xsearch.isEmpty()) {
                                 if (xn.isLeaf) {
-                                    val h: Route? = xn.route
+                                    val h = xn.route
                                     if (h != null) {
                                         rctx.key(h.pathKeys)
                                         return h
@@ -284,7 +284,7 @@ internal class RouteParser {
                             }
 
                             // recursively find the next node on this branch
-                            val fin: Route? = xn.findRoute(rctx, xsearch)
+                            val fin = xn.findRoute(rctx, xsearch)
                             if (fin != null) {
                                 return fin
                             }
@@ -312,7 +312,7 @@ internal class RouteParser {
                 // did we returnType it yet?
                 if (xsearch.isEmpty()) {
                     if (xn.isLeaf) {
-                        val h: Route? = xn.route
+                        val h = xn.route
                         if (h != null) {
                             // rctx.routeParams.Keys = append(rctx.routeParams.Keys, h.paramKeys...)
                             rctx.key(h.pathKeys)
@@ -322,7 +322,7 @@ internal class RouteParser {
                 }
 
                 // recursively returnType the next node..
-                val fin: Route? = xn.findRoute(rctx, xsearch)
+                val fin = xn.findRoute(rctx, xsearch)
                 if (fin != null) {
                     return fin
                 }
@@ -497,25 +497,26 @@ internal class RouteParser {
         insert(route.route, route)
     }
 
-    fun find(path: String): RouterMatch? {
+    fun find(path: String): RouteMatchResult? {
         val staticRoute = staticPaths[path]
         return if (staticRoute == null) {
             findInternal(path)
         } else {
-            return RouterMatch().found(staticRoute)
+            return RouteMatchResult(staticRoute)
         }
     }
 
-    private fun findInternal(path: String): RouterMatch? {
+    private fun findInternal(path: String): RouteMatchResult? {
         // use radix tree
-        val result = RouterMatch()
-        val route: Route = root.findRoute(result, path) ?: return null
-        return result.found(route)
+        val result = RouteMatch()
+        val route = root.findRoute(result, path) ?: return null
+        return RouteMatchResult(route, result.pathMap)
     }
 
     companion object {
         fun pathKeys(
             pattern: String,
+            onItem: (key: String, value: String?) -> Unit = { _, _ -> },
         ): List<String> {
             val result = arrayListOf<String>()
             var start = -1
@@ -537,11 +538,13 @@ internal class RouteParser {
                     curly -= 1
                     if (curly == 0) {
                         val id = pattern.substring(start, min(i, end))
-//                        if (end == Int.MAX_VALUE) {
-//                            null
-//                        } else {
-//                            pattern.substring(end + 1, i)
-//                        }
+                        if (end == Int.MAX_VALUE) {
+                            null
+                        } else {
+                            pattern.substring(end + 1, i)
+                        }.let {
+                            onItem.invoke(id, it)
+                        }
                         result.add(id)
                         start = -1
                         end = Int.MAX_VALUE
@@ -552,6 +555,7 @@ internal class RouteParser {
                     } else {
                         pattern.substring(i + 1)
                     }
+                    onItem.invoke(id, "\\.*")
                     result.add(id)
                     i = len
                 }
