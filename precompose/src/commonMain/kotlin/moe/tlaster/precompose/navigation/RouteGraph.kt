@@ -2,5 +2,5 @@ package moe.tlaster.precompose.navigation
 
 data class RouteGraph(
     val initialRoute: String,
-    val routes: List<Route>,
+    val routes: List<ComposeRoute>,
 )

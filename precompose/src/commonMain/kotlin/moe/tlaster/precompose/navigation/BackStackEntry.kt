@@ -1,7 +1,6 @@
 package moe.tlaster.precompose.navigation
 
 data class BackStackEntry(
-    internal val id: Int,
     val route: ComposeRoute,
     val pathMap: Map<String, String>,
     val queryString: QueryString? = null,

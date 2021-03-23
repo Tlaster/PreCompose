@@ -21,10 +21,13 @@ fun NavHost(
             navigator.stackManager = this
         }
     }
-    val current = manager.current
-    if (current != null) {
-        stateHolder.SaveableStateProvider(current.id) {
-            current.route.content.invoke(current)
+    val currentStack = manager.currentStack
+    if (currentStack != null) {
+        stateHolder.SaveableStateProvider(currentStack.id) {
+            currentStack.scene.route.content.invoke(currentStack.scene)
+            currentStack.dialogStack.forEach {
+                it.route.content.invoke(it)
+            }
         }
     }
 }
