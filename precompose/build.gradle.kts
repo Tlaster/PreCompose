@@ -17,7 +17,9 @@ kotlin {
     android()
     jvm("desktop") {
         compilations.all {
-            kotlinOptions.jvmTarget = "11"
+            kotlinOptions {
+                jvmTarget = "11"
+            }
         }
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
@@ -35,10 +37,7 @@ kotlin {
                 implementation(kotlin("test-annotations-common"))
             }
         }
-        val androidMain by getting {
-            dependencies {
-            }
-        }
+        val androidMain by getting
         val androidTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))

@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 class RouteBuilder(
     private val initialRoute: String,
 ) {
-    private val route = mutableListOf<ComposeRoute>()
+    private val route = mutableListOf<Route>()
 
     fun scene(
         route: String,

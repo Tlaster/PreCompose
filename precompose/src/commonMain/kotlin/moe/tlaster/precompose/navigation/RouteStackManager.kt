@@ -9,12 +9,11 @@ class RouteStackManager(
     private val stateHolder: SaveableStateHolder,
     private val routeGraph: RouteGraph,
 ) {
-
-    private val _stacks = mutableStateListOf<BackStackEntry>()
+    private val _backStacks = mutableStateListOf<BackStackEntry>()
     val current: BackStackEntry?
-        get() = _stacks.lastOrNull()
+        get() = _backStacks.lastOrNull()
     val canGoBack: Boolean
-        get() = _stacks.size > 1
+        get() = _backStacks.size > 1
     private val routeParser by lazy {
         RouteParser().apply {
             routeGraph.routes.forEach {
@@ -28,19 +27,24 @@ class RouteStackManager(
     }
 
     fun navigate(path: String) {
-        val matchResult = routeParser.find(path = path)
+        val query = path.substringAfter('?', "")
+        val routePath = path.substringBefore('?')
+        val matchResult = routeParser.find(path = routePath)
         require(matchResult != null)
         require(matchResult.route is ComposeRoute)
         val stack = BackStackEntry(
-            id = (_stacks.lastOrNull()?.id ?: 0) + 1,
+            id = (_backStacks.lastOrNull()?.id ?: 0) + 1,
             route = matchResult.route,
             pathMap = matchResult.pathMap,
+            queryString = query.takeIf { it.isNotEmpty() }?.let {
+                QueryString(it)
+            }
         )
-        _stacks.add(stack)
+        _backStacks.add(stack)
     }
 
     fun goBack() {
-        val stack = _stacks.removeLast()
+        val stack = _backStacks.removeLast()
         stateHolder.removeState(stack.id)
     }
 }

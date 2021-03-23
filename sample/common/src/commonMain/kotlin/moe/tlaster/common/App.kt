@@ -7,6 +7,7 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import moe.tlaster.precompose.navigation.NavHost
+import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.rememberNavigator
 
 @Composable
@@ -21,7 +22,7 @@ fun App() {
                 var text2 by rememberSaveable { mutableStateOf("") }
                 Column {
                     Button(onClick = {
-                        navigator.navigate("/detail/$text2")
+                        navigator.navigate("/detail/$text2?text=$text2")
                     }) {
                         Text("click me")
                     }
@@ -55,7 +56,8 @@ fun App() {
                         Text("go home !")
                     }
                     Text("number")
-                    Text(it.path("id"))
+                    it.path("id")?.let { it1 -> Text(it1) }
+                    it.query("text")?.let { it1 -> Text(it1) }
                 }
             }
             scene("/detail/{id:[a-z]+}") {
@@ -73,7 +75,8 @@ fun App() {
                         Text("go home !")
                     }
                     Text("string")
-                    Text(it.path("id"))
+                    it.path("id")?.let { it1 -> Text(it1) }
+                    it.query("text")?.let { it1 -> Text(it1) }
                 }
             }
         }
