@@ -1,6 +1,7 @@
 package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 
@@ -23,6 +24,9 @@ fun NavHost(
     }
     val currentStack = manager.currentStack
     if (currentStack != null) {
+        LaunchedEffect(currentStack) {
+            currentStack.onActive()
+        }
         stateHolder.SaveableStateProvider(currentStack.id) {
             currentStack.scene.route.content.invoke(currentStack.scene)
             currentStack.dialogStack.forEach {

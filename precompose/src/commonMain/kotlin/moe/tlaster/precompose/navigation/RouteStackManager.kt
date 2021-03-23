@@ -3,7 +3,6 @@ package moe.tlaster.precompose.navigation
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.saveable.SaveableStateHolder
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import moe.tlaster.precompose.navigation.route.ComposeRoute
 import moe.tlaster.precompose.navigation.route.DialogRoute
 import moe.tlaster.precompose.navigation.route.SceneRoute
@@ -13,24 +12,8 @@ class RouteStackManager(
     private val stateHolder: SaveableStateHolder,
     private val routeGraph: RouteGraph,
 ) {
-    @Stable
-    internal class Stack(
-        val id: Int,
-        val scene: BackStackEntry,
-        val dialogStack: SnapshotStateList<BackStackEntry> = mutableStateListOf(),
-    ) {
-        val current: BackStackEntry
-            get() = dialogStack.lastOrNull() ?: scene
-        val canGoBack: Boolean
-            get() = dialogStack.isNotEmpty()
-
-        fun goBack() {
-            dialogStack.removeLast()
-        }
-    }
-
-    private val _backStacks = mutableStateListOf<Stack>()
-    internal val currentStack: Stack?
+    private val _backStacks = mutableStateListOf<RouteStack>()
+    internal val currentStack: RouteStack?
         get() = _backStacks.lastOrNull()
     val current: BackStackEntry?
         get() = currentStack?.current
@@ -63,8 +46,9 @@ class RouteStackManager(
         )
         when (matchResult.route) {
             is SceneRoute -> {
+                currentStack?.onInActive()
                 _backStacks.add(
-                    Stack(
+                    RouteStack(
                         id = (_backStacks.lastOrNull()?.id ?: 0) + 1,
                         scene = entry,
                     )
@@ -82,6 +66,7 @@ class RouteStackManager(
         } else {
             val stack = _backStacks.removeLast()
             stateHolder.removeState(stack.id)
+            stack.onDestroyed()
         }
     }
 }

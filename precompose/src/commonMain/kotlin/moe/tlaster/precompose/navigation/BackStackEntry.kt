@@ -1,18 +1,24 @@
 package moe.tlaster.precompose.navigation
 
 import moe.tlaster.precompose.navigation.route.ComposeRoute
+import moe.tlaster.precompose.viewmodel.ViewModelStore
+import moe.tlaster.precompose.viewmodel.ViewModelStoreOwner
 
 data class BackStackEntry(
     val route: ComposeRoute,
     val pathMap: Map<String, String>,
     val queryString: QueryString? = null,
-) {
+) : ViewModelStoreOwner {
     fun path(path: String, default: String? = null): String? {
         return pathMap[path] ?: default
     }
 
     fun query(name: String, default: String? = null): String? {
         return queryString?.query(name, default)
+    }
+
+    override val viewModelStore by lazy {
+        ViewModelStore()
     }
 }
 
