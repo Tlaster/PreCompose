@@ -4,6 +4,9 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import moe.tlaster.precompose.navigation.route.ComposeRoute
+import moe.tlaster.precompose.navigation.route.DialogRoute
+import moe.tlaster.precompose.navigation.route.SceneRoute
 
 @Stable
 class RouteStackManager(

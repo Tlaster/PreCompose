@@ -1,5 +1,6 @@
 package moe.tlaster.precompose.navigation
 
+import moe.tlaster.precompose.navigation.route.Route
 import kotlin.math.min
 
 internal class RouteParser {

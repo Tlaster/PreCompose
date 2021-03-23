@@ -1,5 +1,7 @@
 package moe.tlaster.precompose.navigation
 
+import moe.tlaster.precompose.navigation.route.ComposeRoute
+
 data class BackStackEntry(
     val route: ComposeRoute,
     val pathMap: Map<String, String>,
