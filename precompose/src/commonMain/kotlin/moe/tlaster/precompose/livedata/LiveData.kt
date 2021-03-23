@@ -29,6 +29,13 @@ class LiveData<T>(initialValue: T) {
         owner.lifecycle.addObserver(wrapper)
     }
 
+    fun removeObserver(observer: Observer<T>) {
+        observers.remove(observer)?.let {
+            it.detachObserver()
+            it.activeStateChanged(false)
+        }
+    }
+
     private fun dispatchingValue(observerWrapper: ObserverWrapper, value: T) {
         considerNotify(observerWrapper, value)
     }
@@ -48,6 +55,10 @@ class LiveData<T>(initialValue: T) {
             return
         }
         observer.observer.invoke(value)
+    }
+
+    fun hasObserver(): Boolean {
+        return observers.isNotEmpty()
     }
 
     private abstract inner class ObserverWrapper(
@@ -79,7 +90,7 @@ class LiveData<T>(initialValue: T) {
         override fun onStateChanged(state: Lifecycle.State) {
             val currentState = owner.lifecycle.currentState
             if (currentState == Lifecycle.State.Destroyed) {
-                detachObserver()
+                removeObserver(observer)
                 return
             }
             activeStateChanged(shouldBeActive())

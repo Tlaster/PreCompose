@@ -21,4 +21,8 @@ class LifecycleRegistry : Lifecycle {
     override fun addObserver(observer: LifecycleObserver) {
         observers.add(observer)
     }
+
+    override fun hasObserver(): Boolean {
+        return observers.isNotEmpty()
+    }
 }

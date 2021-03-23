@@ -11,4 +11,5 @@ interface Lifecycle {
     val currentState: State
     fun removeObserver(observer: LifecycleObserver)
     fun addObserver(observer: LifecycleObserver)
+    fun hasObserver(): Boolean
 }
