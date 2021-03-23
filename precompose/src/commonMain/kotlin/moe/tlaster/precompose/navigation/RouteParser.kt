@@ -22,7 +22,7 @@ internal class RouteParser {
     ) : Comparable<Node> {
 
         // subroutes on the leaf node
-        //Routes subroutes;
+        // Routes subroutes;
         // child nodes should be stored in-order for iteration,
         // in groups of the node type.
         var children = linkedMapOf<Int, Array<Node>>()
@@ -461,7 +461,7 @@ internal class RouteParser {
             // Wildcard pattern as finale
             // EDIT: should we panic if there is stuff after the * ???
             // We allow naming a wildcard: *path
-            //String key = ws == pattern.length() - 1 ? "*" : pattern.substring(ws + 1).toString();
+            // String key = ws == pattern.length() - 1 ? "*" : pattern.substring(ws + 1).toString();
             return Segment(ntCatchAll, "", ZERO_CHAR, ws, pattern.length)
         }
     }

@@ -1,18 +1,21 @@
 package moe.tlaster.common
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Text
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
-import androidx.compose.runtime.*
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import moe.tlaster.precompose.navigation.NavHost
-import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.rememberNavigator
 
 @Composable
@@ -26,20 +29,26 @@ fun App() {
             scene("/home") {
                 var text2 by rememberSaveable { mutableStateOf("") }
                 Column {
-                    Button(onClick = {
-                        navigator.navigate("/detail/$text2?text=$text2")
-                    }) {
+                    Button(
+                        onClick = {
+                            navigator.navigate("/detail/$text2?text=$text2")
+                        }
+                    ) {
                         Text("click me")
                     }
-                    Button(onClick = {
-                        navigator.navigate("/dialog")
-                    }) {
+                    Button(
+                        onClick = {
+                            navigator.navigate("/dialog")
+                        }
+                    ) {
                         Text("open dialog")
                     }
                     if (navigator.canGoBack) {
-                        Button(onClick = {
-                            navigator.goBack()
-                        }) {
+                        Button(
+                            onClick = {
+                                navigator.goBack()
+                            }
+                        ) {
                             Text("go back !")
                         }
                     }
@@ -54,15 +63,19 @@ fun App() {
             scene("/detail/{id:[0-9]+}") {
                 Column {
                     if (navigator.canGoBack) {
-                        Button(onClick = {
-                            navigator.goBack()
-                        }) {
+                        Button(
+                            onClick = {
+                                navigator.goBack()
+                            }
+                        ) {
                             Text("go back !")
                         }
                     }
-                    Button(onClick = {
-                        navigator.navigate("/home")
-                    }) {
+                    Button(
+                        onClick = {
+                            navigator.navigate("/home")
+                        }
+                    ) {
                         Text("go home !")
                     }
                     Text("number")
@@ -73,15 +86,19 @@ fun App() {
             scene("/detail/{id:[a-z]+}") {
                 Column {
                     if (navigator.canGoBack) {
-                        Button(onClick = {
-                            navigator.goBack()
-                        }) {
+                        Button(
+                            onClick = {
+                                navigator.goBack()
+                            }
+                        ) {
                             Text("go back !")
                         }
                     }
-                    Button(onClick = {
-                        navigator.navigate("/home")
-                    }) {
+                    Button(
+                        onClick = {
+                            navigator.navigate("/home")
+                        }
+                    ) {
                         Text("go home !")
                     }
                     Text("string")
@@ -101,15 +118,19 @@ fun App() {
                     ) {
                         Text("this is dialog")
                         if (navigator.canGoBack) {
-                            Button(onClick = {
-                                navigator.goBack()
-                            }) {
+                            Button(
+                                onClick = {
+                                    navigator.goBack()
+                                }
+                            ) {
                                 Text("go back !")
                             }
                         }
-                        Button(onClick = {
-                            navigator.navigate("/detail/21321?text=21321")
-                        }) {
+                        Button(
+                            onClick = {
+                                navigator.navigate("/detail/21321?text=21321")
+                            }
+                        ) {
                             Text("click me")
                         }
                     }

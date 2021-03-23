@@ -1,7 +1,11 @@
 package moe.tlaster.precompose.navigation
 
 import moe.tlaster.precompose.navigation.route.Route
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class RouteParserTest {
     @Test
@@ -23,7 +27,6 @@ class RouteParserTest {
         pathKeys("/foo/*name") { keys -> assertEquals(1, keys.size) }
         pathKeys("/foo/{x}") { keys -> assertEquals(1, keys.size) }
     }
-
 
     @Test
     fun pathKeyMap() {
@@ -121,8 +124,8 @@ class RouteParserTest {
     @Test
     fun searchParam() {
         val parser = RouteParser()
-        parser.insert(route("/articles/{id}","id"))
-        parser.insert(route("/articles/*","catchall"))
+        parser.insert(route("/articles/{id}", "id"))
+        parser.insert(route("/articles/*", "catchall"))
 
         parser.find("/articles/123").let {
             assertNotNull(it)
@@ -139,7 +142,7 @@ class RouteParserTest {
     @Test
     fun multipleRegex() {
         val parser = RouteParser()
-        parser.insert(route("/{lang:[a-z][a-z]}/{page:[^.]+}/","1515"))
+        parser.insert(route("/{lang:[a-z][a-z]}/{page:[^.]+}/", "1515"))
 
         parser.find("/12/f/").let {
             assertNull(it)
@@ -157,7 +160,7 @@ class RouteParserTest {
     @Test
     fun regexWithQuantity() {
         val parser = RouteParser()
-        parser.insert(route("/{lang:[a-z]{2}}/","qx"))
+        parser.insert(route("/{lang:[a-z]{2}}/", "qx"))
         parser.find("/12/").let {
             assertNull(it)
         }
