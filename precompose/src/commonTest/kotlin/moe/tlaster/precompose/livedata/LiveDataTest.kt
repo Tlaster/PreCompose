@@ -1,8 +1,7 @@
 package moe.tlaster.precompose.livedata
 
 import moe.tlaster.precompose.lifecycle.Lifecycle
-import moe.tlaster.precompose.lifecycle.LifecycleOwner
-import moe.tlaster.precompose.lifecycle.LifecycleRegistry
+import moe.tlaster.precompose.lifecycle.TestLifecycleOwner
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -153,12 +152,6 @@ class LiveDataTest {
         assertEquals(2, liveDataValue)
         lifecycleOwner.lifecycle.currentState = Lifecycle.State.Active
         assertEquals(4, liveDataValue)
-    }
-}
-
-class TestLifecycleOwner : LifecycleOwner {
-    override val lifecycle by lazy {
-        LifecycleRegistry()
     }
 }
 

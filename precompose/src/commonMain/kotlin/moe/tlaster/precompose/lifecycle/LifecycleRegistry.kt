@@ -6,6 +6,9 @@ class LifecycleRegistry : Lifecycle {
     private val observers = arrayListOf<LifecycleObserver>()
     override var currentState: Lifecycle.State = Lifecycle.State.Initialized
         set(value) {
+            if (field == Lifecycle.State.Destroyed || value == Lifecycle.State.Initialized) {
+                return
+            }
             field = value
             dispatchState(value)
         }
