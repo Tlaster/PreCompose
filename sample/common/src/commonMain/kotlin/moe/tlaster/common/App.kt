@@ -10,24 +10,29 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import moe.tlaster.precompose.livedata.LiveData
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.rememberNavigator
+import moe.tlaster.precompose.ui.observeAsState
+import moe.tlaster.precompose.ui.viewModel
+import moe.tlaster.precompose.viewmodel.ViewModel
 
 @Composable
 fun App() {
     MaterialTheme {
         val navigator = rememberNavigator()
+        val outerKeys = listOf("home")
         NavHost(
             navigator = navigator,
             initialRoute = "/home"
         ) {
             scene("/home") {
-                var text2 by rememberSaveable { mutableStateOf("") }
+                val viewModel = viewModel(outerKeys) {
+                    HomeViewModel()
+                }
+                val text2 by viewModel.text.observeAsState()
                 Column {
                     Button(
                         onClick = {
@@ -55,7 +60,7 @@ fun App() {
                     OutlinedTextField(
                         value = text2,
                         onValueChange = {
-                            text2 = it
+                            viewModel.setText(it)
                         }
                     )
                 }
@@ -137,5 +142,12 @@ fun App() {
                 }
             }
         }
+    }
+}
+
+class HomeViewModel : ViewModel() {
+    val text = LiveData("")
+    fun setText(value: String) {
+        text.value = value
     }
 }
