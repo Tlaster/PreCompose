@@ -35,8 +35,8 @@ class RouteStackManager(
         val query = path.substringAfter('?', "")
         val routePath = path.substringBefore('?')
         val matchResult = routeParser.find(path = routePath)
-        require(matchResult != null)
-        require(matchResult.route is ComposeRoute)
+        require(matchResult != null) { "RouteStackManager: navigate target $path not found" }
+        require(matchResult.route is ComposeRoute) { "RouteStackManager: navigate target $path is not ComposeRoute" }
         val entry = BackStackEntry(
             route = matchResult.route,
             pathMap = matchResult.pathMap,

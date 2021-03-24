@@ -3,6 +3,7 @@ package moe.tlaster.precompose.livedata
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleObserver
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
+import moe.tlaster.precompose.standard.copyForEach
 
 class LiveData<T>(initialValue: T) {
     private val observers = linkedMapOf<Observer<T>, ObserverWrapper>()
@@ -36,12 +37,20 @@ class LiveData<T>(initialValue: T) {
         }
     }
 
+    fun removeObservers(owner: LifecycleOwner) {
+        observers.copyForEach {
+            if (it.value.isAttachedTo(owner)) {
+                removeObserver(it.key)
+            }
+        }
+    }
+
     private fun dispatchingValue(observerWrapper: ObserverWrapper, value: T) {
         considerNotify(observerWrapper, value)
     }
 
     private fun dispatchingValue(value: T) {
-        observers.forEach {
+        observers.copyForEach {
             dispatchingValue(it.value, value)
         }
     }
