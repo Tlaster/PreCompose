@@ -16,8 +16,7 @@ internal class RouteStack(
     private val lifecycleRegistry by lazy {
         LifecycleRegistry()
     }
-    val current: BackStackEntry
-        get() = dialogStack.lastOrNull() ?: scene
+
     val canGoBack: Boolean
         get() = dialogStack.isNotEmpty()
 

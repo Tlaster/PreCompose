@@ -15,8 +15,6 @@ class RouteStackManager(
     private val _backStacks = mutableStateListOf<RouteStack>()
     internal val currentStack: RouteStack?
         get() = _backStacks.lastOrNull()
-    val current: BackStackEntry?
-        get() = currentStack?.current
     val canGoBack: Boolean
         get() = currentStack?.canGoBack != false || _backStacks.size > 1
     private val routeParser by lazy {
@@ -46,7 +44,6 @@ class RouteStackManager(
         )
         when (matchResult.route) {
             is SceneRoute -> {
-                currentStack?.onInActive()
                 _backStacks.add(
                     RouteStack(
                         id = (_backStacks.lastOrNull()?.id ?: 0) + 1,

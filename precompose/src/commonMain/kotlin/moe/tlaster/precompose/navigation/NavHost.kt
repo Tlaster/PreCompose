@@ -2,6 +2,7 @@ package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
@@ -31,12 +32,17 @@ fun NavHost(
         LaunchedEffect(currentStack) {
             currentStack.onActive()
         }
+        DisposableEffect(currentStack) {
+            onDispose {
+                currentStack.onInActive()
+            }
+        }
         CompositionLocalProvider(
             LocalLifecycleOwner provides currentStack,
         ) {
             stateHolder.SaveableStateProvider(currentStack.id) {
                 CompositionLocalProvider(
-                    LocalViewModelStoreOwner provides currentStack.current
+                    LocalViewModelStoreOwner provides currentStack.scene
                 ) {
                     currentStack.scene.route.content.invoke(currentStack.scene)
                 }

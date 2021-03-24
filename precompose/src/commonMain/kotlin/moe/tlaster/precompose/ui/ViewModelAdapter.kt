@@ -1,6 +1,7 @@
 package moe.tlaster.precompose.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.ViewModelStoreOwner
 import kotlin.reflect.KClass
@@ -17,9 +18,12 @@ fun <T : ViewModel> viewModel(
     keys: List<Any?> = emptyList(),
     creator: () -> T,
 ): T {
-    return checkNotNull(LocalViewModelStoreOwner.current) {
-        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
-    }.getViewModel(keys, modelClass = modelClass, creator = creator)
+    val viewModelStoreOwner = LocalViewModelStoreOwner.current
+    return remember(
+        modelClass, keys, creator, viewModelStoreOwner
+    ) {
+        viewModelStoreOwner.getViewModel(keys, modelClass = modelClass, creator = creator)
+    }
 }
 
 private fun <T : ViewModel> ViewModelStoreOwner.getViewModel(

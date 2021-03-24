@@ -63,6 +63,7 @@ fun App() {
                             viewModel.setText(it)
                         }
                     )
+                    Text(text2)
                 }
             }
             scene("/detail/{id:[0-9]+}") {
