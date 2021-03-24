@@ -1,16 +1,20 @@
 package moe.tlaster.precompose.viewmodel
 
 import moe.tlaster.precompose.standard.IDisposable
+import kotlin.jvm.Volatile
 
 abstract class ViewModel {
+    @Volatile
+    private var disposed = false
     private val bagOfTags = hashMapOf<String, Any>()
 
     protected open fun onCleared() {}
 
     fun clear() {
+        disposed = true
         bagOfTags.let {
             for (value in it.values) {
-                closeWithRuntimeException(value)
+                disposeWithRuntimeException(value)
             }
         }
         onCleared()
@@ -20,6 +24,10 @@ abstract class ViewModel {
         @Suppress("UNCHECKED_CAST")
         return bagOfTags.getOrPut(key) {
             newValue as Any
+        }.also {
+            if (disposed) {
+                disposeWithRuntimeException(it)
+            }
         } as T
     }
 
@@ -28,7 +36,7 @@ abstract class ViewModel {
         return bagOfTags[key] as T?
     }
 
-    private fun closeWithRuntimeException(obj: Any) {
+    private fun disposeWithRuntimeException(obj: Any) {
         if (obj is IDisposable) {
             obj.dispose()
         }
