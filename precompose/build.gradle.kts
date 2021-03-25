@@ -38,7 +38,12 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
             }
         }
-        val androidMain by getting
+        val androidMain by getting {
+            dependencies {
+                implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha01")
+                implementation("androidx.lifecycle:lifecycle-common-java8:2.4.0-alpha01")
+            }
+        }
         val androidTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
