@@ -18,7 +18,9 @@ fun <T : ViewModel> viewModel(
     keys: List<Any?> = emptyList(),
     creator: () -> T,
 ): T {
-    val viewModelStoreOwner = LocalViewModelStoreOwner.current
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+        "Require LocalViewModelStoreOwner not null for $modelClass"
+    }
     return remember(
         modelClass, keys, creator, viewModelStoreOwner
     ) {

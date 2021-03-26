@@ -27,6 +27,24 @@ fun NavHost(
         }
     }
 
+    val lifecycleOwner = checkNotNull(LocalLifecycleOwner.current) {
+        "NavHost requires a LifecycleOwner to be provided via LocalLifecycleOwner"
+    }
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+        "NavHost requires a ViewModelStoreOwner to be provided via LocalViewModelStoreOwner"
+    }
+    DisposableEffect(manager, lifecycleOwner, viewModelStoreOwner) {
+        manager.lifeCycleOwner = lifecycleOwner
+        manager.setViewModelStore(viewModelStoreOwner.viewModelStore)
+        onDispose {
+            manager.lifeCycleOwner = null
+        }
+    }
+
+    LaunchedEffect(manager, initialRoute) {
+        manager.navigate(initialRoute)
+    }
+
     val currentStack = manager.currentStack
     if (currentStack != null) {
         LaunchedEffect(currentStack) {

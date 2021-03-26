@@ -3,15 +3,27 @@ package moe.tlaster.precompose.navigation
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.saveable.SaveableStateHolder
+import moe.tlaster.precompose.lifecycle.Lifecycle
+import moe.tlaster.precompose.lifecycle.LifecycleObserver
+import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.navigation.route.ComposeRoute
 import moe.tlaster.precompose.navigation.route.DialogRoute
 import moe.tlaster.precompose.navigation.route.SceneRoute
+import moe.tlaster.precompose.viewmodel.ViewModelStore
 
 @Stable
 class RouteStackManager(
     private val stateHolder: SaveableStateHolder,
     private val routeGraph: RouteGraph,
-) {
+) : LifecycleObserver {
+    var stackEntry = 0
+    var lifeCycleOwner: LifecycleOwner? = null
+        set(value) {
+            field?.lifecycle?.removeObserver(this)
+            field = value
+            value?.lifecycle?.addObserver(this)
+        }
+    private var viewModel: NavControllerViewModel? = null
     private val _backStacks = mutableStateListOf<RouteStack>()
     internal val currentStack: RouteStack?
         get() = _backStacks.lastOrNull()
@@ -25,22 +37,28 @@ class RouteStackManager(
         }
     }
 
-    init {
-        navigate(path = routeGraph.initialRoute)
+    internal fun setViewModelStore(viewModelStore: ViewModelStore) {
+        if (viewModel != NavControllerViewModel.create(viewModelStore)) {
+            viewModel = NavControllerViewModel.create(viewModelStore)
+        }
     }
 
     fun navigate(path: String) {
         val query = path.substringAfter('?', "")
         val routePath = path.substringBefore('?')
         val matchResult = routeParser.find(path = routePath)
-        require(matchResult != null) { "RouteStackManager: navigate target $path not found" }
+        checkNotNull(matchResult) { "RouteStackManager: navigate target $path not found" }
         require(matchResult.route is ComposeRoute) { "RouteStackManager: navigate target $path is not ComposeRoute" }
+        val vm = viewModel
+        checkNotNull(vm)
         val entry = BackStackEntry(
+            id = stackEntry++,
             route = matchResult.route,
             pathMap = matchResult.pathMap,
             queryString = query.takeIf { it.isNotEmpty() }?.let {
                 QueryString(it)
-            }
+            },
+            viewModel = vm,
         )
         when (matchResult.route) {
             is SceneRoute -> {
@@ -64,6 +82,21 @@ class RouteStackManager(
             val stack = _backStacks.removeLast()
             stateHolder.removeState(stack.id)
             stack.onDestroyed()
+        }
+    }
+
+    override fun onStateChanged(state: Lifecycle.State) {
+        println("on state changed $state")
+        when (state) {
+            Lifecycle.State.Initialized -> Unit
+            Lifecycle.State.Active -> currentStack?.onActive()
+            Lifecycle.State.InActive -> currentStack?.onInActive()
+            Lifecycle.State.Destroyed -> {
+                _backStacks.forEach {
+                    it.onDestroyed()
+                }
+                _backStacks.clear()
+            }
         }
     }
 }

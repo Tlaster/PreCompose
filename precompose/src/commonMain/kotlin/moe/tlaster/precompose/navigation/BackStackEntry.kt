@@ -1,13 +1,14 @@
 package moe.tlaster.precompose.navigation
 
 import moe.tlaster.precompose.navigation.route.ComposeRoute
-import moe.tlaster.precompose.viewmodel.ViewModelStore
 import moe.tlaster.precompose.viewmodel.ViewModelStoreOwner
 
-data class BackStackEntry(
+data class BackStackEntry internal constructor(
+    val id: Int,
     val route: ComposeRoute,
     val pathMap: Map<String, String>,
     val queryString: QueryString? = null,
+    internal val viewModel: NavControllerViewModel,
 ) : ViewModelStoreOwner {
     fun path(path: String, default: String? = null): String? {
         return pathMap[path] ?: default
@@ -18,7 +19,7 @@ data class BackStackEntry(
     }
 
     override val viewModelStore by lazy {
-        ViewModelStore()
+        viewModel.get(id = id)
     }
 }
 

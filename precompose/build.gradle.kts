@@ -42,6 +42,7 @@ kotlin {
             dependencies {
                 implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha01")
                 implementation("androidx.lifecycle:lifecycle-common-java8:2.4.0-alpha01")
+                implementation("androidx.savedstate:savedstate-ktx:1.1.0")
             }
         }
         val androidTest by getting {

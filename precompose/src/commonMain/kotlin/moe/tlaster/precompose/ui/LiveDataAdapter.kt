@@ -12,7 +12,9 @@ fun <T> LiveData<T>.observeAsState(): State<T> = observeAsState(value)
 
 @Composable
 fun <R, T : R> LiveData<T>.observeAsState(initial: R): State<R> {
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleOwner = checkNotNull(LocalLifecycleOwner.current) {
+        "Require LocalLifecycleOwner not null for $this"
+    }
     val state = remember { mutableStateOf(initial) }
     DisposableEffect(this, lifecycleOwner) {
         val observer = { it: T -> state.value = it }
