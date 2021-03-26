@@ -74,6 +74,7 @@ class RouteStackManager(
                     RouteStack(
                         id = (_backStacks.lastOrNull()?.id ?: 0) + 1,
                         scene = entry,
+                        navTransition = matchResult.route.navTransition,
                     )
                 )
             }
@@ -114,5 +115,9 @@ class RouteStackManager(
         } else {
             false
         }
+    }
+
+    internal fun indexOf(stack: RouteStack): Int {
+        return _backStacks.indexOf(stack)
     }
 }

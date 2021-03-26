@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import moe.tlaster.precompose.livedata.LiveData
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.rememberNavigator
+import moe.tlaster.precompose.navigation.transition.NavTransition
 import moe.tlaster.precompose.ui.observeAsState
 import moe.tlaster.precompose.ui.viewModel
 import moe.tlaster.precompose.viewmodel.ViewModel
@@ -89,7 +90,21 @@ fun App() {
                     it.query("text")?.let { it1 -> Text(it1) }
                 }
             }
-            scene("/detail/{id:[a-z]+}") {
+            scene(
+                "/detail/{id:[a-z]+}",
+                navTransition = NavTransition(
+                    createTransition = {
+                        translationY = (1 - it) * 200f
+                        alpha = it
+                    },
+                    destroyTransition = {
+                        translationY = (1 - it) * 200f
+                        alpha = it
+                    },
+                    resumeTransition = {},
+                    pauseTransition = {}
+                )
+            ) {
                 Column {
                     if (navigator.canGoBack) {
                         Button(

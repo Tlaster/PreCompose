@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import moe.tlaster.precompose.navigation.route.DialogRoute
 import moe.tlaster.precompose.navigation.route.Route
 import moe.tlaster.precompose.navigation.route.SceneRoute
+import moe.tlaster.precompose.navigation.transition.NavTransition
 
 class RouteBuilder(
     private val initialRoute: String,
@@ -12,10 +13,12 @@ class RouteBuilder(
 
     fun scene(
         route: String,
+        navTransition: NavTransition? = null,
         content: @Composable (BackStackEntry) -> Unit,
     ) {
         this.route += SceneRoute(
             route = route,
+            navTransition = navTransition,
             content = content,
         )
     }

@@ -6,12 +6,14 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
+import moe.tlaster.precompose.navigation.transition.NavTransition
 
 @Stable
 internal class RouteStack(
     val id: Int,
     val scene: BackStackEntry,
     val dialogStack: SnapshotStateList<BackStackEntry> = mutableStateListOf(),
+    val navTransition: NavTransition? = null,
 ) : LifecycleOwner {
     private val lifecycleRegistry by lazy {
         LifecycleRegistry()

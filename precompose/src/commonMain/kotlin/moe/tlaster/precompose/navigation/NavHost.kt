@@ -11,6 +11,8 @@ import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
+import moe.tlaster.precompose.navigation.transition.AnimatedRoute
+import moe.tlaster.precompose.navigation.transition.NavTransition
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalLifecycleOwner
 import moe.tlaster.precompose.ui.LocalViewModelStoreOwner
@@ -19,7 +21,8 @@ import moe.tlaster.precompose.ui.LocalViewModelStoreOwner
 fun NavHost(
     navigator: Navigator,
     initialRoute: String,
-    builder: RouteBuilder.() -> Unit
+    navTransition: NavTransition = remember { NavTransition() },
+    builder: RouteBuilder.() -> Unit,
 ) {
     val stateHolder = rememberSaveableStateHolder()
     val manager = remember(
@@ -52,41 +55,46 @@ fun NavHost(
     LaunchedEffect(manager, initialRoute) {
         manager.navigate(initialRoute)
     }
-
     val currentStack = manager.currentStack
     if (currentStack != null) {
-        LaunchedEffect(currentStack) {
-            currentStack.onActive()
-        }
-        DisposableEffect(currentStack) {
-            onDispose {
-                currentStack.onInActive()
+        AnimatedRoute(
+            currentStack,
+            navTransition = navTransition,
+            manager = manager,
+        ) { routeStack ->
+            LaunchedEffect(routeStack) {
+                routeStack.onActive()
             }
-        }
-        CompositionLocalProvider(
-            LocalLifecycleOwner provides currentStack,
-        ) {
-            stateHolder.SaveableStateProvider(currentStack.id) {
-                CompositionLocalProvider(
-                    LocalViewModelStoreOwner provides currentStack.scene
-                ) {
-                    currentStack.scene.route.content.invoke(currentStack.scene)
+            DisposableEffect(routeStack) {
+                onDispose {
+                    routeStack.onInActive()
                 }
-                currentStack.dialogStack.forEach { backStackEntry ->
+            }
+            CompositionLocalProvider(
+                LocalLifecycleOwner provides routeStack,
+            ) {
+                stateHolder.SaveableStateProvider(routeStack.id) {
                     CompositionLocalProvider(
-                        LocalViewModelStoreOwner provides backStackEntry
+                        LocalViewModelStoreOwner provides routeStack.scene
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .pointerInput(Unit) {
-                                    forEachGesture {
-                                        awaitPointerEventScope {
-                                            awaitPointerEvent().changes.forEach { it.consumeAllChanges() }
+                        routeStack.scene.route.content.invoke(routeStack.scene)
+                    }
+                    routeStack.dialogStack.forEach { backStackEntry ->
+                        CompositionLocalProvider(
+                            LocalViewModelStoreOwner provides backStackEntry
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .pointerInput(Unit) {
+                                        forEachGesture {
+                                            awaitPointerEventScope {
+                                                awaitPointerEvent().changes.forEach { it.consumeAllChanges() }
+                                            }
                                         }
                                     }
-                                }
-                        ) {
-                            backStackEntry.route.content.invoke(backStackEntry)
+                            ) {
+                                backStackEntry.route.content.invoke(backStackEntry)
+                            }
                         }
                     }
                 }
