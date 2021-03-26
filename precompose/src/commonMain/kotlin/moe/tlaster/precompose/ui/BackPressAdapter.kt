@@ -21,7 +21,7 @@ class BackDispatcher {
     }
 
     internal fun register(handler: BackHandler) {
-        handlers.add(handler)
+        handlers.add(0, handler)
     }
 
     internal fun unregister(handler: BackHandler) {
