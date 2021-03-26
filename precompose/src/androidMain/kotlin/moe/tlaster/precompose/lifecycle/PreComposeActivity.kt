@@ -166,7 +166,6 @@ private fun PreComposeActivity.ContentInternal(content: @Composable () -> Unit) 
 private fun PreComposeActivity.ProvideAndroidCompositionLocals(
     content: @Composable () -> Unit,
 ) {
-
     CompositionLocalProvider(
         LocalLifecycleOwner provides this,
         LocalViewModelStoreOwner provides this,
