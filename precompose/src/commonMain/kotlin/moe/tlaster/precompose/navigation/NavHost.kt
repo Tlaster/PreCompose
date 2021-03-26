@@ -6,6 +6,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalLifecycleOwner
 import moe.tlaster.precompose.ui.LocalViewModelStoreOwner
 
@@ -33,9 +34,11 @@ fun NavHost(
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "NavHost requires a ViewModelStoreOwner to be provided via LocalViewModelStoreOwner"
     }
-    DisposableEffect(manager, lifecycleOwner, viewModelStoreOwner) {
+    val backDispatcher = LocalBackDispatcherOwner.current?.backDispatcher
+    DisposableEffect(manager, lifecycleOwner, viewModelStoreOwner, backDispatcher) {
         manager.lifeCycleOwner = lifecycleOwner
         manager.setViewModelStore(viewModelStoreOwner.viewModelStore)
+        manager.backDispatcher = backDispatcher
         onDispose {
             manager.lifeCycleOwner = null
         }

@@ -9,13 +9,21 @@ import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.navigation.route.ComposeRoute
 import moe.tlaster.precompose.navigation.route.DialogRoute
 import moe.tlaster.precompose.navigation.route.SceneRoute
+import moe.tlaster.precompose.ui.BackDispatcher
+import moe.tlaster.precompose.ui.BackHandler
 import moe.tlaster.precompose.viewmodel.ViewModelStore
 
 @Stable
 class RouteStackManager(
     private val stateHolder: SaveableStateHolder,
     private val routeGraph: RouteGraph,
-) : LifecycleObserver {
+) : LifecycleObserver, BackHandler {
+    var backDispatcher: BackDispatcher? = null
+        set(value) {
+            field?.unregister(this)
+            field = value
+            value?.register(this)
+        }
     var stackEntry = 0
     var lifeCycleOwner: LifecycleOwner? = null
         set(value) {
@@ -86,7 +94,6 @@ class RouteStackManager(
     }
 
     override fun onStateChanged(state: Lifecycle.State) {
-        println("on state changed $state")
         when (state) {
             Lifecycle.State.Initialized -> Unit
             Lifecycle.State.Active -> currentStack?.onActive()
@@ -97,6 +104,15 @@ class RouteStackManager(
                 }
                 _backStacks.clear()
             }
+        }
+    }
+
+    override fun handleBackPress(): Boolean {
+        return if (canGoBack) {
+            goBack()
+            true
+        } else {
+            false
         }
     }
 }

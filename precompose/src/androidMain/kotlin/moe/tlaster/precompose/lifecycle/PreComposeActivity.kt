@@ -12,6 +12,9 @@ import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
+import moe.tlaster.precompose.ui.BackDispatcher
+import moe.tlaster.precompose.ui.BackDispatcherOwner
+import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalLifecycleOwner
 import moe.tlaster.precompose.ui.LocalViewModelStoreOwner
 import moe.tlaster.precompose.viewmodel.ViewModelStore
@@ -22,7 +25,8 @@ open class PreComposeActivity :
     LifecycleOwner,
     ViewModelStoreOwner,
     androidx.lifecycle.LifecycleOwner,
-    SavedStateRegistryOwner {
+    SavedStateRegistryOwner,
+    BackDispatcherOwner {
     private data class NonConfigurationInstances(
         val custom: Any? = null,
         val viewModelStore: ViewModelStore? = null,
@@ -102,6 +106,16 @@ open class PreComposeActivity :
     override fun getSavedStateRegistry(): SavedStateRegistry {
         return savedStateRegistryController.savedStateRegistry
     }
+
+    override val backDispatcher by lazy {
+        BackDispatcher()
+    }
+
+    override fun onBackPressed() {
+        if (!backDispatcher.onBackPress()) {
+            super.onBackPressed()
+        }
+    }
 }
 
 fun PreComposeActivity.setContent(
@@ -152,9 +166,11 @@ private fun PreComposeActivity.ContentInternal(content: @Composable () -> Unit) 
 private fun PreComposeActivity.ProvideAndroidCompositionLocals(
     content: @Composable () -> Unit,
 ) {
+
     CompositionLocalProvider(
         LocalLifecycleOwner provides this,
         LocalViewModelStoreOwner provides this,
+        LocalBackDispatcherOwner provides this,
     ) {
         content.invoke()
     }
