@@ -1,11 +1,16 @@
 package moe.tlaster.precompose.navigation
 
+import androidx.compose.foundation.gestures.forEachGesture
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.pointerInput
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalLifecycleOwner
 import moe.tlaster.precompose.ui.LocalViewModelStoreOwner
@@ -67,11 +72,22 @@ fun NavHost(
                 ) {
                     currentStack.scene.route.content.invoke(currentStack.scene)
                 }
-                currentStack.dialogStack.forEach {
+                currentStack.dialogStack.forEach { backStackEntry ->
                     CompositionLocalProvider(
-                        LocalViewModelStoreOwner provides it
+                        LocalViewModelStoreOwner provides backStackEntry
                     ) {
-                        it.route.content.invoke(it)
+                        Box(
+                            modifier = Modifier
+                                .pointerInput(Unit) {
+                                    forEachGesture {
+                                        awaitPointerEventScope {
+                                            awaitPointerEvent().changes.forEach { it.consumeAllChanges() }
+                                        }
+                                    }
+                                }
+                        ) {
+                            backStackEntry.route.content.invoke(backStackEntry)
+                        }
                     }
                 }
             }
