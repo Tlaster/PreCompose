@@ -44,7 +44,7 @@ open class PreComposeActivity :
         androidx.lifecycle.LifecycleRegistry(this)
     }
 
-    val savedStateRegistryController by lazy {
+    private val savedStateRegistryController by lazy {
         SavedStateRegistryController.create(this)
     }
 
