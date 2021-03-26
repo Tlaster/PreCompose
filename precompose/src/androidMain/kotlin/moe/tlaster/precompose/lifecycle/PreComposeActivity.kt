@@ -27,17 +27,12 @@ open class PreComposeActivity :
     androidx.lifecycle.LifecycleOwner,
     SavedStateRegistryOwner,
     BackDispatcherOwner {
-    private data class NonConfigurationInstances(
-        val custom: Any? = null,
-        val viewModelStore: ViewModelStore? = null,
-    )
-
     override val lifecycle by lazy {
         LifecycleRegistry()
     }
 
     override val viewModelStore by lazy {
-        (lastNonConfigurationInstance as? NonConfigurationInstances?)?.viewModelStore ?: ViewModelStore()
+        ViewModelStore()
     }
 
     private val androidLifecycle by lazy {
@@ -46,14 +41,6 @@ open class PreComposeActivity :
 
     private val savedStateRegistryController by lazy {
         SavedStateRegistryController.create(this)
-    }
-
-    override fun onRetainNonConfigurationInstance(): Any? {
-        val custom = onRetainCustomNonConfigurationInstance()
-        return NonConfigurationInstances(
-            custom = custom,
-            viewModelStore = viewModelStore
-        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,10 +80,6 @@ open class PreComposeActivity :
         super.onDestroy()
         lifecycle.currentState = Lifecycle.State.Destroyed
         androidLifecycle.handleLifecycleEvent(androidx.lifecycle.Lifecycle.Event.ON_DESTROY)
-    }
-
-    open fun onRetainCustomNonConfigurationInstance(): Any? {
-        return null
     }
 
     override fun getLifecycle(): androidx.lifecycle.Lifecycle {
