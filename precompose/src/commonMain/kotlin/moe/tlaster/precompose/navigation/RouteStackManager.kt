@@ -24,7 +24,8 @@ class RouteStackManager(
             field = value
             value?.register(this)
         }
-    var stackEntry = 0
+    private var stackEntryId = Long.MIN_VALUE
+    private var routeStackId = Long.MIN_VALUE
     var lifeCycleOwner: LifecycleOwner? = null
         set(value) {
             field?.lifecycle?.removeObserver(this)
@@ -60,7 +61,7 @@ class RouteStackManager(
         val vm = viewModel
         checkNotNull(vm)
         val entry = BackStackEntry(
-            id = stackEntry++,
+            id = stackEntryId++,
             route = matchResult.route,
             pathMap = matchResult.pathMap,
             queryString = query.takeIf { it.isNotEmpty() }?.let {
@@ -72,7 +73,7 @@ class RouteStackManager(
             is SceneRoute -> {
                 _backStacks.add(
                     RouteStack(
-                        id = (_backStacks.lastOrNull()?.id ?: 0) + 1,
+                        id = routeStackId++,
                         scene = entry,
                         navTransition = matchResult.route.navTransition,
                     )

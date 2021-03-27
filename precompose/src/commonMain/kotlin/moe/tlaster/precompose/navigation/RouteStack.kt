@@ -10,7 +10,7 @@ import moe.tlaster.precompose.navigation.transition.NavTransition
 
 @Stable
 internal class RouteStack(
-    val id: Int,
+    val id: Long,
     val scene: BackStackEntry,
     val dialogStack: SnapshotStateList<BackStackEntry> = mutableStateListOf(),
     val navTransition: NavTransition? = null,
