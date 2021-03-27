@@ -13,7 +13,6 @@ repositories {
 
 dependencies {
     implementation(project(":sample:common"))
-    implementation("androidx.activity:activity-compose:1.3.0-alpha03")
 }
 
 android {
