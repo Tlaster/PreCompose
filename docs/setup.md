@@ -1,5 +1,7 @@
 # Setup
 
+PreCompose only support [Jetbrains Compose](https://github.com/JetBrains/compose-jb) ATM. If you're using Google's Jetpack Compose please wait for a release in the future.
+
 ## Add Dependency
 
 Add Jitpack
