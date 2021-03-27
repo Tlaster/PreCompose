@@ -12,11 +12,7 @@ internal fun <T> List<T>.copyForEach(action: (T) -> Unit) {
  * Make a copy of the original list
  */
 internal fun <T> List<T>.copy(): List<T> {
-    val result = arrayListOf<T>()
-    forEach {
-        result += it
-    }
-    return result
+    return toMutableList()
 }
 
 /**
@@ -31,7 +27,5 @@ internal fun <K, V> Map<K, V>.copyForEach(action: (Map.Entry<K, V>) -> Unit) {
  * Make a copy of the original map
  */
 internal fun <K, V> Map<K, V>.copy(): Map<K, V> {
-    val result = hashMapOf<K, V>()
-    result.putAll(this)
-    return result
+    return toMutableMap()
 }

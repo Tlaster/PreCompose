@@ -17,6 +17,20 @@ import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalLifecycleOwner
 import moe.tlaster.precompose.ui.LocalViewModelStoreOwner
 
+/**
+ * Provides in place in the Compose hierarchy for self contained navigation to occur.
+ *
+ * Once this is called, any Composable within the given [RouteBuilder] can be navigated to from
+ * the provided [RouteBuilder].
+ *
+ * The builder passed into this method is [remember]ed. This means that for this NavHost, the
+ * contents of the builder cannot be changed.
+ *
+ * @param navigator the Navigator for this host
+ * @param initialRoute the route for the start destination
+ * @param navTransition navigation transition for the scenes in this [NavHost]
+ * @param builder the builder used to construct the graph
+ */
 @Composable
 fun NavHost(
     navigator: Navigator,

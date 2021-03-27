@@ -14,7 +14,7 @@ import moe.tlaster.precompose.ui.BackHandler
 import moe.tlaster.precompose.viewmodel.ViewModelStore
 
 @Stable
-class RouteStackManager(
+internal class RouteStackManager(
     private val stateHolder: SaveableStateHolder,
     private val routeGraph: RouteGraph,
 ) : LifecycleObserver, BackHandler {
@@ -89,7 +89,7 @@ class RouteStackManager(
     fun goBack() {
         if (currentStack?.canGoBack == true) {
             currentStack?.goBack()
-        } else {
+        } else if (_backStacks.any()) {
             val stack = _backStacks.removeLast()
             stateHolder.removeState(stack.id)
             stack.onDestroyed()

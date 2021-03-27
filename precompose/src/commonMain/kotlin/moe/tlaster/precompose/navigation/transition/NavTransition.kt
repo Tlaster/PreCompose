@@ -34,6 +34,9 @@ val fadeScaleResumeTransition: GraphicsLayerScope.(factor: Float) -> Unit = { fa
     alpha = factor
 }
 
+/**
+ * Create a navigation transition
+ */
 data class NavTransition(
     /**
      * Transition the scene that about to appear for the first time, similar to activity onCreate, factor from 0.0 to 1.0

@@ -55,9 +55,11 @@ fun App() {
                     navTransition = NavTransition(
                         createTransition = {
                             translationY = constraints.maxHeight * (1 - it)
+                            alpha = it
                         },
                         destroyTransition = {
                             translationY = constraints.maxHeight * (1 - it)
+                            alpha = it
                         },
                         pauseTransition = fadeScaleDestroyTransition,
                         resumeTransition = fadeScaleCreateTransition,

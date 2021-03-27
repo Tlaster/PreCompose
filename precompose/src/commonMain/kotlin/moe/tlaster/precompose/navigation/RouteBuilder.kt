@@ -11,6 +11,12 @@ class RouteBuilder(
 ) {
     private val route = arrayListOf<Route>()
 
+    /**
+     * Add the scene [Composable] to the [RouteBuilder]
+     * @param route route for the destination
+     * @param navTransition navigation transition for current scene
+     * @param content composable for the destination
+     */
     fun scene(
         route: String,
         navTransition: NavTransition? = null,
@@ -22,7 +28,11 @@ class RouteBuilder(
             content = content,
         )
     }
-
+    /**
+     * Add the scene [Composable] to the [RouteBuilder], which will show over the scene
+     * @param route route for the destination
+     * @param content composable for the destination
+     */
     fun dialog(
         route: String,
         content: @Composable (BackStackEntry) -> Unit,
@@ -33,5 +43,5 @@ class RouteBuilder(
         )
     }
 
-    fun build() = RouteGraph(initialRoute, route.toList())
+    internal fun build() = RouteGraph(initialRoute, route.toList())
 }
