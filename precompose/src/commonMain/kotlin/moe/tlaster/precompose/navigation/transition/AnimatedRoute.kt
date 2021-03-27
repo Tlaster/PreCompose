@@ -75,7 +75,7 @@ internal fun AnimatedRoute(
                     content(key)
                 }
             }
-        }
+        }.sortByDescending { it.animateType }
     } else if (transitionState.currentState == transitionState.targetState) {
         // Remove all the intermediate items from the list once the animation is finished.
         items.removeAll { it.key != transitionState.targetState }
