@@ -4,9 +4,10 @@ plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose") version "0.4.0-build177"
     id("com.android.library")
+    id("maven-publish")
 }
 
-group = "moe.tlaster"
+group = "moe.tlaster.precompose"
 version = "0.1.0"
 
 repositories {
@@ -14,7 +15,9 @@ repositories {
 }
 
 kotlin {
-    android()
+    android {
+        publishLibraryVariants("release")
+    }
     jvm("desktop") {
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
