@@ -11,7 +11,8 @@ This sample demonstrates the following features:
  - ViewModel
  - LiveData
 
-![](https://raw.githubusercontent.com/Tlaster/PreCompose/master/media/note_app.webp)
+<img src="../media/note_app.webp" height="350">
+<img src="../media/note_app_android.webp" height="350">
 
 ## Greetings App with ViewModel in 100 lines!
 
@@ -86,5 +87,4 @@ class HomeViewModel : ViewModel() {
     }
 }
 ```
-
-![](https://raw.githubusercontent.com/Tlaster/PreCompose/master/media/greeting_app.gif)
+<img src="../media/greeting_app.gif" height="400">
