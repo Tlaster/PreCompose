@@ -19,12 +19,12 @@ There's nothing complex to setup, just write your ViewModel and UI code and you'
  - [LiveData](/docs/component/live_data.md)
  - [ViewModel](/docs/component/view_model.md)
 
-# [Sample](/docs/sample.md)
-## Note App
+# Sample
+## [Note App](/docs/sample.md#note-app)
 <img src="media/note_app.webp" height="250">
 <img src="media/note_app_android.webp" height="250">
 
-## Greetings App with ViewModel in 100 lines!
+## [Greetings App with ViewModel in 100 lines!](/docs/sample.md#greetings-app-with-viewmodel-in-100-lines)
 <img src="media/greeting_app.gif" height="250">
 
 # LICENSE
