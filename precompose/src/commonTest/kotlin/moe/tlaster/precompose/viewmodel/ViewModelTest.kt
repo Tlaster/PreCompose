@@ -1,12 +1,12 @@
 package moe.tlaster.precompose.viewmodel
 
-import moe.tlaster.precompose.standard.IDisposable
+import moe.tlaster.precompose.standard.Disposable
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class ViewModelTest {
-    internal class DisposableImpl : IDisposable {
+    internal class DisposableImpl : Disposable {
         var wasDisposable = false
 
         override fun dispose() {

@@ -1,5 +1,5 @@
 package moe.tlaster.precompose.standard
 
-interface IDisposable {
+interface Disposable {
     fun dispose()
 }

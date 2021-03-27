@@ -565,6 +565,86 @@ internal class RouteParser {
             return result
         }
 
+        fun expandOptionalVariables(pattern: String): List<String> {
+            if (pattern.isEmpty() || pattern == "/") {
+                return listOf("/")
+            }
+            val len = pattern.length
+            var key = 0
+            val paths = hashMapOf<Int, StringBuilder>()
+            val pathAppender = { index: Int, segment: StringBuilder ->
+                for (i in index until index - 1) {
+                    paths[i]?.append(segment)
+                }
+                paths.getOrPut(index) {
+                    val value = StringBuilder()
+                    if (index > 0) {
+                        val previous = paths[index - 1]
+                        if (previous.toString() != "/") {
+                            value.append(previous)
+                        }
+                    }
+                    value
+                }.append(segment)
+            }
+            val segment = StringBuilder()
+            var isLastOptional = false
+            var i = 0
+            while (i < len) {
+                val ch = pattern[i]
+                if (ch == '/') {
+                    if (segment.isNotEmpty()) {
+                        pathAppender.invoke(key, segment)
+                        segment.setLength(0)
+                    }
+                    segment.append(ch)
+                    i += 1
+                } else if (ch == '{') {
+                    segment.append(ch)
+                    var curly = 1
+                    var j = i + 1
+                    while (j < len) {
+                        val next = pattern[j++]
+                        segment.append(next)
+                        if (next == '{') {
+                            curly += 1
+                        } else if (next == '}') {
+                            curly -= 1
+                            if (curly == 0) {
+                                break
+                            }
+                        }
+                    }
+                    if (j < len && pattern[j] == '?') {
+                        j += 1
+                        isLastOptional = true
+                        if (paths.isEmpty()) {
+                            paths[0] = StringBuilder("/")
+                        }
+                        pathAppender.invoke(++key, segment)
+                    } else {
+                        isLastOptional = false
+                        pathAppender.invoke(key, segment)
+                    }
+                    segment.setLength(0)
+                    i = j
+                } else {
+                    segment.append(ch)
+                    i += 1
+                }
+            }
+            if (paths.isEmpty()) {
+                return listOf(pattern)
+            }
+            if (segment.isNotEmpty()) {
+                pathAppender.invoke(key, segment)
+                if (isLastOptional) {
+                    paths[++key] = segment
+                }
+            }
+            return paths.values.map { it.toString() }
+        }
+
         private const val ntStatic = 0 // /home
         private const val ntRegexp = 1 // /{id:[0-9]+}
         private const val ntParam = 2 // /{user}

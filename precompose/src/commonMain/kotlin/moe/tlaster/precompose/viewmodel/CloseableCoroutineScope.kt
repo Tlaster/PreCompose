@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import moe.tlaster.precompose.standard.IDisposable
+import moe.tlaster.precompose.standard.Disposable
 import kotlin.coroutines.CoroutineContext
 
 private const val JOB_KEY = "moe.tlaster.precompose.viewmodel.ViewModelCoroutineScope.JOB_KEY"
@@ -21,7 +21,7 @@ val ViewModel.viewModelScope: CoroutineScope
         )
     }
 
-internal class CloseableCoroutineScope(context: CoroutineContext) : IDisposable, CoroutineScope {
+internal class CloseableCoroutineScope(context: CoroutineContext) : Disposable, CoroutineScope {
     override val coroutineContext: CoroutineContext = context
 
     override fun dispose() {

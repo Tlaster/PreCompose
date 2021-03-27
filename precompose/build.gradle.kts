@@ -16,11 +16,6 @@ repositories {
 kotlin {
     android()
     jvm("desktop") {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "11"
-            }
-        }
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
         }
@@ -29,13 +24,13 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(compose.foundation)
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
             }
         }
         val androidMain by getting {
@@ -69,7 +64,7 @@ android {
         targetSdkVersion(30)
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }

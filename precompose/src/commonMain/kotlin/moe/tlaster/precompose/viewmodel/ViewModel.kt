@@ -1,6 +1,6 @@
 package moe.tlaster.precompose.viewmodel
 
-import moe.tlaster.precompose.standard.IDisposable
+import moe.tlaster.precompose.standard.Disposable
 import kotlin.jvm.Volatile
 
 abstract class ViewModel {
@@ -37,7 +37,7 @@ abstract class ViewModel {
     }
 
     private fun disposeWithRuntimeException(obj: Any) {
-        if (obj is IDisposable) {
+        if (obj is Disposable) {
             obj.dispose()
         }
     }

@@ -10,25 +10,17 @@ data class BackStackEntry internal constructor(
     val queryString: QueryString? = null,
     internal val viewModel: NavControllerViewModel,
 ) : ViewModelStoreOwner {
-    fun path(path: String, default: String? = null): String? {
-        return pathMap[path] ?: default
-    }
-
-    fun query(name: String, default: String? = null): String? {
-        return queryString?.query(name, default)
-    }
-
     override val viewModelStore by lazy {
         viewModel.get(id = id)
     }
 }
 
-inline fun <reified T> BackStackEntry.path(path: String, default: T?): T? {
+inline fun <reified T> BackStackEntry.path(path: String, default: T? = null): T? {
     val value = pathMap[path] ?: return default
     return convertValue(value)
 }
 
-inline fun <reified T> BackStackEntry.query(name: String, default: T?): T? {
+inline fun <reified T> BackStackEntry.query(name: String, default: T? = null): T? {
     return queryString?.query(name, default)
 }
 

@@ -25,11 +25,7 @@ fun NavHost(
     builder: RouteBuilder.() -> Unit,
 ) {
     val stateHolder = rememberSaveableStateHolder()
-    val manager = remember(
-        stateHolder,
-        builder,
-        navigator,
-    ) {
+    val manager = remember {
         val graph = RouteBuilder(initialRoute = initialRoute).apply(builder).build()
         RouteStackManager(stateHolder, graph).apply {
             navigator.stackManager = this
