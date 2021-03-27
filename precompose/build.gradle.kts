@@ -7,7 +7,7 @@ plugins {
     id("maven-publish")
 }
 
-group = "moe.tlaster.precompose"
+group = "moe.tlaster"
 version = "0.1.0"
 
 repositories {
