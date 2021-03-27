@@ -6,9 +6,6 @@ plugins {
     id("com.android.library")
 }
 
-group = "moe.tlaster"
-version = "1.0"
-
 repositories {
     google()
 }

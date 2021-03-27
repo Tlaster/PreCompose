@@ -7,12 +7,12 @@ plugins {
     id("maven-publish")
 }
 
-group = "moe.tlaster"
-version = "0.1.0"
-
 repositories {
     google()
 }
+
+group = "moe.tlaster"
+version = "0.0.1"
 
 kotlin {
     android {

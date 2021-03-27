@@ -11,9 +11,6 @@ buildscript {
     }
 }
 
-group = "moe.tlaster"
-version = "0.1.0"
-
 plugins {
     id("com.diffplug.spotless").version("5.6.1")
 }
