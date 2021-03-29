@@ -53,7 +53,7 @@ internal class RouteStackManager(
         }
     }
 
-    fun navigate(path: String, option: NavOption? = null) {
+    fun navigate(path: String, options: NavOptions? = null) {
         val query = path.substringAfter('?', "")
         val routePath = path.substringBefore('?')
         val matchResult = routeParser.find(path = routePath)
@@ -61,7 +61,7 @@ internal class RouteStackManager(
         require(matchResult.route is ComposeRoute) { "RouteStackManager: navigate target $path is not ComposeRoute" }
         val vm = viewModel
         checkNotNull(vm)
-        if (option != null && matchResult.route is SceneRoute && option.launchSingleTop) {
+        if (options != null && matchResult.route is SceneRoute && options.launchSingleTop) {
             _backStacks.firstOrNull { it.scene.route.route == matchResult.route.route }?.let {
                 _backStacks.remove(it)
                 _backStacks.add(it)
@@ -92,11 +92,11 @@ internal class RouteStackManager(
             }
         }
 
-        if (option?.popUpTo != null && matchResult.route is SceneRoute) {
-            val index = _backStacks.indexOfLast { it.scene.route.route == option.popUpTo.route }
+        if (options?.popUpTo != null && matchResult.route is SceneRoute) {
+            val index = _backStacks.indexOfLast { it.scene.route.route == options.popUpTo.route }
             if (index != -1 && index != _backStacks.lastIndex - 1) {
-                _backStacks.removeRange(if (option.popUpTo.inclusive) index else index + 1, _backStacks.lastIndex)
-            } else if (option.popUpTo.route.isEmpty()) {
+                _backStacks.removeRange(if (options.popUpTo.inclusive) index else index + 1, _backStacks.lastIndex)
+            } else if (options.popUpTo.route.isEmpty()) {
                 _backStacks.removeRange(0, _backStacks.lastIndex)
             }
         }

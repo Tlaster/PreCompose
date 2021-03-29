@@ -20,9 +20,10 @@ class Navigator {
      * Navigate to a route in the current RouteGraph.
      *
      * @param route route for the destination
+     * @param options navigation options for the destination
      */
-    fun navigate(route: String, option: NavOption? = null) {
-        stackManager.navigate(route, option)
+    fun navigate(route: String, options: NavOptions? = null) {
+        stackManager.navigate(route, options)
     }
 
     /**
@@ -40,13 +41,3 @@ class Navigator {
     val canGoBack: Boolean
         get() = stackManager.canGoBack
 }
-
-data class NavOption(
-    val launchSingleTop: Boolean = false,
-    val popUpTo: PopUpTo? = null,
-)
-
-data class PopUpTo(
-    val route: String,
-    val inclusive: Boolean = false
-)

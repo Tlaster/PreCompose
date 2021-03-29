@@ -32,14 +32,41 @@ NavHost(
 
 Replacement for Jetpack Navigation's NavController
 
- - `Navigator.navigate(route: String)`  
-Navigate to a route in the current RouteGraph
+ - `Navigator.navigate(route: String, options: NavOptions? = null)`  
+Navigate to a route in the current RouteGraph with optional NavOptions
 
  - `Navigator.goBack()`  
 Attempts to navigate up in the navigation hierarchy
 
  - `Navigator.canGoBack: Boolean`  
 Check if navigator can navigate up
+
+### NavOptions
+
+Similar to Jetpack Navigation's NavOptions, you can have NavOptions like this:
+```kotlin
+navigator.navigate(
+    "/home",
+    NavOptions(
+        // Launch the scene as single top
+        launchSingleTop = true,
+    ),
+)
+```
+or you can have `popUpTo` functionality
+```kotlin
+navigator.navigate(
+    "/detail",
+    NavOptions(
+        popUpTo = PopUpTo(
+            // The destination of popUpTo
+            route = "/home",
+            // Whether the popUpTo destination should be popped from the back stack.
+            inclusive = true,
+        )
+    ),
+)
+```
 
 ## Scene route pattern
 
