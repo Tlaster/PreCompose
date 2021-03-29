@@ -40,7 +40,13 @@ internal class RouteStackManager(
         get() = currentStack?.canGoBack != false || _backStacks.size > 1
     private val routeParser by lazy {
         RouteParser().apply {
-            routeGraph.routes.map { RouteParser.expandOptionalVariables(it.route) to it }
+            routeGraph.routes
+                .map {
+                    RouteParser.expandOptionalVariables(it.route) +
+                        it.deepLinks.flatMap {
+                            RouteParser.expandOptionalVariables(it)
+                        } to it
+                }
                 .flatMap { it.first.map { route -> route to it.second } }.forEach {
                     insert(it.first, it.second)
                 }

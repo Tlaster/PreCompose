@@ -19,12 +19,14 @@ class RouteBuilder(
      */
     fun scene(
         route: String,
+        deepLinks: List<String> = emptyList(),
         navTransition: NavTransition? = null,
         content: @Composable (BackStackEntry) -> Unit,
     ) {
         this.route += SceneRoute(
             route = route,
             navTransition = navTransition,
+            deepLinks = deepLinks,
             content = content,
         )
     }
