@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.navigation.RouteStack
 import moe.tlaster.precompose.navigation.RouteStackManager
 
@@ -30,25 +31,27 @@ internal fun AnimatedRoute(
     val transitionState = remember { MutableTransitionState(targetState) }
     val targetChanged = (targetState != transitionState.targetState)
     val previousState = transitionState.targetState
-    val actualNavTransition = run {
-        val indexOfNew = manager.indexOf(targetState).takeIf { it >= 0 } ?: Int.MAX_VALUE
-        val indexOfOld = manager.indexOf(previousState).takeIf { it >= 0 } ?: Int.MAX_VALUE
-        if (indexOfNew >= indexOfOld) targetState else previousState
-    }.navTransition ?: navTransition
     transitionState.targetState = targetState
     val transition = updateTransition(transitionState)
     if (targetChanged || items.isEmpty()) {
+        val indexOfNew = manager.indexOf(targetState).takeIf { it >= 0 } ?: Int.MAX_VALUE
+        val indexOfOld = manager.indexOf(previousState)
+            .takeIf {
+                it >= 0 ||
+                    // Workaround for navOptions
+                    targetState.lifecycle.currentState == Lifecycle.State.Initialized &&
+                    previousState.lifecycle.currentState == Lifecycle.State.Active
+            } ?: Int.MAX_VALUE
+        val actualNavTransition = run {
+            if (indexOfNew >= indexOfOld) targetState else previousState
+        }.navTransition ?: navTransition
         // Only manipulate the list when the state is changed, or in the first run.
         val keys = items.map {
-            val indexOfNew = manager.indexOf(targetState).takeIf { it >= 0 } ?: Int.MAX_VALUE
-            val indexOfOld = manager.indexOf(previousState).takeIf { it >= 0 } ?: Int.MAX_VALUE
             val type = if (indexOfNew >= indexOfOld) AnimateType.Pause else AnimateType.Destroy
             it.key to type
         }.toMap().run {
             if (!containsKey(targetState)) {
                 toMutableMap().also {
-                    val indexOfNew = manager.indexOf(targetState).takeIf { it >= 0 } ?: Int.MAX_VALUE
-                    val indexOfOld = manager.indexOf(previousState).takeIf { it >= 0 } ?: Int.MAX_VALUE
                     val type = if (indexOfNew >= indexOfOld) AnimateType.Create else AnimateType.Resume
                     it[targetState] = type
                 }

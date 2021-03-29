@@ -53,7 +53,7 @@ internal class RouteStackManager(
         }
     }
 
-    fun navigate(path: String) {
+    fun navigate(path: String, option: NavOption? = null) {
         val query = path.substringAfter('?', "")
         val routePath = path.substringBefore('?')
         val matchResult = routeParser.find(path = routePath)
@@ -61,27 +61,43 @@ internal class RouteStackManager(
         require(matchResult.route is ComposeRoute) { "RouteStackManager: navigate target $path is not ComposeRoute" }
         val vm = viewModel
         checkNotNull(vm)
-        val entry = BackStackEntry(
-            id = stackEntryId++,
-            route = matchResult.route,
-            pathMap = matchResult.pathMap,
-            queryString = query.takeIf { it.isNotEmpty() }?.let {
-                QueryString(it)
-            },
-            viewModel = vm,
-        )
-        when (matchResult.route) {
-            is SceneRoute -> {
-                _backStacks.add(
-                    RouteStack(
-                        id = routeStackId++,
-                        scene = entry,
-                        navTransition = matchResult.route.navTransition,
-                    )
-                )
+        if (option != null && matchResult.route is SceneRoute && option.launchSingleTop) {
+            _backStacks.firstOrNull { it.scene.route.route == matchResult.route.route }?.let {
+                _backStacks.remove(it)
+                _backStacks.add(it)
             }
-            is DialogRoute -> {
-                currentStack?.dialogStack?.add(entry)
+        } else {
+            val entry = BackStackEntry(
+                id = stackEntryId++,
+                route = matchResult.route,
+                pathMap = matchResult.pathMap,
+                queryString = query.takeIf { it.isNotEmpty() }?.let {
+                    QueryString(it)
+                },
+                viewModel = vm,
+            )
+            when (matchResult.route) {
+                is SceneRoute -> {
+                    _backStacks.add(
+                        RouteStack(
+                            id = routeStackId++,
+                            scene = entry,
+                            navTransition = matchResult.route.navTransition,
+                        )
+                    )
+                }
+                is DialogRoute -> {
+                    currentStack?.dialogStack?.add(entry)
+                }
+            }
+        }
+
+        if (option?.popUpTo != null && matchResult.route is SceneRoute) {
+            val index = _backStacks.indexOfLast { it.scene.route.route == option.popUpTo.route }
+            if (index != -1 && index != _backStacks.lastIndex - 1) {
+                _backStacks.removeRange(if (option.popUpTo.inclusive) index else index + 1, _backStacks.lastIndex)
+            } else if (option.popUpTo.route.isEmpty()) {
+                _backStacks.removeRange(0, _backStacks.lastIndex)
             }
         }
     }
@@ -89,7 +105,7 @@ internal class RouteStackManager(
     fun goBack() {
         if (currentStack?.canGoBack == true) {
             currentStack?.goBack()
-        } else if (_backStacks.any()) {
+        } else if (_backStacks.size > 1) {
             val stack = _backStacks.removeLast()
             stateHolder.removeState(stack.id)
             stack.onDestroyed()

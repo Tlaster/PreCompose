@@ -21,8 +21,8 @@ class Navigator {
      *
      * @param route route for the destination
      */
-    fun navigate(route: String) {
-        stackManager.navigate(route)
+    fun navigate(route: String, option: NavOption? = null) {
+        stackManager.navigate(route, option)
     }
 
     /**
@@ -40,3 +40,13 @@ class Navigator {
     val canGoBack: Boolean
         get() = stackManager.canGoBack
 }
+
+data class NavOption(
+    val launchSingleTop: Boolean = false,
+    val popUpTo: PopUpTo? = null,
+)
+
+data class PopUpTo(
+    val route: String,
+    val inclusive: Boolean = false
+)
