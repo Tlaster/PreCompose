@@ -41,11 +41,16 @@ internal class RouteStackManager(
     private val routeParser by lazy {
         RouteParser().apply {
             routeGraph.routes
-                .map {
-                    RouteParser.expandOptionalVariables(it.route) +
-                        it.deepLinks.flatMap {
-                            RouteParser.expandOptionalVariables(it)
-                        } to it
+                .map { route ->
+                    RouteParser.expandOptionalVariables(route.route).let {
+                        if (route is SceneRoute) {
+                            it + route.deepLinks.flatMap {
+                                RouteParser.expandOptionalVariables(it)
+                            }
+                        } else {
+                            it
+                        }
+                    } to route
                 }
                 .flatMap { it.first.map { route -> route to it.second } }.forEach {
                     insert(it.first, it.second)

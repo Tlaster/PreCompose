@@ -7,6 +7,6 @@ import moe.tlaster.precompose.navigation.transition.NavTransition
 internal class SceneRoute(
     route: String,
     val navTransition: NavTransition?,
-    deepLinks: List<String>,
+    val deepLinks: List<String>,
     content: @Composable (BackStackEntry) -> Unit,
-) : ComposeRoute(route, deepLinks, content)
+) : ComposeRoute(route, content)

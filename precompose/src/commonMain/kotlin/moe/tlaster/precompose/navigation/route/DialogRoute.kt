@@ -6,4 +6,4 @@ import moe.tlaster.precompose.navigation.BackStackEntry
 internal class DialogRoute(
     route: String,
     content: @Composable (BackStackEntry) -> Unit
-) : ComposeRoute(route, emptyList(), content)
+) : ComposeRoute(route, content)
