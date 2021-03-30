@@ -26,6 +26,12 @@ class Navigator {
         stackManager.navigate(route, options)
     }
 
+    suspend fun navigateForResult(route: String, options: NavOptions? = null): Any? {
+        stackManager.navigate(route, options)
+        val currentEntry = stackManager.currentEntry ?: return null
+        return stackManager.waitingForResult(currentEntry)
+    }
+
     /**
      * Attempts to navigate up in the navigation hierarchy. Suitable for when the
      * user presses the "Up" button marked with a left (or start)-facing arrow in the upper left
@@ -33,6 +39,10 @@ class Navigator {
      */
     fun goBack() {
         stackManager.goBack()
+    }
+
+    fun goBackWith(result: Any? = null) {
+        stackManager.goBack(result)
     }
 
     /**

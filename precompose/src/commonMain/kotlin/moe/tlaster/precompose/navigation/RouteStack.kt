@@ -15,6 +15,12 @@ internal class RouteStack(
     val dialogStack: SnapshotStateList<BackStackEntry> = mutableStateListOf(),
     val navTransition: NavTransition? = null,
 ) : LifecycleOwner {
+    val currentEntry: BackStackEntry?
+        get() = if (dialogStack.any()) {
+            dialogStack.last()
+        } else {
+            scene
+        }
     private val lifecycleRegistry by lazy {
         LifecycleRegistry()
     }
@@ -22,8 +28,8 @@ internal class RouteStack(
     val canGoBack: Boolean
         get() = dialogStack.isNotEmpty()
 
-    fun goBack() {
-        dialogStack.removeLast().apply {
+    fun goBack(): BackStackEntry {
+        return dialogStack.removeLast().apply {
             viewModelStore.clear()
         }
     }

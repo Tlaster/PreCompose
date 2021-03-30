@@ -3,7 +3,7 @@ package moe.tlaster.precompose.navigation
 import moe.tlaster.precompose.navigation.route.ComposeRoute
 import moe.tlaster.precompose.viewmodel.ViewModelStoreOwner
 
-data class BackStackEntry internal constructor(
+class BackStackEntry internal constructor(
     val id: Long,
     val route: ComposeRoute,
     val pathMap: Map<String, String>,

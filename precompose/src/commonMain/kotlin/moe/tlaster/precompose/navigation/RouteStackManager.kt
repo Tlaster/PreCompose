@@ -12,12 +12,16 @@ import moe.tlaster.precompose.navigation.route.SceneRoute
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackHandler
 import moe.tlaster.precompose.viewmodel.ViewModelStore
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @Stable
 internal class RouteStackManager(
     private val stateHolder: SaveableStateHolder,
     private val routeGraph: RouteGraph,
 ) : LifecycleObserver, BackHandler {
+    private val _suspendResult = linkedMapOf<BackStackEntry, Continuation<Any?>>()
     var backDispatcher: BackDispatcher? = null
         set(value) {
             field?.unregister(this)
@@ -36,6 +40,8 @@ internal class RouteStackManager(
     private val _backStacks = mutableStateListOf<RouteStack>()
     internal val currentStack: RouteStack?
         get() = _backStacks.lastOrNull()
+    internal val currentEntry: BackStackEntry?
+        get() = currentStack?.currentEntry
     val canGoBack: Boolean
         get() = currentStack?.canGoBack != false || _backStacks.size > 1
     private val routeParser by lazy {
@@ -113,14 +119,29 @@ internal class RouteStackManager(
         }
     }
 
-    fun goBack() {
-        if (currentStack?.canGoBack == true) {
-            currentStack?.goBack()
-        } else if (_backStacks.size > 1) {
-            val stack = _backStacks.removeLast()
-            stateHolder.removeState(stack.id)
-            stack.onDestroyed()
+    fun goBack(result: Any? = null) {
+        when {
+            currentStack?.canGoBack == true -> {
+                currentStack?.goBack()
+            }
+            _backStacks.size > 1 -> {
+                val stack = _backStacks.removeLast()
+                stateHolder.removeState(stack.id)
+                stack.onDestroyed()
+                stack.scene
+            }
+            else -> {
+                null
+            }
+        }?.takeIf { backStackEntry ->
+            _suspendResult.containsKey(backStackEntry)
+        }?.let {
+            _suspendResult.remove(it)?.resume(result)
         }
+    }
+
+    suspend fun waitingForResult(entry: BackStackEntry): Any? = suspendCoroutine {
+        _suspendResult[entry] = it
     }
 
     override fun onStateChanged(state: Lifecycle.State) {
