@@ -88,3 +88,5 @@ lint/tmp/
 *.hprof
 
 /.idea
+
+publish.properties
