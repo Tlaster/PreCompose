@@ -278,6 +278,5 @@ class RouteParserTest {
 class TestRoute(
     override val route: String,
     val id: String,
-    override val deepLinks: List<String> = emptyList(),
     override val pathKeys: List<String> = emptyList(),
 ) : Route
