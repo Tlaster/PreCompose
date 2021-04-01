@@ -28,6 +28,9 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew spotlessCheck lint build --stacktrace
 
+    - name: Testing
+      run: ./gradlew test
+
     - name: Publishing
       if: startsWith(github.ref, 'refs/tags/')
       run: ./gradlew publish
