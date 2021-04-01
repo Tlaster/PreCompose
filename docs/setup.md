@@ -3,14 +3,11 @@
 PreCompose only support [Jetbrains Compose](https://github.com/JetBrains/compose-jb) ATM. If you're using Google's Jetpack Compose please wait for a release in the future.
 
 ## Add Dependency
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose/badge.svg)](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose)
 
-Add Jitpack
-```
-maven { url = uri("https://jitpack.io") }
-```
 Add the dependency **in your common module's commonMain sourceSet**
 ```
-api("com.github.Tlaster.PreCompose:precompose:$precompose_version")
+api("moe.tlaster:precompose:$precompose_version")
 ```
 ## Android
 Update the `AndroidManifest.xml` file from your Android project (not the common project's Android library) and add these two lines to the Activity.
