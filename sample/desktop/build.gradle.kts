@@ -3,7 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "0.4.0-build177"
+    id("org.jetbrains.compose") version "0.4.0-build178"
 }
 
 group = "moe.tlaster"

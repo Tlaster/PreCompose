@@ -1,6 +1,6 @@
 # PreCompose
 [![](https://jitpack.io/v/Tlaster/PreCompose.svg)](https://jitpack.io/#Tlaster/PreCompose)
-[![](https://img.shields.io/badge/compose--jb-0.4.0--build177-blue)](https://github.com/JetBrains/compose-jb)
+[![](https://img.shields.io/badge/compose--jb-0.4.0--build178-blue)](https://github.com/JetBrains/compose-jb)
 
 Let you write your Kotlin application in pure compose, which is **Pre**tty **Compose**.
 
