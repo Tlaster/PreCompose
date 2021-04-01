@@ -1,0 +1,35 @@
+name: Android CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+
+    - name: Apply Signing
+      if: ${{ github.event_name != 'pull_request' }}
+      env:
+        SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+        SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+      run: ./.github/apply_signing.sh
+
+    - name: Build with Gradle
+      run: ./gradlew spotlessCheck lint build --stacktrace
+
+    - name: Publishing
+      if: startsWith(github.ref, 'refs/tags/')
+      run: ./gradlew publish
+
+
