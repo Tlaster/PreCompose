@@ -15,7 +15,7 @@ internal class RouteStack(
     val dialogStack: SnapshotStateList<BackStackEntry> = mutableStateListOf(),
     val navTransition: NavTransition? = null,
 ) : LifecycleOwner {
-    val currentEntry: BackStackEntry?
+    val currentEntry: BackStackEntry
         get() = if (dialogStack.any()) {
             dialogStack.last()
         } else {

@@ -274,9 +274,3 @@ class RouteParserTest {
         return TestRoute(path, id)
     }
 }
-
-class TestRoute(
-    override val route: String,
-    val id: String,
-    override val pathKeys: List<String> = emptyList(),
-) : Route
