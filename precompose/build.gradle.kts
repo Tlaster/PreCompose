@@ -36,6 +36,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
+                implementation(compose("org.jetbrains.compose.ui:ui-test-junit4"))
             }
         }
         val androidMain by getting {
