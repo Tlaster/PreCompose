@@ -3,7 +3,7 @@ import java.util.Properties
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "0.4.0-build180"
+    id("org.jetbrains.compose") version "0.4.0-build182"
     id("com.android.library")
     id("maven-publish")
     id("signing")
@@ -14,7 +14,7 @@ repositories {
 }
 
 group = "moe.tlaster"
-version = "0.1.2"
+version = "0.1.3"
 
 kotlin {
     android {

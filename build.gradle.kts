@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         gradlePluginPortal()
-        jcenter()
         google()
         mavenCentral()
     }
@@ -18,7 +17,6 @@ plugins {
 allprojects {
     apply(plugin = "com.diffplug.spotless")
     repositories {
-        jcenter()
         mavenCentral()
         maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
     }
