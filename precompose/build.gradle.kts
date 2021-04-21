@@ -14,7 +14,7 @@ repositories {
 }
 
 group = "moe.tlaster"
-version = "0.1.3"
+version = "0.1.4"
 
 kotlin {
     android {
