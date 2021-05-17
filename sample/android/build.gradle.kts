@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.compose") version "0.4.0-build188"
+    id("org.jetbrains.compose") version "0.4.0-build190"
     id("com.android.application")
     kotlin("android")
 }
