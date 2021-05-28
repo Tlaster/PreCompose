@@ -7,7 +7,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.window.MenuBar
+import androidx.compose.ui.window.v1.MenuBar
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
 import moe.tlaster.precompose.ui.BackDispatcher
