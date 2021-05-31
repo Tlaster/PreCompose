@@ -1,7 +1,7 @@
 # PreCompose
 [![](https://jitpack.io/v/Tlaster/PreCompose.svg)](https://jitpack.io/#Tlaster/PreCompose)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose/badge.svg)](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose)
-[![](https://img.shields.io/badge/compose--jb-0.4.0--build212-blue)](https://github.com/JetBrains/compose-jb)
+[![](https://img.shields.io/badge/compose--jb-0.4.0--rc2-blue)](https://github.com/JetBrains/compose-jb)
 
 Let you write your Kotlin application in pure compose, which is **Pre**tty **Compose**.
 
