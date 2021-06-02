@@ -14,7 +14,7 @@ repositories {
 }
 
 group = "moe.tlaster"
-version = "0.2.1"
+version = "0.2.2"
 
 kotlin {
     android {
@@ -29,7 +29,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(compose.foundation)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
             }
         }
         val commonTest by getting {
@@ -41,7 +41,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha01")
+                api("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha01")
                 api("androidx.savedstate:savedstate-ktx:1.1.0")
             }
         }
