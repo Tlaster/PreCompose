@@ -3,7 +3,7 @@ import java.util.Properties
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "0.4.0"
+    id("org.jetbrains.compose") version "0.5.0-build221"
     id("com.android.library")
     id("maven-publish")
     id("signing")
@@ -36,7 +36,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
-                implementation(compose("org.jetbrains.compose.ui:ui-test-junit4"))
+                // implementation(compose("org.jetbrains.compose.ui:ui-test-junit4"))
             }
         }
         val androidMain by getting {
