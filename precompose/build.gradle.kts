@@ -3,7 +3,7 @@ import java.util.Properties
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "0.5.0-build221"
+    id("org.jetbrains.compose") version "0.5.0-build226"
     id("com.android.library")
     id("maven-publish")
     id("signing")
