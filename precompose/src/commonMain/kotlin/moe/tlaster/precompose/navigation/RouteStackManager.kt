@@ -21,6 +21,8 @@ internal class RouteStackManager(
     private val stateHolder: SaveableStateHolder,
     private val routeGraph: RouteGraph,
 ) : LifecycleObserver, BackHandler {
+    // FIXME: 2021/4/1 Temp workaround for deeplink
+    private var pendingNavigation: String? = null
     private val _suspendResult = linkedMapOf<BackStackEntry, Continuation<Any?>>()
     var backDispatcher: BackDispatcher? = null
         set(value) {
@@ -71,15 +73,17 @@ internal class RouteStackManager(
     }
 
     fun navigate(path: String, options: NavOptions? = null) {
+        val vm = viewModel ?: run {
+            pendingNavigation = path
+            return
+        }
         val query = path.substringAfter('?', "")
         val routePath = path.substringBefore('?')
         val matchResult = routeParser.find(path = routePath)
         checkNotNull(matchResult) { "RouteStackManager: navigate target $path not found" }
         require(matchResult.route is ComposeRoute) { "RouteStackManager: navigate target $path is not ComposeRoute" }
-        val vm = viewModel
-        checkNotNull(vm)
         if (options != null && matchResult.route is SceneRoute && options.launchSingleTop) {
-            _backStacks.firstOrNull { it.scene.route.route == matchResult.route.route }?.let {
+            _backStacks.firstOrNull { it.hasRoute(matchResult.route.route) }?.let {
                 _backStacks.remove(it)
                 _backStacks.add(it)
             }
@@ -98,21 +102,24 @@ internal class RouteStackManager(
                     _backStacks.add(
                         RouteStack(
                             id = routeStackId++,
-                            scene = entry,
+                            stacks = mutableStateListOf(entry),
                             navTransition = matchResult.route.navTransition,
                         )
                     )
                 }
                 is DialogRoute -> {
-                    currentStack?.dialogStack?.add(entry)
+                    currentStack?.stacks?.add(entry)
                 }
             }
         }
 
         if (options?.popUpTo != null && matchResult.route is SceneRoute) {
-            val index = _backStacks.indexOfLast { it.scene.route.route == options.popUpTo.route }
+            val index = _backStacks.indexOfLast { it.hasRoute(options.popUpTo.route) }
             if (index != -1 && index != _backStacks.lastIndex) {
-                _backStacks.removeRange(if (options.popUpTo.inclusive) index else index + 1, _backStacks.lastIndex)
+                _backStacks.removeRange(
+                    if (options.popUpTo.inclusive) index else index + 1,
+                    _backStacks.lastIndex
+                )
             } else if (options.popUpTo.route.isEmpty()) {
                 _backStacks.removeRange(0, _backStacks.lastIndex)
             }
@@ -120,15 +127,20 @@ internal class RouteStackManager(
     }
 
     fun goBack(result: Any? = null) {
+        if (!canGoBack) {
+            backDispatcher?.onBackPress()
+            return
+        }
         when {
             currentStack?.canGoBack == true -> {
                 currentStack?.goBack()
             }
             _backStacks.size > 1 -> {
                 val stack = _backStacks.removeLast()
+                val entry = stack.currentEntry
                 stateHolder.removeState(stack.id)
-                stack.onDestroyed()
-                stack.scene
+                stack.destroyAfterTransition()
+                entry
             }
             else -> {
                 null
@@ -158,6 +170,10 @@ internal class RouteStackManager(
         }
     }
 
+    internal fun indexOf(stack: RouteStack): Int {
+        return _backStacks.indexOf(stack)
+    }
+
     override fun handleBackPress(): Boolean {
         return if (canGoBack) {
             goBack()
@@ -167,7 +183,10 @@ internal class RouteStackManager(
         }
     }
 
-    internal fun indexOf(stack: RouteStack): Int {
-        return _backStacks.indexOf(stack)
+    fun navigateInitial(initialRoute: String) {
+        navigate(initialRoute)
+        pendingNavigation?.let {
+            navigate(it)
+        }
     }
 }

@@ -1,45 +1,36 @@
-buildscript {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.10")
-        classpath("com.android.tools.build:gradle:4.2.1")
-    }
-}
-
 plugins {
-    id("com.diffplug.spotless").version("5.12.5")
+    id("com.android.application").apply(false)
+    id("com.android.library").apply(false)
+    kotlin("android").apply(false)
+    id("com.diffplug.spotless").version(Versions.spotless)
 }
 
 allprojects {
-    apply(plugin = "com.diffplug.spotless")
-    repositories {
-        mavenCentral()
-        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = Versions.Java.jvmTarget
+            allWarningsAsErrors = true
+            freeCompilerArgs = listOf(
+                "-opt-in=kotlin.RequiresOptIn",
+                "-Xcontext-receivers",
+            )
+        }
     }
-}
 
-subprojects {
+    apply(plugin = "com.diffplug.spotless")
     spotless {
         kotlin {
             target("**/*.kt")
-            targetExclude("$buildDir/**/*.kt")
-            targetExclude("bin/**/*.kt")
-            ktlint("0.41.0")
+            targetExclude("$buildDir/**/*.kt", "bin/**/*.kt", "buildSrc/**/*.kt")
+            ktlint(Versions.ktlint)
         }
         kotlinGradle {
             target("*.gradle.kts")
-            ktlint("0.41.0")
+            ktlint(Versions.ktlint)
         }
-    }
-
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            allWarningsAsErrors = true
-            jvmTarget = "11"
+        java {
+            target("**/*.java")
+            targetExclude("$buildDir/**/*.java", "bin/**/*.java")
         }
     }
 }

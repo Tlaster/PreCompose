@@ -1,13 +1,18 @@
 package moe.tlaster.precompose
 
-import androidx.compose.desktop.Window
-import androidx.compose.desktop.WindowEvents
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.window.v1.MenuBar
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.window.FrameWindowScope
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowState
+import androidx.compose.ui.window.rememberWindowState
+import kotlinx.coroutines.flow.distinctUntilChanged
+import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
 import moe.tlaster.precompose.ui.BackDispatcher
@@ -17,46 +22,72 @@ import moe.tlaster.precompose.ui.LocalLifecycleOwner
 import moe.tlaster.precompose.ui.LocalViewModelStoreOwner
 import moe.tlaster.precompose.viewmodel.ViewModelStore
 import moe.tlaster.precompose.viewmodel.ViewModelStoreOwner
-import java.awt.image.BufferedImage
 
+@Composable
 fun PreComposeWindow(
-    title: String = "JetpackDesktopWindow",
-    size: IntSize = IntSize(800, 600),
-    location: IntOffset = IntOffset.Zero,
-    centered: Boolean = true,
-    icon: BufferedImage? = null,
-    menuBar: MenuBar? = null,
+    onCloseRequest: () -> Unit,
+    state: WindowState = rememberWindowState(),
+    visible: Boolean = true,
+    title: String = "Untitled",
+    icon: Painter? = null,
     undecorated: Boolean = false,
+    transparent: Boolean = false,
     resizable: Boolean = true,
-    events: WindowEvents = WindowEvents(),
-    onDismissRequest: (() -> Unit)? = null,
-    content: @Composable () -> Unit = { }
+    enabled: Boolean = true,
+    focusable: Boolean = true,
+    alwaysOnTop: Boolean = false,
+    onPreviewKeyEvent: (KeyEvent) -> Boolean = { false },
+    onKeyEvent: (KeyEvent) -> Boolean = { false },
+    content: @Composable FrameWindowScope.() -> Unit,
 ) {
-    Window(
-        title,
-        size,
-        location,
-        centered,
-        icon,
-        menuBar,
-        undecorated,
-        resizable,
-        events,
-        onDismissRequest,
+    val holder = remember {
+        PreComposeWindowHolder()
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { state.isMinimized }
+            .distinctUntilChanged()
+            .collect {
+                holder.lifecycle.currentState = if (it) {
+                    Lifecycle.State.InActive
+                } else {
+                    Lifecycle.State.Active
+                }
+            }
+    }
+    ProvideDesktopCompositionLocals(
+        holder
     ) {
-        ProvideDesktopCompositionLocals {
-            content.invoke()
-        }
+        Window(
+            onCloseRequest = {
+                holder.lifecycle.currentState = Lifecycle.State.Destroyed
+                onCloseRequest.invoke()
+            },
+            state = state,
+            visible = visible,
+            title = title,
+            icon = icon,
+            undecorated = undecorated,
+            transparent = transparent,
+            resizable = resizable,
+            enabled = enabled,
+            focusable = focusable,
+            alwaysOnTop = alwaysOnTop,
+            onPreviewKeyEvent = onPreviewKeyEvent,
+            onKeyEvent = onKeyEvent,
+            content = {
+                content.invoke(this)
+            }
+        )
     }
 }
 
 @Composable
 private fun ProvideDesktopCompositionLocals(
+    holder: PreComposeWindowHolder = remember {
+        PreComposeWindowHolder()
+    },
     content: @Composable () -> Unit,
 ) {
-    val holder = remember {
-        PreComposeWindowHolder()
-    }
     CompositionLocalProvider(
         LocalLifecycleOwner provides holder,
         LocalViewModelStoreOwner provides holder,

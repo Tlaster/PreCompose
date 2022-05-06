@@ -3,14 +3,10 @@ import java.util.Properties
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "0.5.0-build226"
+    id("org.jetbrains.compose") version Versions.compose_jb
     id("com.android.library")
     id("maven-publish")
     id("signing")
-}
-
-repositories {
-    google()
 }
 
 group = "moe.tlaster"
@@ -21,6 +17,9 @@ kotlin {
         publishLibraryVariants("release", "debug")
     }
     jvm("desktop") {
+        compilations.all {
+            kotlinOptions.jvmTarget = Versions.Java.jvmTarget
+        }
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
         }
@@ -29,7 +28,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(compose.foundation)
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Kotlin.coroutines}")
             }
         }
         val commonTest by getting {
@@ -41,8 +40,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                api("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha01")
-                api("androidx.savedstate:savedstate-ktx:1.1.0")
+                api("androidx.activity:activity-ktx:${Versions.AndroidX.activity}")
             }
         }
         val androidTest by getting {
@@ -55,23 +53,24 @@ kotlin {
         val desktopTest by getting {
             dependencies {
                 implementation(kotlin("test-junit5"))
-                implementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
-                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+                implementation("org.junit.jupiter:junit-jupiter-api:5.8.0")
+                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.0")
             }
         }
     }
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdk = Versions.Android.compile
+    buildToolsVersion = Versions.Android.buildTools
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(30)
+        minSdk = Versions.Android.min
+        targetSdk = Versions.Android.target
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = Versions.Java.java
+        targetCompatibility = Versions.Java.java
     }
 }
 

@@ -8,6 +8,7 @@ abstract class ComposeRoute(
     override val route: String,
     val content: @Composable (BackStackEntry) -> Unit
 ) : Route {
+    @Deprecated("store path key in route node in order to match different links in one route")
     override val pathKeys by lazy {
         RouteParser.pathKeys(pattern = route)
     }

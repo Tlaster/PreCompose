@@ -3,62 +3,63 @@ package moe.tlaster.precompose.navigation
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import moe.tlaster.precompose.lifecycle.Lifecycle
-import moe.tlaster.precompose.lifecycle.LifecycleOwner
-import moe.tlaster.precompose.lifecycle.LifecycleRegistry
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import moe.tlaster.precompose.navigation.transition.NavTransition
 
 @Stable
 internal class RouteStack(
     val id: Long,
-    val scene: BackStackEntry,
-    val dialogStack: SnapshotStateList<BackStackEntry> = mutableStateListOf(),
+    val stacks: SnapshotStateList<BackStackEntry> = mutableStateListOf(),
     val navTransition: NavTransition? = null,
-) : LifecycleOwner {
+) {
     private var destroyAfterTransition = false
-    val currentEntry: BackStackEntry
-        get() = if (dialogStack.any()) {
-            dialogStack.last()
-        } else {
-            scene
-        }
-    private val lifecycleRegistry by lazy {
-        LifecycleRegistry()
-    }
+    val currentEntry: BackStackEntry?
+        get() = stacks.lastOrNull()
+
+    private val _currentBackStackEntryFlow: MutableSharedFlow<BackStackEntry> =
+        MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+
+    val currentBackStackEntryFlow: Flow<BackStackEntry> =
+        _currentBackStackEntryFlow.asSharedFlow()
 
     val canGoBack: Boolean
-        get() = dialogStack.isNotEmpty()
+        get() = stacks.size > 1
 
     fun goBack(): BackStackEntry {
-        return dialogStack.removeLast().apply {
-            viewModelStore.clear()
+        return stacks.removeLast().also {
+            it.destroy()
         }
     }
 
     fun onActive() {
-        lifecycleRegistry.currentState = Lifecycle.State.Active
+        currentEntry?.active()
+        currentEntry?.let {
+            _currentBackStackEntryFlow.tryEmit(it)
+        }
     }
 
     fun onInActive() {
-        lifecycleRegistry.currentState = Lifecycle.State.InActive
+        currentEntry?.inActive()
         if (destroyAfterTransition) {
             onDestroyed()
         }
     }
 
-    fun onDestroyed() {
-        if (lifecycleRegistry.currentState != Lifecycle.State.InActive) {
-            destroyAfterTransition = true
-        } else {
-            lifecycleRegistry.currentState = Lifecycle.State.Destroyed
-            dialogStack.forEach {
-                it.viewModelStore.clear()
-            }
-            scene.viewModelStore.clear()
-        }
+    fun destroyAfterTransition() {
+        destroyAfterTransition = true
     }
 
-    override val lifecycle: Lifecycle by lazy {
-        lifecycleRegistry
+    fun onDestroyed() {
+        stacks.forEach {
+            it.destroy()
+        }
+        stacks.clear()
+    }
+
+    fun hasRoute(route: String): Boolean {
+        return stacks.any { it.route.route == route }
     }
 }

@@ -18,6 +18,7 @@ internal class RouteParser {
         var label: Char = 0.toChar(),
         var tail: Char = 0.toChar(),
         var rex: Regex? = null,
+        var paramsKey: String? = null,
         var route: Route? = null,
     ) : Comparable<Node> {
 
@@ -152,6 +153,7 @@ internal class RouteParser {
                             segStartIdx = searchStr.length
                         }
                         child.tail = seg.tail // for params, we set the tail
+                        child.paramsKey = findParamKey(searchStr) // set paramsKey if it has keys
                         if (segStartIdx != searchStr.length) {
                             // add static edge for the remaining part, split the end.
                             // its not possible to have adjacent param nodes, so its certainly
@@ -170,7 +172,7 @@ internal class RouteParser {
 
                         // add the param edge node
                         searchStr = searchStr.substring(segStartIdx)
-                        val nn = Node(type = segTyp, label = searchStr[0], tail = seg.tail)
+                        val nn = Node(type = segTyp, label = searchStr[0], tail = seg.tail, paramsKey = findParamKey(searchStr))
                         hn = child.addChild(nn, searchStr)
                     }
                 }
@@ -179,6 +181,19 @@ internal class RouteParser {
                 tailSort(it)
             }
             return hn
+        }
+
+        private fun findParamKey(pattern: String): String? {
+            val startChar = "{"
+            val endChar = "}"
+            val regexStart = ":"
+            if (!pattern.startsWith("{") && !pattern.endsWith("}")) return null
+            val startIndex = pattern.indexOf(startChar)
+            val endIndex = pattern.indexOf(endChar)
+            val regexIndex = pattern.indexOf(regexStart).let {
+                if (it == -1) pattern.length else it
+            }
+            return pattern.substring(min(startIndex + 1, pattern.length - 1), min(endIndex, regexIndex))
         }
 
         fun replaceChild(label: Char, tail: Char, child: Node) {
@@ -247,7 +262,11 @@ internal class RouteParser {
                         var idx = 0
                         while (idx < nds.size) {
                             xn = nds[idx]
-
+                            if (xn.type != ntStatic) {
+                                xn.paramsKey?.let {
+                                    rctx.keys.add(it)
+                                }
+                            }
                             // label for param nodes is the delimiter byte
                             var p = xsearch.indexOf(xn.tail)
                             if (p < 0) {
@@ -278,7 +297,7 @@ internal class RouteParser {
                                 if (xn.isLeaf) {
                                     val h = xn.route
                                     if (h != null) {
-                                        rctx.key(h.pathKeys)
+                                        rctx.key()
                                         return h
                                     }
                                 }
@@ -316,7 +335,7 @@ internal class RouteParser {
                         val h = xn.route
                         if (h != null) {
                             // rctx.routeParams.Keys = append(rctx.routeParams.Keys, h.paramKeys...)
-                            rctx.key(h.pathKeys)
+                            rctx.key()
                             return h
                         }
                     }
@@ -571,7 +590,7 @@ internal class RouteParser {
             }
             val len = pattern.length
             var key = 0
-            val paths = hashMapOf<Int, StringBuilder>()
+            val paths = linkedMapOf<Int, StringBuilder>()
             val pathAppender = { index: Int, segment: StringBuilder ->
                 for (i in index until index - 1) {
                     paths[i]?.append(segment)

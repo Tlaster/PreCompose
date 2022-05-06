@@ -1,7 +1,5 @@
 package moe.tlaster.precompose.lifecycle
 
-import moe.tlaster.precompose.standard.copyForEach
-
 class LifecycleRegistry : Lifecycle {
     private val observers = arrayListOf<LifecycleObserver>()
     override var currentState: Lifecycle.State = Lifecycle.State.Initialized
@@ -14,7 +12,7 @@ class LifecycleRegistry : Lifecycle {
         }
 
     private fun dispatchState(value: Lifecycle.State) {
-        observers.copyForEach {
+        observers.toMutableList().forEach {
             it.onStateChanged(value)
         }
     }
@@ -25,6 +23,7 @@ class LifecycleRegistry : Lifecycle {
 
     override fun addObserver(observer: LifecycleObserver) {
         observers.add(observer)
+        observer.onStateChanged(currentState)
     }
 
     override fun hasObserver(): Boolean {

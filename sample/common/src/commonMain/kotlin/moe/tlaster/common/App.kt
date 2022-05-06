@@ -10,7 +10,6 @@ import moe.tlaster.common.scene.NoteListScene
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.rememberNavigator
-import moe.tlaster.precompose.navigation.route.scene
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import moe.tlaster.precompose.navigation.transition.fadeScaleCreateTransition
 import moe.tlaster.precompose.navigation.transition.fadeScaleDestroyTransition

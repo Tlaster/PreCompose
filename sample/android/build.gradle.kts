@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.compose") version "0.5.0-build226"
+    id("org.jetbrains.compose") version Versions.compose_jb
     id("com.android.application")
     kotlin("android")
 }
@@ -7,20 +7,17 @@ plugins {
 group = "moe.tlaster"
 version = "1.0"
 
-repositories {
-    google()
-}
-
 dependencies {
     implementation(project(":sample:common"))
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdk = Versions.Android.compile
+    buildToolsVersion = Versions.Android.buildTools
     defaultConfig {
         applicationId = "moe.tlaster.android"
-        minSdkVersion(21)
-        targetSdkVersion(30)
+        minSdk = Versions.Android.min
+        targetSdk = Versions.Android.target
         versionCode = 1
         versionName = "0.1.0"
     }
@@ -30,8 +27,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = Versions.Java.java
+        targetCompatibility = Versions.Java.java
     }
     lintOptions {
         isCheckReleaseBuilds = false

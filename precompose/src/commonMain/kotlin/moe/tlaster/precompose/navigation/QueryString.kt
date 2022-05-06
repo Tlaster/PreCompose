@@ -5,6 +5,11 @@ data class QueryString(
 ) {
     val map by lazy {
         rawInput
+            .split("?")
+            .lastOrNull()
+            .let {
+                it ?: ""
+            }
             .split("&")
             .asSequence()
             .map { it.split("=") }
@@ -25,5 +30,5 @@ inline fun <reified T> QueryString.query(name: String, default: T? = null): T? {
 
 inline fun <reified T> QueryString.queryList(name: String): List<T> {
     val value = map[name] ?: return emptyList()
-    return value.map { convertValue(it) }
+    return value.mapNotNull { convertValue(it) }
 }

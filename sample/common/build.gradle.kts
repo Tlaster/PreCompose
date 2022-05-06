@@ -2,12 +2,8 @@ import org.jetbrains.compose.compose
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "0.5.0-build226"
+    id("org.jetbrains.compose") version Versions.compose_jb
     id("com.android.library")
-}
-
-repositories {
-    google()
 }
 
 kotlin {
@@ -40,10 +36,11 @@ kotlin {
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdk = Versions.Android.compile
+    buildToolsVersion = Versions.Android.buildTools
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(30)
+        minSdk = Versions.Android.min
+        targetSdk = Versions.Android.target
     }
 }
