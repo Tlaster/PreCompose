@@ -4,6 +4,7 @@ plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose") version Versions.compose_jb
     id("com.android.library")
+    id("app.cash.molecule")
 }
 
 kotlin {
@@ -16,6 +17,7 @@ kotlin {
                 api(compose.foundation)
                 api(compose.material)
                 api(project(":precompose"))
+                api("app.cash.molecule:molecule-runtime:0.3.0-SNAPSHOT")
             }
         }
         val commonTest by getting

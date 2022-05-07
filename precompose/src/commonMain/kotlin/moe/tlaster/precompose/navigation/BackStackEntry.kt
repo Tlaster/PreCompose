@@ -1,49 +1,85 @@
 package moe.tlaster.precompose.navigation
 
-import moe.tlaster.precompose.lifecycle.Lifecycle
-import moe.tlaster.precompose.lifecycle.LifecycleOwner
-import moe.tlaster.precompose.lifecycle.LifecycleRegistry
+import androidx.compose.runtime.AbstractApplier
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composition
+import androidx.compose.runtime.DisallowComposableCalls
+import androidx.compose.runtime.Recomposer
+import androidx.compose.runtime.cache
+import androidx.compose.runtime.currentComposer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import moe.tlaster.precompose.navigation.route.ComposeRoute
-import moe.tlaster.precompose.viewmodel.ViewModelStore
-import moe.tlaster.precompose.viewmodel.ViewModelStoreOwner
 
 class BackStackEntry internal constructor(
     val id: Long,
     val route: ComposeRoute,
     val pathMap: Map<String, String>,
     val queryString: QueryString? = null,
-    internal val viewModel: NavControllerViewModel,
-) : ViewModelStoreOwner, LifecycleOwner {
-    private var destroyAfterTransition = false
+    // internal val viewModel: NavControllerViewModel,
+) : CoroutineScope by MainScope() {
 
-    override val viewModelStore: ViewModelStore
-        get() = viewModel.get(id = id)
+    // private val recomposer = Recomposer(coroutineContext)
+    // private val composition = Composition(UnitApplier, recomposer)
+    //
+    // init {
+    //     composition.setContent {
+    //         currentComposer.cache()
+    //     }
+    // }
 
-    private val lifecycleRegistry by lazy {
-        LifecycleRegistry()
-    }
+    // @Composable
+    // inline fun <T> remember(calculation: @DisallowComposableCalls () -> T): T {
+    //     // return composition
+    // }
 
-    override val lifecycle: Lifecycle
-        get() = lifecycleRegistry
+    // private val stateFlowMap = mutableMapOf<Any, StateFlow<*>>()
+    //
+    // fun <T : Any> rememberStateFlow(key: Any, block: CoroutineScope.() -> StateFlow<T>): StateFlow<T> {
+    //     @Suppress("UNCHECKED_CAST")
+    //     return stateFlowMap.getOrPut(key) {
+    //         block(this)
+    //     } as StateFlow<T>
+    // }
+    //
+    // inline fun <reified T : Any> rememberStateFlow(noinline block: CoroutineScope.() -> StateFlow<T>): StateFlow<T> {
+    //     return rememberStateFlow(T::class, block)
+    // }
 
-    fun active() {
-        lifecycleRegistry.currentState = Lifecycle.State.Active
-    }
+    // fun <T> getStateFlow(): StateFlow<T> =
 
-    fun inActive() {
-        lifecycleRegistry.currentState = Lifecycle.State.InActive
-        if (destroyAfterTransition) {
-            destroy()
-        }
-    }
+    // private var destroyAfterTransition = false
+
+    // override val viewModelStore: ViewModelStore
+    //     get() = viewModel.get(id = id)
+    //
+    // private val lifecycleRegistry by lazy {
+    //     LifecycleRegistry()
+    // }
+    //
+    // override val lifecycle: Lifecycle
+    //     get() = lifecycleRegistry
+    //
+    // fun active() {
+    //     lifecycleRegistry.currentState = Lifecycle.State.Active
+    // }
+    //
+    // fun inActive() {
+    //     lifecycleRegistry.currentState = Lifecycle.State.InActive
+    //     if (destroyAfterTransition) {
+    //         destroy()
+    //     }
+    // }
 
     fun destroy() {
-        if (lifecycleRegistry.currentState != Lifecycle.State.InActive) {
-            destroyAfterTransition = true
-        } else {
-            lifecycleRegistry.currentState = Lifecycle.State.Destroyed
-            viewModelStore.clear()
-        }
+        // if (lifecycleRegistry.currentState != Lifecycle.State.InActive) {
+        //     destroyAfterTransition = true
+        // } else {
+        //     lifecycleRegistry.currentState = Lifecycle.State.Destroyed
+        //     viewModelStore.clear()
+        // }
+        cancel()
     }
 }
 
@@ -71,4 +107,12 @@ inline fun <reified T> convertValue(value: String): T? {
         Double::class -> value.toDoubleOrNull()
         else -> throw NotImplementedError()
     } as T
+}
+
+private object UnitApplier : AbstractApplier<Unit>(Unit) {
+    override fun insertBottomUp(index: Int, instance: Unit) {}
+    override fun insertTopDown(index: Int, instance: Unit) {}
+    override fun move(from: Int, to: Int, count: Int) {}
+    override fun remove(index: Int, count: Int) {}
+    override fun onClear() {}
 }

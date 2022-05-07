@@ -12,41 +12,37 @@ import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
-import moe.tlaster.precompose.ui.LocalLifecycleOwner
-import moe.tlaster.precompose.ui.LocalViewModelStoreOwner
-import moe.tlaster.precompose.viewmodel.ViewModelStore
-import moe.tlaster.precompose.viewmodel.ViewModelStoreOwner
 
 open class PreComposeActivity :
     ComponentActivity(),
-    LifecycleOwner,
-    ViewModelStoreOwner,
+    // LifecycleOwner,
+    // ViewModelStoreOwner,
     androidx.lifecycle.LifecycleOwner,
     SavedStateRegistryOwner,
     BackDispatcherOwner,
     androidx.lifecycle.LifecycleObserver {
-    override val lifecycle by lazy {
-        LifecycleRegistry()
-    }
+    // override val lifecycle by lazy {
+    //     LifecycleRegistry()
+    // }
+    //
+    // override val viewModelStore by lazy {
+    //     ViewModelStore()
+    // }
 
-    override val viewModelStore by lazy {
-        ViewModelStore()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        lifecycle.currentState = Lifecycle.State.Active
-    }
-
-    override fun onPause() {
-        super.onPause()
-        lifecycle.currentState = Lifecycle.State.InActive
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        lifecycle.currentState = Lifecycle.State.Destroyed
-    }
+    // override fun onResume() {
+    //     super.onResume()
+    //     lifecycle.currentState = Lifecycle.State.Active
+    // }
+    //
+    // override fun onPause() {
+    //     super.onPause()
+    //     lifecycle.currentState = Lifecycle.State.InActive
+    // }
+    //
+    // override fun onDestroy() {
+    //     super.onDestroy()
+    //     lifecycle.currentState = Lifecycle.State.Destroyed
+    // }
 
     override val backDispatcher by lazy {
         BackDispatcher()
@@ -108,8 +104,8 @@ private fun PreComposeActivity.ProvideAndroidCompositionLocals(
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
-        LocalLifecycleOwner provides this,
-        LocalViewModelStoreOwner provides this,
+        // LocalLifecycleOwner provides this,
+        // LocalViewModelStoreOwner provides this,
         LocalBackDispatcherOwner provides this,
     ) {
         content.invoke()

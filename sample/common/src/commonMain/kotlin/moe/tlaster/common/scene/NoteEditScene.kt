@@ -15,22 +15,23 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import moe.tlaster.common.viewmodel.NoteEditViewModel
-import moe.tlaster.precompose.ui.observeAsState
-import moe.tlaster.precompose.ui.viewModel
 
 @ExperimentalMaterialApi
 @Composable
 fun NoteEditScene(
-    id: Int? = null,
-    onDone: () -> Unit = {},
-    onBack: () -> Unit = {},
+    // id: Int?,
+    isCreate: Boolean,
+    title: String,
+    onTitleChanged: (String) -> Unit,
+    content: String,
+    onContentChanged: (String) -> Unit,
+    onDone: () -> Unit,
+    onBack: () -> Unit,
 ) {
-    val viewModel = viewModel(listOf(id)) {
-        NoteEditViewModel(id)
-    }
+    // val viewModel = viewModel(listOf(id)) {
+    //     NoteEditViewModel(id)
+    // }
 
     Scaffold(
         topBar = {
@@ -38,7 +39,7 @@ fun NoteEditScene(
                 actions = {
                     IconButton(
                         onClick = {
-                            viewModel.save()
+                            // viewModel.save()
                             onDone.invoke()
                         }
                     ) {
@@ -46,7 +47,7 @@ fun NoteEditScene(
                     }
                 },
                 title = {
-                    if (id == null) {
+                    if (isCreate) {
                         Text("Create")
                     } else {
                         Text("Edit")
@@ -61,14 +62,15 @@ fun NoteEditScene(
         }
     ) {
         Column {
-            val title by viewModel.title.observeAsState()
-            val content by viewModel.content.observeAsState()
+            // val title by viewModel.title.observeAsState()
+            // val content by viewModel.content.observeAsState()
             ListItem {
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = title,
                     onValueChange = {
-                        viewModel.setTitle(it)
+                        // viewModel.setTitle(it)
+                        onTitleChanged(it)
                     },
                     placeholder = {
                         Text("Title")
@@ -83,7 +85,8 @@ fun NoteEditScene(
                     modifier = Modifier.fillMaxSize(),
                     value = content,
                     onValueChange = {
-                        viewModel.setContent(it)
+                        // viewModel.setContent(it)
+                        onContentChanged(it)
                     },
                     placeholder = {
                         Text("Content")

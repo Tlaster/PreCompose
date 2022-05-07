@@ -15,25 +15,23 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import moe.tlaster.common.model.Note
-import moe.tlaster.common.viewmodel.NoteListViewModel
-import moe.tlaster.precompose.ui.observeAsState
-import moe.tlaster.precompose.ui.viewModel
 
 @ExperimentalMaterialApi
 @Composable
 fun NoteListScene(
+    items: List<Note>,
     onItemClicked: (note: Note) -> Unit,
     onEditClicked: (note: Note) -> Unit,
+    onDeleteClicked: (note: Note) -> Unit,
     onAddClicked: () -> Unit,
 ) {
-    val viewModel = viewModel {
-        NoteListViewModel()
-    }
-    val items by viewModel.items.observeAsState()
+    // val viewModel = viewModel {
+    //     NoteListViewModel()
+    // }
+    // val items by viewModel.items.observeAsState()
 
     Scaffold(
         topBar = {
@@ -70,7 +68,8 @@ fun NoteListScene(
                             }
                             TextButton(
                                 onClick = {
-                                    viewModel.delete(it)
+                                    // viewModel.delete(it)
+                                    onDeleteClicked.invoke(it)
                                 }
                             ) {
                                 Text("Delete", color = Color.Red)

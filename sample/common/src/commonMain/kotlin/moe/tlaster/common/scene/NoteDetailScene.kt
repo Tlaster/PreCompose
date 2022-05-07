@@ -14,21 +14,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import moe.tlaster.common.viewmodel.NoteDetailViewModel
-import moe.tlaster.precompose.ui.observeAsState
-import moe.tlaster.precompose.ui.viewModel
+import moe.tlaster.common.model.Note
 
 @ExperimentalMaterialApi
 @Composable
 fun NoteDetailScene(
-    id: Int,
+    // id: Int,
+    note: Note,
     onBack: () -> Unit,
     onEdit: () -> Unit,
 ) {
-    val viewModel = viewModel(listOf(id)) {
-        NoteDetailViewModel(id)
-    }
+    // val viewModel = viewModel(listOf(id)) {
+    //     NoteDetailViewModel(id)
+    // }
 
     Scaffold(
         topBar = {
@@ -50,7 +48,7 @@ fun NoteDetailScene(
         }
     ) {
         Column {
-            val note by viewModel.note.observeAsState()
+            // val note by viewModel.note.observeAsState()
             ListItem {
                 Text(text = note.title, style = MaterialTheme.typography.h5)
             }

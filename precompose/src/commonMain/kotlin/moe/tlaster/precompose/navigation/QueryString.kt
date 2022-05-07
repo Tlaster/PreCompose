@@ -3,7 +3,7 @@ package moe.tlaster.precompose.navigation
 data class QueryString(
     private val rawInput: String,
 ) {
-    val map by lazy {
+    val map: Map<String, List<String>> by lazy {
         rawInput
             .split("?")
             .lastOrNull()

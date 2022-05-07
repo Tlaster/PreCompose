@@ -29,6 +29,6 @@ class BackDispatcher {
     }
 }
 
-interface BackHandler {
+fun interface BackHandler {
     fun handleBackPress(): Boolean
 }

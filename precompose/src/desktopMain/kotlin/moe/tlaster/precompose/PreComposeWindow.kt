@@ -2,26 +2,16 @@ package moe.tlaster.precompose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberWindowState
-import kotlinx.coroutines.flow.distinctUntilChanged
-import moe.tlaster.precompose.lifecycle.Lifecycle
-import moe.tlaster.precompose.lifecycle.LifecycleOwner
-import moe.tlaster.precompose.lifecycle.LifecycleRegistry
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
-import moe.tlaster.precompose.ui.LocalLifecycleOwner
-import moe.tlaster.precompose.ui.LocalViewModelStoreOwner
-import moe.tlaster.precompose.viewmodel.ViewModelStore
-import moe.tlaster.precompose.viewmodel.ViewModelStoreOwner
 
 @Composable
 fun PreComposeWindow(
@@ -43,23 +33,23 @@ fun PreComposeWindow(
     val holder = remember {
         PreComposeWindowHolder()
     }
-    LaunchedEffect(Unit) {
-        snapshotFlow { state.isMinimized }
-            .distinctUntilChanged()
-            .collect {
-                holder.lifecycle.currentState = if (it) {
-                    Lifecycle.State.InActive
-                } else {
-                    Lifecycle.State.Active
-                }
-            }
-    }
+    // LaunchedEffect(Unit) {
+    //     snapshotFlow { state.isMinimized }
+    //         .distinctUntilChanged()
+    //         .collect {
+    //             holder.lifecycle.currentState = if (it) {
+    //                 Lifecycle.State.InActive
+    //             } else {
+    //                 Lifecycle.State.Active
+    //             }
+    //         }
+    // }
     ProvideDesktopCompositionLocals(
         holder
     ) {
         Window(
             onCloseRequest = {
-                holder.lifecycle.currentState = Lifecycle.State.Destroyed
+                // holder.lifecycle.currentState = Lifecycle.State.Destroyed
                 onCloseRequest.invoke()
             },
             state = state,
@@ -89,21 +79,21 @@ private fun ProvideDesktopCompositionLocals(
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
-        LocalLifecycleOwner provides holder,
-        LocalViewModelStoreOwner provides holder,
+        // LocalLifecycleOwner provides holder,
+        // LocalViewModelStoreOwner provides holder,
         LocalBackDispatcherOwner provides holder,
     ) {
         content.invoke()
     }
 }
 
-private class PreComposeWindowHolder : LifecycleOwner, ViewModelStoreOwner, BackDispatcherOwner {
-    override val lifecycle by lazy {
-        LifecycleRegistry()
-    }
-    override val viewModelStore by lazy {
-        ViewModelStore()
-    }
+private class PreComposeWindowHolder : BackDispatcherOwner {
+    // override val lifecycle by lazy {
+    //     LifecycleRegistry()
+    // }
+    // override val viewModelStore by lazy {
+    //     ViewModelStore()
+    // }
     override val backDispatcher by lazy {
         BackDispatcher()
     }

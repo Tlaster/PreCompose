@@ -29,6 +29,7 @@ kotlin {
             dependencies {
                 api(compose.foundation)
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Kotlin.coroutines}")
+                // api("app.cash.molecule:molecule-runtime:0.3.0-SNAPSHOT")
             }
         }
         val commonTest by getting {

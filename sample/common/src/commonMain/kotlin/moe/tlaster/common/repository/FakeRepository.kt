@@ -1,7 +1,8 @@
 package moe.tlaster.common.repository
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import moe.tlaster.common.model.Note
-import moe.tlaster.precompose.livedata.LiveData
 
 private val fakeInitialNotes = mutableListOf(
     Note(0, title = "This is my first note", content = "Wow!"),
@@ -12,8 +13,8 @@ private val fakeInitialNotes = mutableListOf(
 )
 
 object FakeRepository {
-    private val watchers = hashMapOf<Int, LiveData<Note>>()
-    val items = LiveData<MutableList<Note>>(fakeInitialNotes)
+    private val watchers = hashMapOf<Int, MutableStateFlow<Note>>()
+    val items = MutableStateFlow<MutableList<Note>>(fakeInitialNotes)
 
     fun get(id: Int): Note? {
         return items.value.firstOrNull { it.id == id }
@@ -43,10 +44,10 @@ object FakeRepository {
         }
     }
 
-    fun getLiveData(id: Int): LiveData<Note> {
+    fun getStateFlow(id: Int): StateFlow<Note> {
         return get(id)?.let {
             watchers.getOrPut(id) {
-                LiveData(it)
+                MutableStateFlow(it)
             }
         } ?: throw IllegalArgumentException()
     }

@@ -35,14 +35,14 @@ internal class RouteStack(
     }
 
     fun onActive() {
-        currentEntry?.active()
+        // currentEntry?.active()
         currentEntry?.let {
             _currentBackStackEntryFlow.tryEmit(it)
         }
     }
 
     fun onInActive() {
-        currentEntry?.inActive()
+        // currentEntry?.inActive()
         if (destroyAfterTransition) {
             onDestroyed()
         }

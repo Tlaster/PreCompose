@@ -7,7 +7,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import moe.tlaster.precompose.ui.BackHandler
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
-import moe.tlaster.precompose.ui.LocalLifecycleOwner
 
 @Composable
 public fun BackHandler(onBack: () -> Unit) {
@@ -15,19 +14,17 @@ public fun BackHandler(onBack: () -> Unit) {
     val currentOnBack by rememberUpdatedState(onBack)
     // Remember in Composition a back callback that calls the `onBack` lambda
     val backCallback = remember {
-        object : BackHandler {
-            override fun handleBackPress(): Boolean {
-                currentOnBack.invoke()
-                return true
-            }
+        BackHandler {
+            currentOnBack.invoke()
+            true
         }
     }
 
     val backDispatcher = checkNotNull(LocalBackDispatcherOwner.current) {
         "No OnBackPressedDispatcherOwner was provided via LocalOnBackPressedDispatcherOwner"
     }.backDispatcher
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner, backDispatcher) {
+    // val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(backDispatcher) {
         // Add callback to the backDispatcher
         // backDispatcher.addCallback(lifecycleOwner, backCallback)
         backDispatcher.register(backCallback)
