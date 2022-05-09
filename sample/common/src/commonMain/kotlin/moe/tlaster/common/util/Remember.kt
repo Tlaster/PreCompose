@@ -9,23 +9,33 @@ import androidx.compose.runtime.saveable.rememberSaveable
 fun <T : Any> rememberInMemory(
     vararg inputs: Any?,
     key: String? = null,
-    init: () -> MutableState<T?>
-): MutableState<T?> {
-    return rememberSaveable(
-        inputs = inputs,
-        stateSaver = autoMemorySaver(),
-        key = key,
-        init = init,
-    )
-}
+    init: () -> T
+): T = rememberSaveable(
+    inputs = inputs,
+    saver = autoMemorySaver(),
+    key = key,
+    init = init,
+)
 
-private fun <T> autoMemorySaver(): Saver<T, Any> =
+@Composable
+fun <T> rememberInMemory(
+    vararg inputs: Any?,
+    key: String? = null,
+    init: () -> MutableState<T>
+): MutableState<T> = rememberSaveable(
+    *inputs,
+    stateSaver = autoMemorySaver(),
+    key = key,
+    init = init
+)
+
+private fun <T> autoMemorySaver(): Saver<T, MemoryStateHolder> =
     @Suppress("UNCHECKED_CAST")
-    (AutoMemorySaver as Saver<T, Any>)
+    (AutoMemorySaver as Saver<T, MemoryStateHolder>)
 
-private val AutoMemorySaver = Saver<Any?, Any>(
+private val AutoMemorySaver = Saver<Any?, MemoryStateHolder>(
     save = { MemoryStateHolder(it) },
-    restore = { (it as? MemoryStateHolder)?.value }
+    restore = { it.value }
 )
 
 expect class MemoryStateHolder(value: Any?) {

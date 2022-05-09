@@ -15,19 +15,26 @@ class NoteDetailPresenter(
 ) {
     @Composable
     fun present(intents: Flow<NoteDetailIntent>): NoteDetailState {
-        var node by rememberInMemory {
-            mutableStateOf<Note?>(null)
+        // var node by rememberInMemory {
+        //     mutableStateOf<Note?>(null)
+        // }
+
+        // just for test
+        var state by rememberInMemory {
+            mutableStateOf<NoteDetailState>(NoteDetailState.Loading)
         }
+
         LaunchedEffect(Unit) {
             FakeRepository.getStateFlow(id).collect {
-                node = it
+                state = NoteDetailState.Success(it)
             }
         }
-        return if (node != null) {
-            NoteDetailState.Success(node!!)
-        } else {
-            NoteDetailState.Loading
-        }
+        // return if (node != null) {
+        //     NoteDetailState.Success(node!!)
+        // } else {
+        //     NoteDetailState.Loading
+        // }
+        return state
     }
 }
 
