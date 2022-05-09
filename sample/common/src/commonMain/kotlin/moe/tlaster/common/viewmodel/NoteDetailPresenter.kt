@@ -4,24 +4,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.flow.Flow
 import moe.tlaster.common.model.Note
 import moe.tlaster.common.repository.FakeRepository
+import moe.tlaster.common.util.rememberInMemory
 
 class NoteDetailPresenter(
     private val id: Int,
-)  {
+) {
     @Composable
     fun present(intents: Flow<NoteDetailIntent>): NoteDetailState {
-        var model by remember { mutableStateOf<NoteDetailState>(NoteDetailState.Loading) }
+        var node by rememberInMemory {
+            mutableStateOf<Note?>(null)
+        }
         LaunchedEffect(Unit) {
             FakeRepository.getStateFlow(id).collect {
-                model = NoteDetailState.Success(it)
+                node = it
             }
         }
-        return model
+        return if (node != null) {
+            NoteDetailState.Success(node!!)
+        } else {
+            NoteDetailState.Loading
+        }
     }
 }
 

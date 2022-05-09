@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.flow.Flow
 import moe.tlaster.common.model.Note
@@ -15,9 +15,8 @@ class NoteEditPresenter(
 ) {
     @Composable
     fun present(intents: Flow<NoteEditIntent>): NoteEditState {
-
-        var title by remember { mutableStateOf("") }
-        var content by remember { mutableStateOf("") }
+        var title by rememberSaveable { mutableStateOf("") }
+        var content by rememberSaveable { mutableStateOf("") }
 
         LaunchedEffect(Unit) {
             if (id != null) {
@@ -65,10 +64,9 @@ class NoteEditPresenter(
 }
 
 sealed class NoteEditIntent {
-    data class TitleChanged(val value: String): NoteEditIntent()
-    data class ContentChanged(val value: String): NoteEditIntent()
-    object Save: NoteEditIntent()
-
+    data class TitleChanged(val value: String) : NoteEditIntent()
+    data class ContentChanged(val value: String) : NoteEditIntent()
+    object Save : NoteEditIntent()
 }
 
 data class NoteEditState(
