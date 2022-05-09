@@ -95,7 +95,7 @@ fun NavHost(
                     //     LocalViewModelStoreOwner provides it,
                     //     LocalLifecycleOwner provides it,
                     // ) {
-                        it.route.content.invoke(it)
+                    it.route.content.invoke(it)
                     // }
                 }
             }

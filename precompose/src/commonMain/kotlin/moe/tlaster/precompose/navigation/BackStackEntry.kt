@@ -1,12 +1,6 @@
 package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.AbstractApplier
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Composition
-import androidx.compose.runtime.DisallowComposableCalls
-import androidx.compose.runtime.Recomposer
-import androidx.compose.runtime.cache
-import androidx.compose.runtime.currentComposer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel

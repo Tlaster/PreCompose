@@ -37,10 +37,10 @@ internal fun AnimatedRoute(
         val indexOfOld = manager.indexOf(previousState)
             .takeIf {
                 it >= 0
-                    // ||
-                    // Workaround for navOptions
-                    // targetState.currentEntry?.lifecycle?.currentState == Lifecycle.State.Initialized &&
-                    // previousState.currentEntry?.lifecycle?.currentState == Lifecycle.State.Active
+                // ||
+                // Workaround for navOptions
+                // targetState.currentEntry?.lifecycle?.currentState == Lifecycle.State.Initialized &&
+                // previousState.currentEntry?.lifecycle?.currentState == Lifecycle.State.Active
             } ?: Int.MAX_VALUE
         val actualNavTransition = run {
             if (indexOfNew >= indexOfOld) targetState else previousState

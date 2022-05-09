@@ -42,10 +42,10 @@ internal fun AnimatedDialogRoute(
         val indexOfOld = stacks.indexOf(previousState)
             .takeIf {
                 it >= 0
-                    // ||
-                    // Workaround for navOptions
-                    // targetState?.lifecycle?.currentState == Lifecycle.State.Initialized &&
-                    // previousState?.lifecycle?.currentState == Lifecycle.State.Active
+                // ||
+                // Workaround for navOptions
+                // targetState?.lifecycle?.currentState == Lifecycle.State.Initialized &&
+                // previousState?.lifecycle?.currentState == Lifecycle.State.Active
             } ?: Int.MAX_VALUE
         // Only manipulate the list when the state is changed, or in the first run.
         val keys = items.map {
