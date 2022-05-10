@@ -1,6 +1,10 @@
 package moe.tlaster.common
 
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -11,71 +15,62 @@ import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
-import moe.tlaster.precompose.navigation.transition.fadeScaleCreateTransition
-import moe.tlaster.precompose.navigation.transition.fadeScaleDestroyTransition
 
+@OptIn(ExperimentalAnimationApi::class)
 @ExperimentalMaterialApi
 @Composable
 fun App() {
     val navigator = rememberNavigator()
-    BoxWithConstraints {
-        MaterialTheme {
-            NavHost(
-                navigator = navigator,
-                initialRoute = "/home"
-            ) {
-                scene("/home") {
-                    NoteListScene(
-                        onItemClicked = {
-                            navigator.navigate("/detail/${it.id}")
-                        },
-                        onAddClicked = {
-                            navigator.navigate("/edit")
-                        },
-                        onEditClicked = {
-                            navigator.navigate("/edit/${it.id}")
-                        }
-                    )
-                }
-                scene("/detail/{id:[0-9]+}") { backStackEntry ->
-                    backStackEntry.path<Int>("id")?.let {
-                        NoteDetailScene(
-                            id = it,
-                            onEdit = {
-                                navigator.navigate("/edit/$it")
-                            },
-                            onBack = {
-                                navigator.goBack()
-                            },
-                        )
+    MaterialTheme {
+        NavHost(
+            navigator = navigator,
+            initialRoute = "/home"
+        ) {
+            scene("/home") {
+                NoteListScene(
+                    onItemClicked = {
+                        navigator.navigate("/detail/${it.id}")
+                    },
+                    onAddClicked = {
+                        navigator.navigate("/edit")
+                    },
+                    onEditClicked = {
+                        navigator.navigate("/edit/${it.id}")
                     }
-                }
-                scene(
-                    "/edit/{id:[0-9]+}?",
-                    navTransition = NavTransition(
-                        createTransition = {
-                            translationY = constraints.maxHeight * (1 - it)
-                            alpha = it
-                        },
-                        destroyTransition = {
-                            translationY = constraints.maxHeight * (1 - it)
-                            alpha = it
-                        },
-                        pauseTransition = fadeScaleDestroyTransition,
-                        resumeTransition = fadeScaleCreateTransition,
-                    )
-                ) { backStackEntry ->
-                    val id = backStackEntry.path<Int>("id")
-                    NoteEditScene(
-                        id = id,
-                        onDone = {
-                            navigator.goBack()
+                )
+            }
+            scene("/detail/{id:[0-9]+}") { backStackEntry ->
+                backStackEntry.path<Int>("id")?.let {
+                    NoteDetailScene(
+                        id = it,
+                        onEdit = {
+                            navigator.navigate("/edit/$it")
                         },
                         onBack = {
                             navigator.goBack()
-                        }
+                        },
                     )
                 }
+            }
+            floating(
+                "/edit/{id:[0-9]+}?",
+                navTransition = NavTransition(
+                    createTransition = slideInVertically(initialOffsetY = { it }),
+                    destroyTransition = slideOutVertically(targetOffsetY = { it }),
+                    pauseTransition = scaleOut(targetScale = 0.9f),
+                    resumeTransition = scaleIn(initialScale = 0.9f),
+                )
+            ) { backStackEntry ->
+                val id = backStackEntry.path<Int>("id")
+                NoteEditScene(
+                    id = id,
+                    onDone = {
+                        navigator.goBack()
+                    },
+                    onBack = {
+                        navigator.goBack()
+                    }
+                )
             }
         }
     }

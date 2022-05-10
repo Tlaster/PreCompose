@@ -1,14 +1,17 @@
 package moe.tlaster.precompose.navigation
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.with
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
-import moe.tlaster.precompose.navigation.transition.AnimatedDialogRoute
-import moe.tlaster.precompose.navigation.transition.AnimatedRoute
-import moe.tlaster.precompose.navigation.transition.DialogTransition
+import androidx.compose.ui.Modifier
+import moe.tlaster.precompose.navigation.transition.FloatingContent
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalLifecycleOwner
@@ -28,12 +31,14 @@ import moe.tlaster.precompose.ui.LocalViewModelStoreOwner
  * @param navTransition navigation transition for the scenes in this [NavHost]
  * @param builder the builder used to construct the graph
  */
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun NavHost(
+    modifier: Modifier = Modifier,
     navigator: Navigator,
     initialRoute: String,
     navTransition: NavTransition = remember { NavTransition() },
-    dialogTransition: DialogTransition = remember { DialogTransition() },
+    dialogTransition: NavTransition = remember { NavTransition() },
     builder: RouteBuilder.() -> Unit,
 ) {
     val stateHolder = rememberSaveableStateHolder()
@@ -65,10 +70,19 @@ fun NavHost(
     }
     val currentStack = manager.currentStack
     if (currentStack != null) {
-        AnimatedRoute(
+        AnimatedContent(
             currentStack,
-            navTransition = navTransition,
-            manager = manager,
+            modifier = modifier,
+            transitionSpec = {
+                val actualTransaction =
+                    run { if (manager.contains(initialState)) targetState else initialState }.navTransition
+                        ?: navTransition
+                if (!manager.contains(initialState)) {
+                    actualTransaction.resumeTransition with actualTransaction.destroyTransition
+                } else {
+                    actualTransaction.createTransition with actualTransaction.pauseTransition
+                }
+            }
         ) { routeStack ->
             LaunchedEffect(routeStack) {
                 routeStack.onActive()
@@ -88,20 +102,28 @@ fun NavHost(
                         currentEntry.inActive()
                     }
                 }
-            }
-            AnimatedDialogRoute(
-                stack = routeStack,
-                dialogTransition = dialogTransition,
-            ) {
-                stateHolder.SaveableStateProvider(it.id) {
-                    CompositionLocalProvider(
-                        LocalViewModelStoreOwner provides it,
-                        LocalLifecycleOwner provides it,
-                    ) {
-                        it.route.content.invoke(it)
-                    }
+                FloatingContent(
+                    routeStack,
+                    dialogTransition = dialogTransition,
+                ) {
+                    NavHostContent(stateHolder, it)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun NavHostContent(
+    stateHolder: SaveableStateHolder,
+    it: BackStackEntry
+) {
+    stateHolder.SaveableStateProvider(it.id) {
+        CompositionLocalProvider(
+            LocalViewModelStoreOwner provides it,
+            LocalLifecycleOwner provides it,
+        ) {
+            it.route.content.invoke(it)
         }
     }
 }

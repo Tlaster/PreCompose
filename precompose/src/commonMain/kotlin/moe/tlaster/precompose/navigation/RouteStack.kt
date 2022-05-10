@@ -2,7 +2,6 @@ package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -12,7 +11,7 @@ import moe.tlaster.precompose.navigation.transition.NavTransition
 @Stable
 internal class RouteStack(
     val id: Long,
-    val stacks: SnapshotStateList<BackStackEntry> = mutableStateListOf(),
+    val stacks: MutableList<BackStackEntry> = mutableStateListOf(),
     val navTransition: NavTransition? = null,
 ) {
     private var destroyAfterTransition = false
@@ -61,5 +60,9 @@ internal class RouteStack(
 
     fun hasRoute(route: String): Boolean {
         return stacks.any { it.route.route == route }
+    }
+
+    internal fun contains(entry: BackStackEntry): Boolean {
+        return this.stacks.contains(entry)
     }
 }

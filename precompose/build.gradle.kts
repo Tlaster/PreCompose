@@ -28,6 +28,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(compose.foundation)
+                api(compose.animation)
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Kotlin.coroutines}")
             }
         }
