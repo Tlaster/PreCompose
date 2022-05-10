@@ -39,11 +39,7 @@ kotlin {
                 // implementation(compose("org.jetbrains.compose.ui:ui-test-junit4"))
             }
         }
-        val androidMain by getting {
-            dependencies {
-                api("androidx.activity:activity-ktx:${Versions.AndroidX.activity}")
-            }
-        }
+        val androidMain by getting
         val androidTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))

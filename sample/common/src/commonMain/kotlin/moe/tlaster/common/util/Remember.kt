@@ -1,7 +1,6 @@
 package moe.tlaster.common.util
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 
@@ -15,18 +14,6 @@ fun <T : Any> rememberInMemory(
     saver = autoMemorySaver(),
     key = key,
     init = init,
-)
-
-@Composable
-fun <T> rememberInMemory(
-    vararg inputs: Any?,
-    key: String? = null,
-    init: () -> MutableState<T>
-): MutableState<T> = rememberSaveable(
-    *inputs,
-    stateSaver = autoMemorySaver(),
-    key = key,
-    init = init
 )
 
 private fun <T> autoMemorySaver(): Saver<T, MemoryStateHolder> =

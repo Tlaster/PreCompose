@@ -11,68 +11,8 @@ class BackStackEntry internal constructor(
     val route: ComposeRoute,
     val pathMap: Map<String, String>,
     val queryString: QueryString? = null,
-    // internal val viewModel: NavControllerViewModel,
 ) : CoroutineScope by MainScope() {
-
-    // private val recomposer = Recomposer(coroutineContext)
-    // private val composition = Composition(UnitApplier, recomposer)
-    //
-    // init {
-    //     composition.setContent {
-    //         currentComposer.cache()
-    //     }
-    // }
-
-    // @Composable
-    // inline fun <T> remember(calculation: @DisallowComposableCalls () -> T): T {
-    //     // return composition
-    // }
-
-    // private val stateFlowMap = mutableMapOf<Any, StateFlow<*>>()
-    //
-    // fun <T : Any> rememberStateFlow(key: Any, block: CoroutineScope.() -> StateFlow<T>): StateFlow<T> {
-    //     @Suppress("UNCHECKED_CAST")
-    //     return stateFlowMap.getOrPut(key) {
-    //         block(this)
-    //     } as StateFlow<T>
-    // }
-    //
-    // inline fun <reified T : Any> rememberStateFlow(noinline block: CoroutineScope.() -> StateFlow<T>): StateFlow<T> {
-    //     return rememberStateFlow(T::class, block)
-    // }
-
-    // fun <T> getStateFlow(): StateFlow<T> =
-
-    // private var destroyAfterTransition = false
-
-    // override val viewModelStore: ViewModelStore
-    //     get() = viewModel.get(id = id)
-    //
-    // private val lifecycleRegistry by lazy {
-    //     LifecycleRegistry()
-    // }
-    //
-    // override val lifecycle: Lifecycle
-    //     get() = lifecycleRegistry
-    //
-    // fun active() {
-    //     lifecycleRegistry.currentState = Lifecycle.State.Active
-    // }
-    //
-    // fun inActive() {
-    //     lifecycleRegistry.currentState = Lifecycle.State.InActive
-    //     if (destroyAfterTransition) {
-    //         destroy()
-    //     }
-    // }
-
     fun destroy() {
-        // if (lifecycleRegistry.currentState != Lifecycle.State.InActive) {
-        //     destroyAfterTransition = true
-        // } else {
-        //     lifecycleRegistry.currentState = Lifecycle.State.Destroyed
-        //     viewModelStore.clear()
-        // }
         cancel()
     }
 }

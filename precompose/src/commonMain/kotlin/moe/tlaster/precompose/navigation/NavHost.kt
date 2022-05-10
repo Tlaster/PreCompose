@@ -41,20 +41,9 @@ fun NavHost(
         }
     }
 
-    // val lifecycleOwner = checkNotNull(LocalLifecycleOwner.current) {
-    //     "NavHost requires a LifecycleOwner to be provided via LocalLifecycleOwner"
-    // }
-    // val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
-    //     "NavHost requires a ViewModelStoreOwner to be provided via LocalViewModelStoreOwner"
-    // }
     val backDispatcher = LocalBackDispatcherOwner.current?.backDispatcher
-    DisposableEffect(manager, backDispatcher) {
-        // manager.lifeCycleOwner = lifecycleOwner
-        // manager.setViewModelStore(viewModelStoreOwner.viewModelStore)
+    LaunchedEffect(manager, backDispatcher) {
         manager.backDispatcher = backDispatcher
-        onDispose {
-            // manager.lifeCycleOwner = null
-        }
     }
 
     LaunchedEffect(manager, initialRoute) {
@@ -75,28 +64,12 @@ fun NavHost(
                     routeStack.onInActive()
                 }
             }
-            val currentEntry = routeStack.currentEntry
-            if (currentEntry != null) {
-                // LaunchedEffect(currentEntry) {
-                //     currentEntry.active()
-                // }
-                // DisposableEffect(currentEntry) {
-                //     onDispose {
-                //         currentEntry.inActive()
-                //     }
-                // }
-            }
             AnimatedDialogRoute(
                 stack = routeStack,
                 dialogTransition = dialogTransition,
             ) {
                 stateHolder.SaveableStateProvider(it.id) {
-                    // CompositionLocalProvider(
-                    //     LocalViewModelStoreOwner provides it,
-                    //     LocalLifecycleOwner provides it,
-                    // ) {
                     it.route.content.invoke(it)
-                    // }
                 }
             }
         }

@@ -9,6 +9,7 @@ version = "1.0"
 
 dependencies {
     implementation(project(":sample:common"))
+    implementation("androidx.activity:activity-compose:1.4.0")
 }
 
 android {

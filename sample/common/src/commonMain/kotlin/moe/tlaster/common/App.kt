@@ -10,10 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kotlinx.coroutines.flow.MutableSharedFlow
 import moe.tlaster.common.scene.NoteDetailScene
 import moe.tlaster.common.scene.NoteEditScene
 import moe.tlaster.common.scene.NoteListScene
+import moe.tlaster.common.util.rememberIntentFlow
 import moe.tlaster.common.viewmodel.NoteDetailIntent
 import moe.tlaster.common.viewmodel.NoteDetailPresenter
 import moe.tlaster.common.viewmodel.NoteDetailState
@@ -41,8 +41,7 @@ fun App() {
             ) {
                 scene("/home") {
                     val noteListPresenter = remember { NoteListPresenter() }
-                    val intentsFlow =
-                        remember { MutableSharedFlow<NoteListIntent>(extraBufferCapacity = 1) }
+                    val intentsFlow = rememberIntentFlow<NoteListIntent>()
 
                     when (val model = noteListPresenter.present(intentsFlow)) {
                         NoteListState.Loading -> {
@@ -74,11 +73,13 @@ fun App() {
                 scene("/detail/{id:[0-9]+}") { backStackEntry ->
                     val id = backStackEntry.path<Int>("id")!!
                     val noteDetailPresenter = remember(id) { NoteDetailPresenter(id) }
-                    val intentsFlow =
-                        remember { MutableSharedFlow<NoteDetailIntent>(extraBufferCapacity = 1) }
+                    val intentsFlow = rememberIntentFlow<NoteDetailIntent>()
 
                     when (val model = noteDetailPresenter.present(intentsFlow)) {
                         NoteDetailState.Loading -> {
+                            Box(Modifier.fillMaxSize(), Alignment.Center) {
+                                CircularProgressIndicator()
+                            }
                         }
                         is NoteDetailState.Success -> {
                             NoteDetailScene(
@@ -110,8 +111,7 @@ fun App() {
                 ) { backStackEntry ->
                     val id = backStackEntry.path<Int>("id")
                     val noteEditPresenter = remember(id) { NoteEditPresenter(id) }
-                    val intentsFlow =
-                        remember { MutableSharedFlow<NoteEditIntent>(extraBufferCapacity = 1) }
+                    val intentsFlow = rememberIntentFlow<NoteEditIntent>()
 
                     val model = noteEditPresenter.present(intentsFlow)
                     NoteEditScene(

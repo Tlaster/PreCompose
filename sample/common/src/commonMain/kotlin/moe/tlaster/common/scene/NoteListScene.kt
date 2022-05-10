@@ -28,11 +28,6 @@ fun NoteListScene(
     onDeleteClicked: (note: Note) -> Unit,
     onAddClicked: () -> Unit,
 ) {
-    // val viewModel = viewModel {
-    //     NoteListViewModel()
-    // }
-    // val items by viewModel.items.observeAsState()
-
     Scaffold(
         topBar = {
             TopAppBar(

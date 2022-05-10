@@ -20,28 +20,27 @@ internal class RouteStackManager(
     // FIXME: 2021/4/1 Temp workaround for deeplink
     private var pendingNavigation: String? = null
     private val _suspendResult = linkedMapOf<BackStackEntry, Continuation<Any?>>()
+
     var backDispatcher: BackDispatcher? = null
         set(value) {
             field?.unregister(this)
             field = value
             value?.register(this)
         }
+
     private var stackEntryId = Long.MIN_VALUE
     private var routeStackId = Long.MIN_VALUE
-    // var lifeCycleOwner: LifecycleOwner? = null
-    //     set(value) {
-    //         field?.lifecycle?.removeObserver(this)
-    //         field = value
-    //         value?.lifecycle?.addObserver(this)
-    //     }
-    // private var viewModel: NavControllerViewModel? = null
+
     private val _backStacks = mutableStateListOf<RouteStack>()
     internal val currentStack: RouteStack?
         get() = _backStacks.lastOrNull()
+
     internal val currentEntry: BackStackEntry?
         get() = currentStack?.currentEntry
+
     val canGoBack: Boolean
         get() = currentStack?.canGoBack != false || _backStacks.size > 1
+
     private val routeParser: RouteParser by lazy {
         RouteParser().apply {
             routeGraph.routes
@@ -62,17 +61,7 @@ internal class RouteStackManager(
         }
     }
 
-    // internal fun setViewModelStore(viewModelStore: ViewModelStore) {
-    //     if (viewModel != NavControllerViewModel.create(viewModelStore)) {
-    //         viewModel = NavControllerViewModel.create(viewModelStore)
-    //     }
-    // }
-
     fun navigate(path: String, options: NavOptions? = null) {
-        // val vm = viewModel ?: run {
-        //     pendingNavigation = path
-        //     return
-        // }
         val query = path.substringAfter('?', "")
         val routePath = path.substringBefore('?')
         val matchResult = routeParser.find(path = routePath)
@@ -91,7 +80,6 @@ internal class RouteStackManager(
                 queryString = query.takeIf { it.isNotEmpty() }?.let {
                     QueryString(it)
                 },
-                // viewModel = vm,
             )
             when (matchResult.route) {
                 is SceneRoute -> {
@@ -151,20 +139,6 @@ internal class RouteStackManager(
     suspend fun waitingForResult(entry: BackStackEntry): Any? = suspendCoroutine {
         _suspendResult[entry] = it
     }
-
-    // override fun onStateChanged(state: Lifecycle.State) {
-    //     when (state) {
-    //         Lifecycle.State.Initialized -> Unit
-    //         Lifecycle.State.Active -> currentStack?.onActive()
-    //         Lifecycle.State.InActive -> currentStack?.onInActive()
-    //         Lifecycle.State.Destroyed -> {
-    //             _backStacks.forEach {
-    //                 it.onDestroyed()
-    //             }
-    //             _backStacks.clear()
-    //         }
-    //     }
-    // }
 
     internal fun indexOf(stack: RouteStack): Int {
         return _backStacks.indexOf(stack)

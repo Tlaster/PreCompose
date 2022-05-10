@@ -27,6 +27,7 @@ class NoteEditPresenter(
                 }
             }
         }
+
         LaunchedEffect(Unit) {
             intents.collect { intent ->
                 when (intent) {

@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 @ExperimentalMaterialApi
 @Composable
 fun NoteEditScene(
-    // id: Int?,
     isCreate: Boolean,
     title: String,
     onTitleChanged: (String) -> Unit,
@@ -29,10 +28,6 @@ fun NoteEditScene(
     onDone: () -> Unit,
     onBack: () -> Unit,
 ) {
-    // val viewModel = viewModel(listOf(id)) {
-    //     NoteEditViewModel(id)
-    // }
-
     Scaffold(
         topBar = {
             TopAppBar(
