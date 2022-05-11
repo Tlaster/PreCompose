@@ -40,12 +40,10 @@ class RouteBuilder(
      */
     fun dialog(
         route: String,
-        navTransition: NavTransition? = null,
         content: @Composable (BackStackEntry) -> Unit,
     ) {
         floating(
             route,
-            navTransition,
             content
         )
     }
@@ -57,14 +55,12 @@ class RouteBuilder(
      */
     fun floating(
         route: String,
-        navTransition: NavTransition? = null,
         content: @Composable (BackStackEntry) -> Unit,
     ) {
         addRoute(
             FloatingRoute(
                 route = route,
                 content = content,
-                navTransition = navTransition,
             )
         )
     }

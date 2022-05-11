@@ -52,7 +52,7 @@ fun App() {
                     )
                 }
             }
-            floating(
+            scene(
                 "/edit/{id:[0-9]+}?",
                 navTransition = NavTransition(
                     createTransition = slideInVertically(initialOffsetY = { it }),

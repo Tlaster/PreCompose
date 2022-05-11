@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
-import moe.tlaster.precompose.navigation.transition.FloatingContent
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalLifecycleOwner
@@ -38,7 +37,6 @@ fun NavHost(
     navigator: Navigator,
     initialRoute: String,
     navTransition: NavTransition = remember { NavTransition() },
-    dialogTransition: NavTransition = remember { NavTransition() },
     builder: RouteBuilder.() -> Unit,
 ) {
     val stateHolder = rememberSaveableStateHolder()
@@ -102,10 +100,7 @@ fun NavHost(
                         currentEntry.inActive()
                     }
                 }
-                FloatingContent(
-                    routeStack,
-                    dialogTransition = dialogTransition,
-                ) {
+                routeStack.stacks.forEach {
                     NavHostContent(stateHolder, it)
                 }
             }
