@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "moe.tlaster"
-version = "1.1.0"
+version = "1.1.1"
 
 kotlin {
     android {
