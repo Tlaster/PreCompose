@@ -21,8 +21,6 @@ open class PreComposeActivity :
     ComponentActivity(),
     LifecycleOwner,
     ViewModelStoreOwner,
-    androidx.lifecycle.LifecycleOwner,
-    SavedStateRegistryOwner,
     BackDispatcherOwner,
     androidx.lifecycle.LifecycleObserver {
     override val lifecycle by lazy {
