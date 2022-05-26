@@ -41,6 +41,8 @@ internal class RouteStackManager(
     val canGoBack: Boolean
         get() = currentStack?.canGoBack != false || _backStacks.size > 1
 
+    private var isInitiated = false
+
     private val routeParser: RouteParser by lazy {
         RouteParser().apply {
             routeGraph.routes
@@ -62,7 +64,7 @@ internal class RouteStackManager(
     }
 
     fun navigate(path: String, options: NavOptions? = null) {
-        if (backDispatcher == null) {
+        if (!isInitiated) {
             pendingNavigation = path
             return
         }
@@ -144,10 +146,6 @@ internal class RouteStackManager(
         _suspendResult[entry] = it
     }
 
-    internal fun indexOf(stack: RouteStack): Int {
-        return _backStacks.indexOf(stack)
-    }
-
     override fun handleBackPress(): Boolean {
         return if (canGoBack) {
             goBack()
@@ -158,6 +156,7 @@ internal class RouteStackManager(
     }
 
     fun navigateInitial(initialRoute: String) {
+        isInitiated = true
         navigate(initialRoute)
         pendingNavigation?.let {
             navigate(it)
