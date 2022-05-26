@@ -90,5 +90,6 @@ lint/tmp/
 /.idea
 
 publish.properties
+*.gpg
 
 .DS_Store
