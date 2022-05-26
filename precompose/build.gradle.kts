@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "moe.tlaster"
-version = "1.0.0"
+version = "1.1.3"
 
 kotlin {
     android {
@@ -28,6 +28,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(compose.foundation)
+                api(compose.animation)
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Kotlin.coroutines}")
                 // api("app.cash.molecule:molecule-runtime:0.3.0-SNAPSHOT")
             }

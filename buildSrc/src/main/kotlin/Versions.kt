@@ -20,7 +20,7 @@ object Versions {
 
     const val spotless = "6.5.0"
     const val ktlint = "0.45.2"
-    const val compose_jb = "1.2.0-alpha01-dev679"
+    const val compose_jb = "1.2.0-alpha01-dev686"
 
     object AndroidX {
         const val activity = "1.4.0"

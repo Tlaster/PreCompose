@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.saveable.SaveableStateHolder
 import moe.tlaster.precompose.navigation.route.ComposeRoute
-import moe.tlaster.precompose.navigation.route.DialogRoute
+import moe.tlaster.precompose.navigation.route.FloatingRoute
 import moe.tlaster.precompose.navigation.route.SceneRoute
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackHandler
@@ -91,7 +91,7 @@ internal class RouteStackManager(
                         )
                     )
                 }
-                is DialogRoute -> {
+                is FloatingRoute -> {
                     currentStack?.stacks?.add(entry)
                 }
             }
@@ -158,5 +158,9 @@ internal class RouteStackManager(
         pendingNavigation?.let {
             navigate(it)
         }
+    }
+
+    internal fun contains(stack: RouteStack): Boolean {
+        return _backStacks.contains(stack)
     }
 }

@@ -1,7 +1,7 @@
 package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Composable
-import moe.tlaster.precompose.navigation.route.DialogRoute
+import moe.tlaster.precompose.navigation.route.FloatingRoute
 import moe.tlaster.precompose.navigation.route.Route
 import moe.tlaster.precompose.navigation.route.SceneRoute
 import moe.tlaster.precompose.navigation.transition.NavTransition
@@ -23,15 +23,18 @@ class RouteBuilder(
         navTransition: NavTransition? = null,
         content: @Composable (BackStackEntry) -> Unit,
     ) {
-        this.route += SceneRoute(
-            route = route,
-            navTransition = navTransition,
-            deepLinks = deepLinks,
-            content = content,
+        addRoute(
+            SceneRoute(
+                route = route,
+                navTransition = navTransition,
+                deepLinks = deepLinks,
+                content = content,
+            )
         )
     }
+
     /**
-     * Add the scene [Composable] to the [RouteBuilder], which will show over the scene
+     * Add the dialog [Composable] to the [RouteBuilder], which will show over the scene
      * @param route route for the destination
      * @param content composable for the destination
      */
@@ -39,9 +42,26 @@ class RouteBuilder(
         route: String,
         content: @Composable (BackStackEntry) -> Unit,
     ) {
-        this.route += DialogRoute(
-            route = route,
-            content = content
+        floating(
+            route,
+            content
+        )
+    }
+
+    /**
+     * Add the floating [Composable] to the [RouteBuilder], which will show over the scene
+     * @param route route for the destination
+     * @param content composable for the destination
+     */
+    fun floating(
+        route: String,
+        content: @Composable (BackStackEntry) -> Unit,
+    ) {
+        addRoute(
+            FloatingRoute(
+                route = route,
+                content = content,
+            )
         )
     }
 

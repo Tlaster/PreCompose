@@ -7,8 +7,8 @@ import moe.tlaster.precompose.navigation.transition.NavTransition
 
 internal class SceneRoute(
     route: String,
-    val navTransition: NavTransition?,
     val deepLinks: List<String>,
+    val navTransition: NavTransition?,
     content: @Composable (BackStackEntry) -> Unit,
 ) : ComposeRoute(route, content) {
     @Deprecated("store path key in route node in order to match different links in one route")
