@@ -32,8 +32,7 @@ import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
 
-@OptIn(ExperimentalAnimationApi::class)
-@ExperimentalMaterialApi
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun App() {
     val navigator = rememberNavigator()
@@ -109,16 +108,10 @@ fun App() {
             scene(
                 "/edit/{id:[0-9]+}?",
                 navTransition = NavTransition(
-                    createTransition = {
-                        translationY = constraints.maxHeight * (1 - it)
-                        alpha = it
-                    },
-                    destroyTransition = {
-                        translationY = constraints.maxHeight * (1 - it)
-                        alpha = it
-                    },
-                    pauseTransition = fadeScaleDestroyTransition,
-                    resumeTransition = fadeScaleCreateTransition,
+                    createTransition = slideInVertically(initialOffsetY = { it }),
+                    destroyTransition = slideOutVertically(targetOffsetY = { it }),
+                    pauseTransition = scaleOut(targetScale = 0.9f),
+                    resumeTransition = scaleIn(initialScale = 0.9f),
                 )
             ) { backStackEntry ->
                 val id = backStackEntry.path<Int>("id")

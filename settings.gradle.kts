@@ -4,7 +4,7 @@ pluginManagement {
         google()
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-        maven("https://oss.sonatype.org/content/repositories/snapshots/")
+        // maven("https://oss.sonatype.org/content/repositories/snapshots/")
     }
 }
 
@@ -14,10 +14,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven("https://maven.mozilla.org/maven2/")
+        // maven("https://maven.mozilla.org/maven2/")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-        maven("https://jitpack.io")
-        maven("https://oss.sonatype.org/content/repositories/snapshots/")
+        // maven("https://jitpack.io")
+        // maven("https://oss.sonatype.org/content/repositories/snapshots/")
     }
 }
 rootProject.name = "PreCompose"

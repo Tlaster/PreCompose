@@ -3,7 +3,6 @@ package moe.tlaster.android
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.CompositionLocalProvider
 import moe.tlaster.common.App
 import moe.tlaster.precompose.ui.BackDispatcher
@@ -16,7 +15,6 @@ class MainActivity : AppCompatActivity(), BackDispatcherOwner {
         BackDispatcher()
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

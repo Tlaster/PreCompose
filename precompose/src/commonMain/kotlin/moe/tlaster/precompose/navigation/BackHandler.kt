@@ -9,7 +9,7 @@ import moe.tlaster.precompose.ui.BackHandler
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 
 @Composable
-public fun BackHandler(onBack: () -> Unit) {
+fun BackHandler(onBack: () -> Unit) {
     // Safely update the current `onBack` lambda when a new one is provided
     val currentOnBack by rememberUpdatedState(onBack)
     // Remember in Composition a back callback that calls the `onBack` lambda

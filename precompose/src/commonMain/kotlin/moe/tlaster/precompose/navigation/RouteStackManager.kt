@@ -62,6 +62,10 @@ internal class RouteStackManager(
     }
 
     fun navigate(path: String, options: NavOptions? = null) {
+        if (backDispatcher == null) {
+            pendingNavigation = path
+            return
+        }
         val query = path.substringAfter('?', "")
         val routePath = path.substringBefore('?')
         val matchResult = routeParser.find(path = routePath)

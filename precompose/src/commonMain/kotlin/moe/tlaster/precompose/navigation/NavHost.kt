@@ -78,14 +78,6 @@ fun NavHost(
             }
             val currentEntry = routeStack.currentEntry
             if (currentEntry != null) {
-                LaunchedEffect(currentEntry) {
-                    currentEntry.active()
-                }
-                DisposableEffect(currentEntry) {
-                    onDispose {
-                        currentEntry.inActive()
-                    }
-                }
                 routeStack.stacks.forEach {
                     NavHostContent(stateHolder, it)
                 }
@@ -100,11 +92,6 @@ private fun NavHostContent(
     it: BackStackEntry
 ) {
     stateHolder.SaveableStateProvider(it.id) {
-        CompositionLocalProvider(
-            LocalViewModelStoreOwner provides it,
-            LocalLifecycleOwner provides it,
-        ) {
-            it.route.content.invoke(it)
-        }
+        it.route.content.invoke(it)
     }
 }

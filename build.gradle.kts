@@ -3,7 +3,6 @@ plugins {
     id("com.android.library").apply(false)
     kotlin("android").apply(false)
     id("com.diffplug.spotless").version(Versions.spotless)
-    id("app.cash.molecule").version("0.3.0-SNAPSHOT")
 }
 
 allprojects {

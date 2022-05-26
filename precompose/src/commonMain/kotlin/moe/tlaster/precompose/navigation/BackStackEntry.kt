@@ -1,17 +1,21 @@
 package moe.tlaster.precompose.navigation
 
-import androidx.compose.runtime.AbstractApplier
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import moe.tlaster.precompose.navigation.route.ComposeRoute
+import kotlin.coroutines.CoroutineContext
 
 class BackStackEntry internal constructor(
     val id: Long,
     val route: ComposeRoute,
     val pathMap: Map<String, String>,
     val queryString: QueryString? = null,
-) : CoroutineScope by MainScope() {
+) : CoroutineScope {
+
+    override val coroutineContext: CoroutineContext = SupervisorJob() + Dispatchers.Main.immediate
+
     fun destroy() {
         cancel()
     }
@@ -41,12 +45,4 @@ inline fun <reified T> convertValue(value: String): T? {
         Double::class -> value.toDoubleOrNull()
         else -> throw NotImplementedError()
     } as T
-}
-
-private object UnitApplier : AbstractApplier<Unit>(Unit) {
-    override fun insertBottomUp(index: Int, instance: Unit) {}
-    override fun insertTopDown(index: Int, instance: Unit) {}
-    override fun move(from: Int, to: Int, count: Int) {}
-    override fun remove(index: Int, count: Int) {}
-    override fun onClear() {}
 }

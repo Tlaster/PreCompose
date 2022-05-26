@@ -16,45 +16,25 @@ kotlin {
     android {
         publishLibraryVariants("release", "debug")
     }
-    jvm("desktop") {
-        compilations.all {
-            kotlinOptions.jvmTarget = Versions.Java.jvmTarget
-        }
-        testRuns["test"].executionTask.configure {
-            useJUnitPlatform()
-        }
-    }
+    jvm()
+    ios()
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(compose.foundation)
-                api(compose.animation)
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Kotlin.coroutines}")
-                // api("app.cash.molecule:molecule-runtime:0.3.0-SNAPSHOT")
+                implementation(compose.foundation)
+                implementation(compose.animation)
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Kotlin.coroutines}")
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
-                // implementation(compose("org.jetbrains.compose.ui:ui-test-junit4"))
             }
         }
         val androidMain by getting
-        val androidTest by getting {
-            dependencies {
-                implementation(kotlin("test-junit"))
-                implementation("junit:junit:4.13.2")
-            }
-        }
-        val desktopMain by getting
-        val desktopTest by getting {
-            dependencies {
-                implementation(kotlin("test-junit5"))
-                implementation("org.junit.jupiter:junit-jupiter-api:5.8.0")
-                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.0")
-            }
-        }
+        val jvmMain by sourceSets.getting
+        val iosMain by sourceSets.getting
     }
 }
 
