@@ -180,6 +180,9 @@ internal class RouteStackManager(
     }
 
     fun navigateInitial(initialRoute: String) {
+        if (_backStacks.isNotEmpty()) {
+            return
+        }
         navigate(initialRoute)
         pendingNavigation?.let {
             navigate(it)

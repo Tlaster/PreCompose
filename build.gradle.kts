@@ -16,7 +16,6 @@ allprojects {
             )
         }
     }
-
     apply(plugin = "com.diffplug.spotless")
     spotless {
         kotlin {

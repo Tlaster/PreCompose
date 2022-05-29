@@ -2,6 +2,7 @@ package moe.tlaster.precompose.lifecycle
 
 import android.view.ViewGroup
 import androidx.activity.ComponentActivity
+import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.CompositionLocalProvider
@@ -14,7 +15,6 @@ import moe.tlaster.precompose.ui.BackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalLifecycleOwner
 import moe.tlaster.precompose.ui.LocalViewModelStoreOwner
-import moe.tlaster.precompose.viewmodel.ViewModelStore
 import moe.tlaster.precompose.viewmodel.ViewModelStoreOwner
 
 open class PreComposeActivity :
@@ -25,12 +25,13 @@ open class PreComposeActivity :
     SavedStateRegistryOwner,
     BackDispatcherOwner,
     androidx.lifecycle.LifecycleObserver {
+    private val viewModel by viewModels<PreComposeViewModel>()
     override val lifecycle by lazy {
         LifecycleRegistry()
     }
 
     override val viewModelStore by lazy {
-        ViewModelStore()
+        viewModel.viewModelStore
     }
 
     override fun onResume() {
