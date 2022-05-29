@@ -8,7 +8,6 @@ import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.ViewTreeLifecycleOwner
-import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackDispatcherOwner
@@ -21,8 +20,6 @@ open class PreComposeActivity :
     ComponentActivity(),
     LifecycleOwner,
     ViewModelStoreOwner,
-    androidx.lifecycle.LifecycleOwner,
-    SavedStateRegistryOwner,
     BackDispatcherOwner,
     androidx.lifecycle.LifecycleObserver {
     private val viewModel by viewModels<PreComposeViewModel>()
