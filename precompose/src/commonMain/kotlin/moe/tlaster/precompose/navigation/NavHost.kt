@@ -14,7 +14,7 @@ import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
-import com.benasher44.uuid.Uuid
+import com.benasher44.uuid.uuid4
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalLifecycleOwner
@@ -50,19 +50,17 @@ fun NavHost(
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "NavHost requires a ViewModelStoreOwner to be provided via LocalViewModelStoreOwner"
     }
-    val id by rememberSaveable { mutableStateOf(Uuid.randomUUID().toString()) }
+    val id by rememberSaveable { mutableStateOf(uuid4().toString()) }
 
     val stateHolder = rememberSaveableStateHolder()
 
-    val vm = viewModelStoreOwner.viewModelStore.getViewModel(id, NavHostViewModel::class) {
+    val manager = viewModelStoreOwner.viewModelStore.getViewModel(id, NavHostViewModel::class) {
         val graph = RouteBuilder(initialRoute = initialRoute).apply(builder).build()
         val manager = RouteStackManager(stateHolder, graph).apply {
             navigator.stackManager = this
         }
         NavHostViewModel(manager)
-    }
-
-    val manager = vm.manager
+    }.manager
 
     val backDispatcher = LocalBackDispatcherOwner.current?.backDispatcher
     DisposableEffect(manager, lifecycleOwner, viewModelStoreOwner, backDispatcher) {
