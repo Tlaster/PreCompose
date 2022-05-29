@@ -13,10 +13,11 @@ group = "moe.tlaster"
 version = "1.1.3"
 
 kotlin {
+    ios()
     android {
         publishLibraryVariants("release", "debug")
     }
-    jvm("desktop") {
+    jvm {
         compilations.all {
             kotlinOptions.jvmTarget = Versions.Java.jvmTarget
         }
@@ -51,8 +52,8 @@ kotlin {
                 implementation("junit:junit:4.13.2")
             }
         }
-        val desktopMain by getting
-        val desktopTest by getting {
+        val jvmMain by getting
+        val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit5"))
                 implementation("org.junit.jupiter:junit-jupiter-api:5.8.0")
