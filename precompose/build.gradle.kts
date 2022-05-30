@@ -147,4 +147,18 @@ if (rootProject.file("publish.properties").exists()) {
             }
         }
     }
+} else {
+    afterEvaluate {
+        publishing {
+            publications {
+                create<MavenPublication>("release") {
+                    groupId = "moe.tlaster"
+                    artifactId = "precompose"
+                    version = "1.1.4"
+    
+                    from(components["release"])
+                }
+            }
+        }
+    }
 }
