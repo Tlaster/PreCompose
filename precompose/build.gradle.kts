@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "moe.tlaster"
-version = "1.1.3"
+version = "1.1.4"
 
 kotlin {
     // https://github.com/JetBrains/compose-jb/issues/2046
