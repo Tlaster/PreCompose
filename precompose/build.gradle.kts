@@ -155,7 +155,7 @@ if (rootProject.file("publish.properties").exists()) {
                     groupId = "moe.tlaster"
                     artifactId = "precompose"
                     version = "1.1.4"
-    
+
                     from(components["release"])
                 }
             }
