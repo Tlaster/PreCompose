@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "moe.tlaster"
-version = "1.1.4"
+version = "1.1.5"
 
 kotlin {
     // https://github.com/JetBrains/compose-jb/issues/2046
@@ -158,7 +158,7 @@ if (rootProject.file("publish.properties").exists()) {
                 create<MavenPublication>("release") {
                     groupId = "moe.tlaster"
                     artifactId = "precompose"
-                    version = "1.1.4"
+                    version = "1.1.5"
 
                     from(components["release"])
                 }
