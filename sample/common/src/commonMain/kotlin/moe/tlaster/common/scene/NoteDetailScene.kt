@@ -14,9 +14,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import moe.tlaster.common.viewmodel.NoteDetailViewModel
-import moe.tlaster.precompose.ui.observeAsState
 import moe.tlaster.precompose.ui.viewModel
 
 @ExperimentalMaterialApi
@@ -50,7 +50,7 @@ fun NoteDetailScene(
         }
     ) {
         Column {
-            val note by viewModel.note.observeAsState()
+            val note by viewModel.note.collectAsState()
             ListItem {
                 Text(text = note.title, style = MaterialTheme.typography.h5)
             }

@@ -15,12 +15,12 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import moe.tlaster.common.model.Note
 import moe.tlaster.common.viewmodel.NoteListViewModel
-import moe.tlaster.precompose.ui.observeAsState
 import moe.tlaster.precompose.ui.viewModel
 
 @ExperimentalMaterialApi
@@ -30,10 +30,10 @@ fun NoteListScene(
     onEditClicked: (note: Note) -> Unit,
     onAddClicked: () -> Unit,
 ) {
-    val viewModel = viewModel {
+    val viewModel = viewModel(NoteListViewModel::class) {
         NoteListViewModel()
     }
-    val items by viewModel.items.observeAsState()
+    val items by viewModel.items.collectAsState()
 
     Scaffold(
         topBar = {

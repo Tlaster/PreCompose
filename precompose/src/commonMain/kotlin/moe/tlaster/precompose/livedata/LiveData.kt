@@ -5,6 +5,7 @@ import moe.tlaster.precompose.lifecycle.LifecycleObserver
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.standard.copyForEach
 
+@Deprecated("Please use Kotlin Flow instead")
 class LiveData<T>(initialValue: T) {
     private val observers = linkedMapOf<Observer<T>, ObserverWrapper>()
     var value: T = initialValue
