@@ -3,7 +3,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("multiplatform") id("org.jetbrains.compose") version Versions.compose_jb
+    kotlin("multiplatform") 
+    id("org.jetbrains.compose") version Versions.compose_jb
 }
 
 kotlin {
