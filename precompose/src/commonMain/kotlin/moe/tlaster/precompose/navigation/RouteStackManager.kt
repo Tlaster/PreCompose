@@ -102,7 +102,7 @@ internal class RouteStackManager(
                     _backStacks.add(
                         RouteStack(
                             id = routeStackId++,
-                            stacks = mutableStateListOf(entry),
+                            backStackEntry = entry,
                             navTransition = matchResult.route.navTransition,
                         )
                     )

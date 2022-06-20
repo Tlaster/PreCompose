@@ -1,8 +1,8 @@
 package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 
 /**
@@ -18,13 +18,12 @@ fun rememberNavigator(): Navigator {
 class Navigator {
     // FIXME: 2021/4/1 Temp workaround for deeplink
     private var pendingNavigation: String? = null
-    internal var stackManager: RouteStackManager? = null
-        set(value) {
-            field = value
-            value?.let {
-                pendingNavigation?.let { it1 -> it.navigate(it1) }
-            }
-        }
+    private val stackManagerState = mutableStateOf<RouteStackManager?>(null)
+    private val stackManager by stackManagerState
+    internal fun init(manager: RouteStackManager) {
+        stackManagerState.value = manager
+        pendingNavigation?.let { it1 -> manager.navigate(it1) }
+    }
 
     /**
      * Navigate to a route in the current RouteGraph.
@@ -72,9 +71,4 @@ class Navigator {
      */
     val canGoBack: Boolean
         get() = stackManager?.canGoBack ?: false
-}
-
-@Composable
-fun Navigator.currentBackStackEntryAsState(): State<BackStackEntry?>? {
-    return stackManager?.currentStack?.currentBackStackEntryFlow?.collectAsState(null)
 }

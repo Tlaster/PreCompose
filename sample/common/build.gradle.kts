@@ -39,7 +39,7 @@ kotlin {
 android {
     compileSdk = Versions.Android.compile
     buildToolsVersion = Versions.Android.buildTools
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    namespace = "moe.tlaster.common"
     defaultConfig {
         minSdk = Versions.Android.min
         targetSdk = Versions.Android.target

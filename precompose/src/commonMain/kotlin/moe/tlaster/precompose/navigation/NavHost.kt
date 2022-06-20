@@ -57,7 +57,7 @@ fun NavHost(
     val manager = viewModelStoreOwner.viewModelStore.getViewModel(id, NavHostViewModel::class) {
         val graph = RouteBuilder(initialRoute = initialRoute).apply(builder).build()
         val manager = RouteStackManager(stateHolder, graph).apply {
-            navigator.stackManager = this
+            navigator.init(this)
         }
         NavHostViewModel(manager)
     }.manager
