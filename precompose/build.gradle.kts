@@ -98,12 +98,8 @@ ext {
     }
 }
 
-val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-}
-
-if (rootProject.file("publish.properties").exists()) {
-    publishing {
+publishing {
+    if (rootProject.file("publish.properties").exists()) {
         signing {
             sign(publishing.publications)
         }
@@ -122,45 +118,31 @@ if (rootProject.file("publish.properties").exists()) {
                 }
             }
         }
-        publications.withType<MavenPublication> {
-            artifact(javadocJar.get())
-            pom {
-                name.set("PreCompose")
-                description.set("A third-party Jetbrains Compose library with ViewModel, LiveData and Navigation support.")
-                url.set("https://github.com/Tlaster/PreCompose")
+    }
 
-                licenses {
-                    license {
-                        name.set("MIT")
-                        url.set("https://opensource.org/licenses/MIT")
-                    }
-                }
-                developers {
-                    developer {
-                        id.set("Tlaster")
-                        name.set("James Tlaster")
-                        email.set("tlaster@outlook.com")
-                    }
-                }
-                scm {
-                    url.set("https://github.com/Tlaster/PreCompose")
-                    connection.set("scm:git:git://github.com/Tlaster/PreCompose.git")
-                    developerConnection.set("scm:git:git://github.com/Tlaster/PreCompose.git")
+    publications.withType<MavenPublication> {
+        pom {
+            name.set("PreCompose")
+            description.set("A third-party Jetbrains Compose library with ViewModel, LiveData and Navigation support.")
+            url.set("https://github.com/Tlaster/PreCompose")
+
+            licenses {
+                license {
+                    name.set("MIT")
+                    url.set("https://opensource.org/licenses/MIT")
                 }
             }
-        }
-    }
-} else {
-    afterEvaluate {
-        publishing {
-            publications {
-                create<MavenPublication>("release") {
-                    groupId = "moe.tlaster"
-                    artifactId = "precompose"
-                    version = "1.1.5"
-
-                    from(components["release"])
+            developers {
+                developer {
+                    id.set("Tlaster")
+                    name.set("James Tlaster")
+                    email.set("tlaster@outlook.com")
                 }
+            }
+            scm {
+                url.set("https://github.com/Tlaster/PreCompose")
+                connection.set("scm:git:git://github.com/Tlaster/PreCompose.git")
+                developerConnection.set("scm:git:git://github.com/Tlaster/PreCompose.git")
             }
         }
     }
