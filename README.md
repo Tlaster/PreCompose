@@ -1,6 +1,6 @@
 # PreCompose
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose/badge.svg)](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose)
-[![](https://img.shields.io/badge/compose--jb-1.2.0--alpha01--dev709-blue)](https://github.com/JetBrains/compose-jb)
+[![](https://img.shields.io/badge/compose--jb-1.2.0--alpha01--dev716-blue)](https://github.com/JetBrains/compose-jb)
 
 Let you write your Kotlin application in pure compose, which is **Pre**tty **Compose**.
 
@@ -16,7 +16,6 @@ There's nothing complex to setup, just write your ViewModel and UI code and you'
 
 # Components
  - [Navigation](/docs/component/navigation.md)
- - [LiveData](/docs/component/live_data.md)
  - [ViewModel](/docs/component/view_model.md)
 
 # Sample
