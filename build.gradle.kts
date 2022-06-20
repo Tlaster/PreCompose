@@ -9,7 +9,7 @@ allprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
             jvmTarget = Versions.Java.jvmTarget
-            allWarningsAsErrors = true
+            // allWarningsAsErrors = true
             freeCompilerArgs = listOf(
                 "-opt-in=kotlin.RequiresOptIn",
                 "-Xcontext-receivers",
