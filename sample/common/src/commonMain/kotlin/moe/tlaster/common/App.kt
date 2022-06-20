@@ -8,6 +8,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import moe.tlaster.common.scene.NoteDetailScene
 import moe.tlaster.common.scene.NoteEditScene
 import moe.tlaster.common.scene.NoteListScene
@@ -16,8 +17,7 @@ import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
 
-@OptIn(ExperimentalAnimationApi::class)
-@ExperimentalMaterialApi
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun App() {
     val navigator = rememberNavigator()

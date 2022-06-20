@@ -13,8 +13,7 @@ group = "moe.tlaster"
 version = "1.1.5"
 
 kotlin {
-    // https://github.com/JetBrains/compose-jb/issues/2046
-    // ios()
+    ios("uikit")
     android {
         publishLibraryVariants("release", "debug")
     }

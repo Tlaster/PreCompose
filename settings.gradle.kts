@@ -18,9 +18,10 @@ dependencyResolutionManagement {
         maven("https://jitpack.io")
     }
 }
-rootProject.name = "PreCompose"
+rootProject.name = "precompose"
 
 include(":precompose")
 include(":sample:android")
 include(":sample:desktop")
 include(":sample:common")
+include(":sample:ios")

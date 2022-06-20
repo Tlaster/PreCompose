@@ -7,6 +7,7 @@ plugins {
 }
 
 kotlin {
+    ios()
     android()
     jvm("desktop")
     sourceSets {

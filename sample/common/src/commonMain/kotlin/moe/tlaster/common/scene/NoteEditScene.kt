@@ -28,7 +28,7 @@ fun NoteEditScene(
     onDone: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
-    val viewModel = viewModel(listOf(id)) {
+    val viewModel = viewModel(NoteEditViewModel::class, listOf(id)) {
         NoteEditViewModel(id)
     }
 
