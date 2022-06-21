@@ -32,7 +32,7 @@ jobs:
       run: ./.github/apply_signing.sh
 
     - name: Build with Gradle
-      run: ./gradlew :precompose:spotlessCheck :precompose:lint :precompose:build --stacktrace --no-daemon --no-parallel
+      run: ./gradlew :precompose:spotlessCheck :precompose:lint :precompose:assemble --stacktrace --no-daemon --no-parallel
 
     - name: Testing
       run: ./gradlew :precompose:test --no-daemon --no-parallel
