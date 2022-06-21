@@ -98,7 +98,6 @@ ext {
     }
 }
 
-
 val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
 }
