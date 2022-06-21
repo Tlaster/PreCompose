@@ -15,5 +15,8 @@ Change the Activity's parent class to `moe.tlaster.precompose.lifecycle.PreCompo
 ## Desktop
 Change the `Window` to `moe.tlaster.precompose.PreComposeWindow`
 
+## iOS
+Set the `UIWindow.rootViewController` to `PreComposeApplication`
+
 ## Done!
 That's it! Enjoying the PreCompose! Now you can write all your business logic and ui code in `commonMain`
