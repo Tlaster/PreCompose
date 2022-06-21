@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "moe.tlaster"
-version = "1.2.0"
+version = "1.2.1"
 
 kotlin {
     ios("uikit")
@@ -98,6 +98,11 @@ ext {
     }
 }
 
+
+val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+}
+
 publishing {
     if (rootProject.file("publish.properties").exists()) {
         signing {
@@ -121,6 +126,7 @@ publishing {
     }
 
     publications.withType<MavenPublication> {
+        artifact(javadocJar)
         pom {
             name.set("PreCompose")
             description.set("A third-party Jetbrains Compose library with ViewModel, LiveData and Navigation support.")
