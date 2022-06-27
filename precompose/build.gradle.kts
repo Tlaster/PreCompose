@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "moe.tlaster"
-version = "1.2.1"
+version = "1.2.2"
 
 kotlin {
     ios("uikit")
