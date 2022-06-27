@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 /**
  * Creates a [Navigator] that controls the [NavHost].
@@ -18,6 +20,8 @@ fun rememberNavigator(): Navigator {
 class Navigator {
     // FIXME: 2021/4/1 Temp workaround for deeplink
     private var pendingNavigation: String? = null
+    // FIXME: 2022/6/27: Temp workaround for current entry
+    internal val currentEntryFlow = MutableStateFlow<BackStackEntry?>(null)
     private val stackManagerState = mutableStateOf<RouteStackManager?>(null)
     private val stackManager by stackManagerState
     internal fun init(manager: RouteStackManager) {
@@ -71,4 +75,6 @@ class Navigator {
      */
     val canGoBack: Boolean
         get() = stackManager?.canGoBack ?: false
+
+    val currentEntry = currentEntryFlow.asSharedFlow()
 }

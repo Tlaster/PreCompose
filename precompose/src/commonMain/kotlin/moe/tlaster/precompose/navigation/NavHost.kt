@@ -75,6 +75,9 @@ fun NavHost(
     LaunchedEffect(manager, initialRoute) {
         manager.navigateInitial(initialRoute)
     }
+    LaunchedEffect(manager.currentEntry) {
+        navigator.currentEntryFlow.value = manager.currentEntry
+    }
     val currentStack = manager.currentStack
     if (currentStack != null) {
         AnimatedContent(
