@@ -82,7 +82,7 @@ internal class RouteStackManager(
         val matchResult = routeParser.find(path = routePath)
         checkNotNull(matchResult) { "RouteStackManager: navigate target $path not found" }
         require(matchResult.route is ComposeRoute) { "RouteStackManager: navigate target $path is not ComposeRoute" }
-        if (// for launchSingleTop
+        if ( // for launchSingleTop
             options != null &&
             matchResult.route is SceneRoute &&
             options.launchSingleTop &&
