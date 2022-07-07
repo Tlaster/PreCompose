@@ -31,6 +31,14 @@ There's nothing complex to setup, just write your ViewModel and UI code and you'
 ## [Greetings App with ViewModel in 100 lines!](/docs/sample.md#greetings-app-with-viewmodel-in-100-lines)
 <img src="media/greeting_app.gif" height="250">
 
+# Credits
+
+Thanks Jetbrains for [supporting open source software](https://www.jetbrains.com/community/opensource/#support)
+
+<a href="https://www.jetbrains.com/community/opensource/#support">
+  <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" alt="JetBrains Logo (Main) logo." width="200" />
+</a>
+
 # LICENSE
 ```
 MIT License
