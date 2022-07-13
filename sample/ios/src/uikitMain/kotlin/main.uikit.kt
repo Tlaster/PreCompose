@@ -7,7 +7,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.cinterop.autoreleasepool
+import kotlinx.cinterop.cstr
 import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.toCValues
 import moe.tlaster.common.App
 import moe.tlaster.precompose.PreComposeApplication
 import platform.Foundation.NSStringFromClass
@@ -17,6 +19,7 @@ import platform.UIKit.UIApplicationDelegateProtocolMeta
 import platform.UIKit.UIApplicationMain
 import platform.UIKit.UIResponder
 import platform.UIKit.UIResponderMeta
+import platform.UIKit.UIScreen
 import platform.UIKit.UIWindow
 
 fun main() {
