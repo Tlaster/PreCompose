@@ -88,9 +88,13 @@ fun NavHost(
                     run { if (manager.contains(initialState)) targetState else initialState }.navTransition
                         ?: navTransition
                 if (!manager.contains(initialState)) {
-                    actualTransaction.resumeTransition with actualTransaction.destroyTransition
+                    actualTransaction.resumeTransition.with(actualTransaction.destroyTransition).apply {
+                        targetContentZIndex = actualTransaction.enterTargetContentZIndex
+                    }
                 } else {
-                    actualTransaction.createTransition with actualTransaction.pauseTransition
+                    actualTransaction.createTransition.with(actualTransaction.pauseTransition).apply {
+                        targetContentZIndex = actualTransaction.exitTargetContentZIndex
+                    }
                 }
             }
         ) { routeStack ->

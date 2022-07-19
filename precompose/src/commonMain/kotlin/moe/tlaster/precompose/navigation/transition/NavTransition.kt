@@ -31,4 +31,15 @@ data class NavTransition(
      * Have no effect for floating/dialog route
      */
     val resumeTransition: EnterTransition = fadeIn() + scaleIn(initialScale = 1.1f),
+    /**
+     * This describes the zIndex of the new target content as it enters the container. It defaults
+     * to 0f. Content with higher zIndex will be drawn over lower `zIndex`ed content. Among
+     * content with the same index, the target content will be placed on top.
+     */
+    val enterTargetContentZIndex: Float = 0f,
+    /**
+     * This describes the zIndex of the target content as it exists the container. It defaults
+     * to 0f. Content with higher zIndex will be drawn over lower `zIndex`ed content.
+     */
+    val exitTargetContentZIndex: Float = 0f,
 )
