@@ -59,6 +59,7 @@ fun App() {
                     destroyTransition = slideOutVertically(targetOffsetY = { it }),
                     pauseTransition = scaleOut(targetScale = 0.9f),
                     resumeTransition = scaleIn(initialScale = 0.9f),
+                    exitTargetContentZIndex = 1f,
                 )
             ) { backStackEntry ->
                 val id = backStackEntry.path<Int>("id")
