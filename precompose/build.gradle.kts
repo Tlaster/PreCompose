@@ -13,7 +13,6 @@ group = "moe.tlaster"
 version = "1.2.3"
 
 kotlin {
-    ios("uikit")
     android {
         publishLibraryVariants("release", "debug")
     }

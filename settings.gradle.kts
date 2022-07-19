@@ -24,4 +24,4 @@ include(":precompose")
 include(":sample:android")
 include(":sample:desktop")
 include(":sample:common")
-include(":sample:ios")
+//include(":sample:ios") // Only available on compose-jb 1.2.0
