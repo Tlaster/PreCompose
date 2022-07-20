@@ -1,11 +1,12 @@
 # PreCompose
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose/badge.svg)](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose)
-[![compose-jb-version](https://img.shields.io/badge/compose--jb-1.2.0--alpha01--dev716-blue)](https://github.com/JetBrains/compose-jb)
+[![compose-jb-version](https://img.shields.io/badge/compose--jb-1.2.0--alpha01--dev748-blue)](https://github.com/JetBrains/compose-jb)
 ![license](https://img.shields.io/github/license/Tlaster/PreCompose)
 
-![badge-android](https://img.shields.io/badge/Platform-Android-brightgreen)
-![badge-ios](https://img.shields.io/badge/Platform-iOS-lightgray)
-![badge-jvm](https://img.shields.io/badge/Platform-JVM-orange)
+![badge-Android](https://img.shields.io/badge/Platform-Android-brightgreen)
+![badge-iOS](https://img.shields.io/badge/Platform-iOS-lightgray)
+![badge-JVM](https://img.shields.io/badge/Platform-JVM-orange)
+![badge-macOS](https://img.shields.io/badge/Platform-macOS-purple)
 
 Let you write your Kotlin application in pure compose, which is **Pre**tty **Compose**.
 
