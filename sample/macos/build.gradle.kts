@@ -57,7 +57,7 @@ compose.desktop.nativeApplication {
     targets(kotlin.targets.getByName("macosX64"), kotlin.targets.getByName("macosArm64"))
     distributions {
         targetFormats(org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg)
-        packageName = "Chat"
+        packageName = "PreComposeSample"
         packageVersion = "1.0.0"
     }
 }
