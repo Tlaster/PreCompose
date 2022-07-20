@@ -13,6 +13,8 @@ group = "moe.tlaster"
 version = "1.2.3"
 
 kotlin {
+    macosArm64()
+    macosX64()
     ios("uikit")
     android {
         publishLibraryVariants("release", "debug")
@@ -51,6 +53,15 @@ kotlin {
                 implementation(kotlin("test-junit"))
                 implementation("junit:junit:4.13.2")
             }
+        }
+        val macosMain by creating {
+            dependsOn(commonMain)
+        }
+        val macosX64Main by getting {
+            dependsOn(macosMain)
+        }
+        val macosArm64Main by getting {
+            dependsOn(macosMain)
         }
         val jvmMain by getting {
             dependencies {

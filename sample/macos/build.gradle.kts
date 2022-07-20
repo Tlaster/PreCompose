@@ -8,17 +8,23 @@ plugins {
 }
 
 kotlin {
-    ios("uikit") {
+    macosX64 {
         binaries {
             executable {
                 entryPoint = "main"
                 freeCompilerArgs += listOf(
-                    "-linker-option", "-framework", "-linker-option", "Metal",
-                    "-linker-option", "-framework", "-linker-option", "CoreText",
-                    "-linker-option", "-framework", "-linker-option", "CoreGraphics"
+                    "-linker-option", "-framework", "-linker-option", "Metal"
                 )
-                // TODO: the current compose binary surprises LLVM, so disable checks for now.
-                freeCompilerArgs += "-Xdisable-phases=VerifyBitcode"
+            }
+        }
+    }
+    macosArm64 {
+        binaries {
+            executable {
+                entryPoint = "main"
+                freeCompilerArgs += listOf(
+                    "-linker-option", "-framework", "-linker-option", "Metal"
+                )
             }
         }
     }
@@ -35,18 +41,24 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
+        val macosMain by creating {
+            dependsOn(commonMain)
+        }
+        val macosX64Main by getting {
+            dependsOn(macosMain)
+        }
+        val macosArm64Main by getting {
+            dependsOn(macosMain)
+        }
     }
 }
 
-compose.experimental {
-    uikit.application {
-        bundleIdPrefix = "moe.tlaster"
-        projectName = "PreComposeSample"
-        deployConfigurations {
-            simulator("Simulator") {
-                device = org.jetbrains.compose.experimental.dsl.IOSDevices.IPHONE_13_MINI
-            }
-        }
+compose.desktop.nativeApplication {
+    targets(kotlin.targets.getByName("macosX64"), kotlin.targets.getByName("macosArm64"))
+    distributions {
+        targetFormats(org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg)
+        packageName = "Chat"
+        packageVersion = "1.0.0"
     }
 }
 
