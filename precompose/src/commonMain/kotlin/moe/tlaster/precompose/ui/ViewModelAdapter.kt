@@ -33,7 +33,7 @@ private fun <T : ViewModel> ViewModelStoreOwner.getViewModel(
     modelClass: KClass<T>,
     creator: () -> T,
 ): T {
-    val key = (keys.map { it.hashCode().toString() } + modelClass.qualifiedName).joinToString()
+    val key = (keys.map { it.hashCode().toString() } + modelClass.simpleName).joinToString()
     val existing = viewModelStore[key]
     if (existing != null && modelClass.isInstance(existing)) {
         @Suppress("UNCHECKED_CAST")

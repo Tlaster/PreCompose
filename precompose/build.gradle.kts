@@ -27,6 +27,10 @@ kotlin {
             useJUnitPlatform()
         }
     }
+    js(IR) {
+        browser()
+        binaries.executable()
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -74,6 +78,9 @@ kotlin {
                 implementation("org.junit.jupiter:junit-jupiter-api:5.8.0")
                 runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.0")
             }
+        }
+        val jsMain by getting {
+            dependsOn(commonMain)
         }
     }
 }

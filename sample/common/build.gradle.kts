@@ -12,6 +12,10 @@ kotlin {
     ios()
     android()
     jvm("desktop")
+    js(IR) {
+        browser()
+        binaries.executable()
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -35,6 +39,7 @@ kotlin {
         }
         val desktopMain by getting
         val desktopTest by getting
+        val jsMain by getting
     }
 }
 
@@ -45,5 +50,20 @@ android {
     defaultConfig {
         minSdk = Versions.Android.min
         targetSdk = Versions.Android.target
+    }
+}
+
+compose.experimental {
+    web.application {}
+}
+
+tasks.withType<ProcessResources> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+afterEvaluate {
+    rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
+        versions.webpackCli.version = "4.10.0"
+        nodeVersion = "16.0.0"
     }
 }
