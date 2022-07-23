@@ -5,7 +5,7 @@ import kotlin.reflect.KClass
 inline fun <reified T : ViewModel> ViewModelStore.getViewModel(
     noinline creator: () -> T,
 ): T {
-    val key = T::class.qualifiedName.toString()
+    val key = T::class.simpleName.toString()
     return getViewModel(key, T::class, creator)
 }
 
