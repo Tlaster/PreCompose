@@ -14,7 +14,7 @@ public fun BackHandler(onBack: () -> Unit) {
     // Safely update the current `onBack` lambda when a new one is provided
     val currentOnBack by rememberUpdatedState(onBack)
     // Remember in Composition a back callback that calls the `onBack` lambda
-    val backCallback = remember {
+    val backCallback = remember<BackHandler> {
         object : BackHandler {
             override fun handleBackPress(): Boolean {
                 currentOnBack.invoke()
