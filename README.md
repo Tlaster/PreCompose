@@ -7,6 +7,7 @@
 ![badge-iOS](https://img.shields.io/badge/Platform-iOS-lightgray)
 ![badge-JVM](https://img.shields.io/badge/Platform-JVM-orange)
 ![badge-macOS](https://img.shields.io/badge/Platform-macOS-purple)
+![badge-web](https://img.shields.io/badge/Platform-Web-blue)
 
 Let you write your Kotlin application in pure compose, which is **Pre**tty **Compose**.
 
