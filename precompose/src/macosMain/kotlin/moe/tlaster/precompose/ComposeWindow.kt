@@ -10,6 +10,7 @@ import kotlinx.cinterop.useContents
 import platform.AppKit.NSBackingStoreBuffered
 import platform.AppKit.NSWindow
 import platform.AppKit.NSWindowDelegateProtocol
+import platform.AppKit.NSWindowDidChangeBackingPropertiesNotification
 import platform.AppKit.NSWindowDidResizeNotification
 import platform.AppKit.NSWindowStyleMaskClosable
 import platform.AppKit.NSWindowStyleMaskFullSizeContentView
@@ -17,6 +18,7 @@ import platform.AppKit.NSWindowStyleMaskMiniaturizable
 import platform.AppKit.NSWindowStyleMaskResizable
 import platform.AppKit.NSWindowStyleMaskTitled
 import platform.AppKit.NSWindowTitleHidden
+import platform.AppKit.NSWindowWillCloseNotification
 import platform.CoreGraphics.CGRectMake
 import platform.Foundation.NSMakeRect
 import platform.Foundation.NSNotification
@@ -26,6 +28,8 @@ import platform.darwin.NSObject
 
 internal class ComposeWindow(
     hideTitleBar: Boolean = false,
+    initialTitle: String,
+    private val onCloseRequest: () -> Unit = {},
 ) : NSObject(), NSWindowDelegateProtocol {
     private val layer = ComposeLayer(
         layer = createSkiaLayer(),
@@ -63,6 +67,8 @@ internal class ComposeWindow(
         backing = NSBackingStoreBuffered,
         defer = true,
     ).apply {
+        center()
+        setFrameAutosaveName(initialTitle)
         if (hideTitleBar) {
             titlebarAppearsTransparent = true
             titleVisibility = NSWindowTitleHidden
@@ -79,12 +85,35 @@ internal class ComposeWindow(
             name = NSWindowDidResizeNotification,
             `object` = nsWindow,
         )
+        NSNotificationCenter.defaultCenter().addObserver(
+            this,
+            selector = NSSelectorFromString("windowWillClose:"),
+            name = NSWindowWillCloseNotification,
+            `object` = nsWindow,
+        )
+        NSNotificationCenter.defaultCenter().addObserver(
+            this,
+            selector = NSSelectorFromString("windowDidChangeBackingProperties:"),
+            name = NSWindowDidChangeBackingPropertiesNotification,
+            `object` = nsWindow,
+        )
+        updateLayerSize()
+        setTitle(initialTitle)
+    }
+
+    @ObjCAction
+    override fun windowDidChangeBackingProperties(notification: NSNotification) {
         updateLayerSize()
     }
 
     @ObjCAction
     override fun windowDidResize(notification: NSNotification) {
         updateLayerSize()
+    }
+
+    @ObjCAction
+    override fun windowWillClose(notification: NSNotification) {
+        onCloseRequest.invoke()
     }
 
     private fun updateLayerSize() {
@@ -111,6 +140,7 @@ internal class ComposeWindow(
     }
 
     // TODO: need to call .dispose() on window close.
+    // When calling dispose() it will throw kotlin.IllegalStateException which indicate that the layer is already disposed.
     fun dispose() {
         layer.dispose()
     }

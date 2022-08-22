@@ -3,7 +3,12 @@ import moe.tlaster.precompose.PreComposeWindow
 import platform.AppKit.NSApp
 
 fun main() {
-    PreComposeWindow("PreComposeSample") {
+    PreComposeWindow(
+        "PreComposeSample",
+        onCloseRequest = {
+            NSApp?.terminate(null)
+        }
+    ) {
         App()
     }
     NSApp?.run()
