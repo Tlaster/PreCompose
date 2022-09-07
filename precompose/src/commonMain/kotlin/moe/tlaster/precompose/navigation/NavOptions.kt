@@ -15,4 +15,8 @@ data class NavOptions(
      * @see [PopUpTo]
      */
     val popUpTo: PopUpTo? = null,
+    /**
+     * clear old back stack after navigate
+     */
+    val clearBackStack: Boolean = false,
 )

@@ -118,7 +118,11 @@ internal class RouteStackManager(
             }
         }
 
-        if (options?.popUpTo != null && matchResult.route is SceneRoute) {
+        if (options?.clearBackStack == true) {
+            if (_backStacks.lastIndex > 1) {
+                _backStacks.removeRange(0, _backStacks.lastIndex - 1)
+            }
+        } else if (options?.popUpTo != null && matchResult.route is SceneRoute) {
             val index = _backStacks.indexOfLast { it.hasRoute(options.popUpTo.route) }
             if (index != -1 && index != _backStacks.lastIndex) {
                 _backStacks.removeRange(
