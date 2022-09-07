@@ -119,7 +119,7 @@ internal class RouteStackManager(
         }
 
         if (options?.clearBackStack == true) {
-            if (_backStacks.lastIndex > 1) {
+            if (_backStacks.lastIndex > 0) {
                 _backStacks.removeRange(0, _backStacks.lastIndex - 1)
             }
         } else if (options?.popUpTo != null && matchResult.route is SceneRoute) {
