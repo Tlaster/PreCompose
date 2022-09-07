@@ -21,6 +21,7 @@ dependencyResolutionManagement {
 rootProject.name = "precompose"
 
 include(":precompose")
+include(":precompose-molecule")
 include(":sample:android")
 include(":sample:desktop")
 include(":sample:common")
