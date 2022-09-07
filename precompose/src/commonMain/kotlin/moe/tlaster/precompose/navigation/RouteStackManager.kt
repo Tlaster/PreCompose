@@ -120,7 +120,7 @@ internal class RouteStackManager(
 
         if (options?.clearBackStack == true) {
             if (_backStacks.lastIndex > 0) {
-                _backStacks.removeRange(0, _backStacks.lastIndex - 1)
+                _backStacks.removeRange(0, _backStacks.lastIndex)
             }
         } else if (options?.popUpTo != null && matchResult.route is SceneRoute) {
             val index = _backStacks.indexOfLast { it.hasRoute(options.popUpTo.route) }
