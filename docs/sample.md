@@ -1,15 +1,14 @@
 # Sample
 
 ## Note App
-[Source Code](https://github.com/Tlaster/PreCompose/tree/master/sample)
+[Source Code](https://github.com/Tlaster/PreCompose/tree/master/sample/todo)
 
-run `./gradlew :sample:desktop:run` to run the desktop app or `./gradlew :sample:android:installDebug` to install the Android app.
+run `./gradlew :sample:todo:desktop:run` to run the desktop app or `./gradlew :sample:todo:android:installDebug` to install the Android app.
 
 This sample demonstrates the following features:
  - Navigation
  - Custom Navigation transition
  - ViewModel
- - LiveData
 
 <img src="../media/note_app.webp" height="350">
 <img src="../media/note_app_android.webp" height="350">

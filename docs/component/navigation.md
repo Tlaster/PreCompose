@@ -1,8 +1,8 @@
 # Navigation
 
-Similar to Jetpack Navigation, but a little bit different.
+Similar to Jetpack Navigation, but a little different.
 
-You still have the `NavHost` composable function to define the navigation graph like what you've done in Jetpack Navigation, and it behave like what Jetpack Navigation provides. `NavHost` provides back stack management and stack lifecycle and viewModel management.
+You still have the `NavHost` composable function to define the navigation graph like what you've done in Jetpack Navigation, and it behaves like what Jetpack Navigation provides. `NavHost` provides back stack management and stack lifecycle and viewModel management.
 
 ## Quick example
 ```kotlin
@@ -83,7 +83,7 @@ scene(route = "/detail/{id}") { backStackEntry ->
     val id: Int? = backStackEntry.path<Int>("id")
 }
 ```
-this is most common useage of navigation route
+this is most common usage of navigation route
 
 Optional path variable
 ```kotlin
@@ -102,7 +102,7 @@ scene(route = "/detail/{id:[0-9]+}") { backStackEntry ->
     val id: Int? = backStackEntry.path<Int>("id")
 }
 ```
-You can defines a path variable: `id`. Regex expression is everything after the first `:`, like: `[0-9]+`
+You can define a path variable: `id`. Regex expression is everything after the first `:`, like: `[0-9]+`
 
 Optional syntax is also supported for regex path variable: `/user/{id:[0-9]+}?`:
  - matches `/user`
@@ -125,9 +125,9 @@ scene(route = "/detail/{id}") { backStackEntry ->
 If your query string is a list, you can retrive by `BackStackEntry.queryList(name: String)`
 
 ## Navigation transition
-You can define a `NavTransition` for both `NavHost` and `scene`, PreCompose will use the `scene`'s `NavTransition` if the `scene` define a `NavTransition`, otherwise will fallback to `NavHost`'s `NavTransition`.
+You can define a `NavTransition` for both `NavHost` and `scene`, PreCompose will use the `scene`'s `NavTransition` if the `scene` define a `NavTransition`, otherwise will fall back to `NavHost`'s `NavTransition`.
 
-There're 4 transition type for `NavTransition`
+There are 4 transition type for `NavTransition`
  - `createTransition`  
  Transition the scene that about to appear for the first time, similar to activity onCreate
 

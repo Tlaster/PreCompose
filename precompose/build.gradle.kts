@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "moe.tlaster"
-version = "1.3.3"
+version = Versions.precompose
 
 kotlin {
     macosArm64()
