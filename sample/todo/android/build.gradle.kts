@@ -8,7 +8,7 @@ group = "moe.tlaster"
 version = "1.0"
 
 dependencies {
-    implementation(project(":sample:common"))
+    implementation(project(":sample:todo:common"))
 }
 
 android {

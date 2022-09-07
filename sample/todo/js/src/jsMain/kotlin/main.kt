@@ -1,12 +1,12 @@
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "EXPOSED_PARAMETER_TYPE")
 
+import androidx.compose.ui.native.ComposeLayer
 import kotlinx.browser.document
 import kotlinx.browser.window
-import org.w3c.dom.HTMLCanvasElement
-import androidx.compose.ui.native.ComposeLayer
 import moe.tlaster.common.App
 import moe.tlaster.precompose.preComposeWindow
 import org.jetbrains.skiko.wasm.onWasmReady
+import org.w3c.dom.HTMLCanvasElement
 
 // All of this is to manually handle window resizes for ComposeJS
 // until it's implemented in the library.

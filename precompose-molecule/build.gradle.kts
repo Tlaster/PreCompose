@@ -35,7 +35,6 @@ kotlin {
                 api(compose.animation)
                 implementation(project(":precompose"))
                 implementation("app.cash.molecule:molecule-runtime:0.4.0")
-                
             }
         }
         val commonTest by getting {
