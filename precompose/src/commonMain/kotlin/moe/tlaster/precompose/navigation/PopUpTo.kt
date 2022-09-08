@@ -15,7 +15,9 @@ sealed interface PopUpTo {
     /**
      * pop prev back stack
      */
-    object Prev : PopUpTo
+    object Prev : PopUpTo {
+        override val inclusive: Boolean get() = true
+    }
 
     /**
      * The `popUpTo` destination, if it's an empty string will clear all backstack
