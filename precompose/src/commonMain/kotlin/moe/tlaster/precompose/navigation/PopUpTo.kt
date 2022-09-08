@@ -33,7 +33,7 @@ sealed interface PopUpTo {
          * popUpTo first back stack
          */
         @Suppress("FunctionName")
-        fun First(inclusive: Boolean = true) : PopUpTo = Route("", inclusive)
+        fun First(inclusive: Boolean = true): PopUpTo = Route("", inclusive)
     }
 }
 
