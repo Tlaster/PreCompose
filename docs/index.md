@@ -19,16 +19,16 @@ Compose Multiplatform Navigation && ViewModel, inspired by Jetpack Lifecycle, Vi
 - Lifecycle is handled by PreCompose, you don't need to worry about it.
 
 # Setup
-[Setup guide for PreCompose](/docs/setup.md)
+[Setup guide for PreCompose](/setup.md)
 
 # Components
-- [Navigation](/docs/component/navigation.md)
-- [ViewModel](/docs/component/view_model.md)
-- [Molecule Integration](/docs/component/molecule.md)
+- [Navigation](/component/navigation.md)
+- [ViewModel](/component/view_model.md)
+- [Molecule Integration](/component/molecule.md)
 
 # Sample
-- [Note App](/docs/sample.md#note-app)
-- [Greetings App with ViewModel in 100 lines!](/docs/sample.md#greetings-app-with-viewmodel-in-100-lines)
+- [Note App](/sample.md#note-app)
+- [Greetings App with ViewModel in 100 lines!](/sample.md#greetings-app-with-viewmodel-in-100-lines)
 
 # Why the name PreCompose?
 IDK, just let my cat hitting the keyboard, and it came up with it.
