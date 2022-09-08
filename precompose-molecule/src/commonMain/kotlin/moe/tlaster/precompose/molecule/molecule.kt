@@ -4,10 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MonotonicFrameClock
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import app.cash.molecule.RecompositionClock
 import app.cash.molecule.launchMolecule
 import kotlinx.coroutines.CoroutineScope
@@ -40,20 +38,21 @@ private class PresenterViewModel<T>(
 }
 
 @Composable
-private fun <T> rememberPresenterState(body: @Composable () -> T): StateFlow<T> {
+private fun <T> rememberPresenterState(
+    keys: List<Any?>,
+    body: @Composable () -> T,
+): StateFlow<T> {
     @Suppress("UNCHECKED_CAST")
     val viewModel = viewModel(
         modelClass = PresenterViewModel::class,
-        keys = listOf(
-            currentCompositeKeyHash.toString(36),
-        ),
+        keys = keys,
         creator = { PresenterViewModel(body) }
     ) as PresenterViewModel<T>
     return viewModel.state
 }
 
-private class EventViewModel<T> : ViewModel() {
-    val channel = Channel<T>(capacity = Channel.BUFFERED)
+private class ActionViewModel<T> : ViewModel() {
+    val channel = Channel<T>()
     val pair = channel to channel.consumeAsFlow()
     override fun onCleared() {
         channel.close()
@@ -61,59 +60,76 @@ private class EventViewModel<T> : ViewModel() {
 }
 
 @Composable
-private fun <E> rememberEvent(): Pair<Channel<E>, Flow<E>> {
+private fun <E> rememberAction(
+    keys: List<Any?>,
+): Pair<Channel<E>, Flow<E>> {
     @Suppress("UNCHECKED_CAST")
     val viewModel = viewModel(
-        modelClass = EventViewModel::class,
-        keys = listOf(
-            currentCompositeKeyHash.toString(36),
-        ),
-        creator = { EventViewModel<E>() }
-    ) as EventViewModel<E>
+        modelClass = ActionViewModel::class,
+        keys = keys,
+        creator = { ActionViewModel<E>() }
+    ) as ActionViewModel<E>
     return viewModel.pair
 }
 
 /**
- * Return pair of State and Event Channel, use it in your Compose UI
- * The molecule scope and the Event Channel will be managed by the [ViewModel], so it has the same lifecycle as the [ViewModel]
+ * Return pair of State and Action Channel, use it in your Compose UI
+ * The molecule scope and the Action Channel will be managed by the [ViewModel], so it has the same lifecycle as the [ViewModel]
  *
- * @param body The body of the molecule presenter, the flow parameter is the flow of the event channel
- * @return Pair of State and Event channel
+ * @param keys The keys to use to identify the Presenter
+ * @param body The body of the molecule presenter, the flow parameter is the flow of the action channel
+ * @return Pair of State and Action channel
  */
 @Composable
 fun <T, E> rememberPresenter(
+    keys: List<Any?>,
     body: @Composable (flow: Flow<E>) -> T
 ): Pair<T, Channel<E>> {
-    rememberCoroutineScope()
-    val (channel, event) = rememberEvent<E>()
-    val presenter = rememberPresenterState { body(event) }
+    val (channel, action) = rememberAction<E>(keys = keys)
+    val presenter = rememberPresenterState(keys = keys) { body(action) }
     val state by presenter.collectAsState()
     return state to channel
 }
 
 /**
- * Return pair of State and Event channel, use it in your Presenter, not Compose UI
+ * Return pair of State and Action Channel, use it in your Compose UI
+ * The molecule scope and the Action Channel will be managed by the [ViewModel], so it has the same lifecycle as the [ViewModel]
  *
- * @param body The body of the molecule presenter, the flow parameter is the flow of the event channel
- * @return Pair of State and Event channel
+ * @param body The body of the molecule presenter, the flow parameter is the flow of the action channel
+ * @return Pair of State and Action channel
+ */
+@Composable
+inline fun <reified T, reified E> rememberPresenter(
+    crossinline body: @Composable (flow: Flow<E>) -> T
+): Pair<T, Channel<E>> {
+    return rememberPresenter(keys = listOf(T::class, E::class)) {
+        body.invoke(it)
+    }
+}
+
+/**
+ * Return pair of State and Action channel, use it in your Presenter, not Compose UI
+ *
+ * @param body The body of the molecule presenter, the flow parameter is the flow of the action channel
+ * @return Pair of State and Action channel
  */
 @Composable
 fun <T, E> rememberNestedPresenter(
     body: @Composable (flow: Flow<E>) -> T
 ): Pair<T, Channel<E>> {
-    val channel = remember { Channel<E>(capacity = Channel.BUFFERED) }
+    val channel = remember { Channel<E>() }
     val flow = remember { channel.consumeAsFlow() }
     val presenter = body(flow)
     return presenter to channel
 }
 
 /**
- * Helper function to collect the event channel in your Presenter
+ * Helper function to collect the action channel in your Presenter
  *
- * @param body Your event handler
+ * @param body Your action handler
  */
 @Composable
-fun <T> Flow<T>.collectEvent(
+fun <T> Flow<T>.collectAction(
     body: suspend T.() -> Unit,
 ) {
     LaunchedEffect(Unit) {

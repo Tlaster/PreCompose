@@ -2,7 +2,7 @@
 
 Molecule is a library from cashapp, which can write business logic in Compose, and it's also Kotlin Multiplatform project. For more information: https://github.com/cashapp/molecule
 
-# Why PreCompose with Molecule
+# Why Molecule with PreCompose
 Since Molecule does not include any Lifecycle and Navigation state management, PreCompose can help you to integrate Molecule with Lifecycle and Navigation.
 
 # Setup
@@ -19,14 +19,14 @@ You can write a Presenter like this:
 ```kotlin
 @Composable
 fun CounterPresenter(
-    event: Flow<CounterEvent>,
+    action: Flow<CounterAction>,
 ): CounterState {
     var count by remember { mutableStateOf(0) }
 
-    event.collectEvent {
+    action.collectAction {
         when (this) {
-            CounterEvent.Increment -> count++
-            CounterEvent.Decrement -> count--
+            CounterAction.Increment -> count++
+            CounterAction.Decrement -> count--
         }
     }
 
