@@ -118,15 +118,20 @@ internal class RouteStackManager(
             }
         }
 
-        if (options?.popUpTo != null && matchResult.route is SceneRoute) {
-            val index = _backStacks.indexOfLast { it.hasRoute(options.popUpTo.route) }
+        if (options != null && matchResult.route is SceneRoute) {
+            val popUpTo = options.popUpTo
+            val index = when (popUpTo) {
+                PopUpTo.None -> return
+                PopUpTo.Prev -> _backStacks.lastIndex - 1
+                is PopUpTo.Route -> if (popUpTo.route.isNotEmpty()) {
+                    _backStacks.indexOfLast { it.hasRoute(popUpTo.route) }
+                } else 0
+            }
             if (index != -1 && index != _backStacks.lastIndex) {
                 _backStacks.removeRange(
-                    if (options.popUpTo.inclusive) index else index + 1,
+                    if (popUpTo.inclusive) index else index + 1,
                     _backStacks.lastIndex
                 )
-            } else if (options.popUpTo.route.isEmpty()) {
-                _backStacks.removeRange(0, _backStacks.lastIndex)
             }
         }
     }
