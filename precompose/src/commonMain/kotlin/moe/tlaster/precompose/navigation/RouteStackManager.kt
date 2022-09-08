@@ -128,10 +128,15 @@ internal class RouteStackManager(
                 } else 0
             }
             if (index != -1 && index != _backStacks.lastIndex) {
-                _backStacks.removeRange(
+                val stacks = _backStacks.subList(
                     if (popUpTo.inclusive) index else index + 1,
                     _backStacks.lastIndex
-                )
+                ).toList()
+                _backStacks.removeAll(stacks)
+                stacks.forEach {
+                    stateHolder.removeState(it.id)
+                    it.destroyAfterTransition()
+                }
             }
         }
     }

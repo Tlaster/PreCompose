@@ -2,6 +2,7 @@ package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
+import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.navigation.transition.NavTransition
 
 @Stable
@@ -36,7 +37,11 @@ internal class RouteStack(
     }
 
     fun destroyAfterTransition() {
-        destroyAfterTransition = true
+        if (currentEntry?.lifecycle?.currentState == Lifecycle.State.InActive) {
+            onDestroyed()
+        } else {
+            destroyAfterTransition = true
+        }
     }
 
     fun onDestroyed() {
