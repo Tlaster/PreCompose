@@ -1,15 +1,34 @@
 # PreCompose
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose/badge.svg)](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose)
-[![](https://img.shields.io/badge/compose--jb-0.5.0--build226-blue)](https://github.com/JetBrains/compose-jb)
+[![compose-jb-version](https://img.shields.io/badge/compose--jb-1.2.0--alpha01--dev748-blue)](https://github.com/JetBrains/compose-jb)
+![license](https://img.shields.io/github/license/Tlaster/PreCompose)
 
-Let you write your Kotlin application in pure compose, which is **Pre**tty **Compose**.
+![badge-Android](https://img.shields.io/badge/Platform-Android-brightgreen)
+![badge-iOS](https://img.shields.io/badge/Platform-iOS-lightgray)
+![badge-JVM](https://img.shields.io/badge/Platform-JVM-orange)
+![badge-macOS](https://img.shields.io/badge/Platform-macOS-purple)
+![badge-web](https://img.shields.io/badge/Platform-Web-blue)
 
-PreCompose inspired by Jetpack Lifecycle, ViewModel, LiveData and Navigation. If you're familiar with these components in Android, PreCompose provides similar (or even the same) components for you but it's written in pure Kotlin and it's Kotlin Multiplatform project.
+Compose Multiplatform Navigation && ViewModel, inspired by Jetpack Lifecycle, ViewModel, LiveData and Navigation, PreCompose provides similar (or even the same) components for you but in Kotlin, and it's Kotlin Multiplatform project.
 
-# Why PreCompose?
-Since compose actually renders itself using skia like what Flutter does, it can be platform-independent with the power of Kotlin Multiplatform. So why not do the things that Flutter does? And get better! Just write your business logic and ui code once in one `commonMain`, and your application can be anywhere, powered by Kotlin and compose!  
+# Why PreCompose
+- Write your business logic and UI code once in one `commonMain`, and your application can be anywhere, powered by Kotlin and Compose!
+- If you familiar with Jetpack Lifecycle, ViewModel and Navigation, there will be nothing to lean.
+- Super easy to set up.
+- No need to write platform-specific code and UI.
+- Lifecycle is handled by PreCompose, you don't need to worry about it.
 
-There's nothing complex to setup, just write your ViewModel and UI code and you're good to go! Complex things like lifecycle will be handled by PreCompose.
+# Setup
+[Setup guide for PreCompose](/setup.md)
+
+# Components
+- [Navigation](/component/navigation.md)
+- [ViewModel](/component/view_model.md)
+- [Molecule Integration](/component/molecule.md)
+
+# Sample
+- [Note App](/sample.md#note-app)
+- [Greetings App with ViewModel in 100 lines!](/sample.md#greetings-app-with-viewmodel-in-100-lines)
 
 # Why the name PreCompose?
-idk, just let my cat hitting the keyboard and it came up with it.
+IDK, just let my cat hitting the keyboard, and it came up with it.

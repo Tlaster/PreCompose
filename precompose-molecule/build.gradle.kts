@@ -13,9 +13,6 @@ group = "moe.tlaster"
 version = Versions.precompose
 
 kotlin {
-    macosArm64()
-    macosX64()
-    ios("uikit")
     android {
         publishLibraryVariants("release", "debug")
     }
@@ -36,8 +33,8 @@ kotlin {
             dependencies {
                 api(compose.foundation)
                 api(compose.animation)
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Kotlin.coroutines}")
-                implementation("com.benasher44:uuid:0.4.0")
+                implementation(project(":precompose"))
+                implementation("app.cash.molecule:molecule-runtime:0.4.0")
             }
         }
         val commonTest by getting {
@@ -50,6 +47,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 api("androidx.activity:activity-ktx:${Versions.AndroidX.activity}")
+                implementation("androidx.compose.ui:ui:${Versions.compose}")
             }
         }
         val androidTest by getting {
@@ -57,15 +55,6 @@ kotlin {
                 implementation(kotlin("test-junit"))
                 implementation("junit:junit:4.13.2")
             }
-        }
-        val macosMain by creating {
-            dependsOn(commonMain)
-        }
-        val macosX64Main by getting {
-            dependsOn(macosMain)
-        }
-        val macosArm64Main by getting {
-            dependsOn(macosMain)
         }
         val jvmMain by getting {
             dependencies {
@@ -88,7 +77,7 @@ kotlin {
 android {
     compileSdk = Versions.Android.compile
     buildToolsVersion = Versions.Android.buildTools
-    namespace = "moe.tlaster.precompose"
+    namespace = "moe.tlaster.precompose.molecule"
     defaultConfig {
         minSdk = Versions.Android.min
         targetSdk = Versions.Android.target
@@ -149,8 +138,8 @@ publishing {
     publications.withType<MavenPublication> {
         artifact(javadocJar)
         pom {
-            name.set("PreCompose")
-            description.set("A third-party Jetbrains Compose library with ViewModel, LiveData and Navigation support.")
+            name.set("PreCompose-Molecule")
+            description.set("PreCompose molecule intergration")
             url.set("https://github.com/Tlaster/PreCompose")
 
             licenses {

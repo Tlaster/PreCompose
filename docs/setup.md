@@ -12,11 +12,17 @@ api("moe.tlaster:precompose:$precompose_version")
 ## Android
 Change the Activity's parent class to `moe.tlaster.precompose.lifecycle.PreComposeActivity` and use `moe.tlaster.precompose.lifecycle.setContent` for setting compose content
 
-## Desktop
+## Desktop (JVM)
 Change the `Window` to `moe.tlaster.precompose.PreComposeWindow`
 
 ## iOS
 Set the `UIWindow.rootViewController` to `PreComposeApplication`
+
+## Native macOS
+Change the `Window` to `moe.tlaster.precompose.PreComposeWindow`
+
+## Web (Canvas)
+Change the `Window` to `moe.tlaster.precompose.preComposeWindow`
 
 ## Done!
 That's it! Enjoying the PreCompose! Now you can write all your business logic and ui code in `commonMain`

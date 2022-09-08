@@ -32,7 +32,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":sample:common"))
+                implementation(project(":sample:todo:common"))
                 implementation(compose.ui)
                 implementation(compose.web.core)
                 implementation("org.jetbrains.skiko:skiko:$skikoVersion")

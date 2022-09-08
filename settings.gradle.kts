@@ -21,9 +21,11 @@ dependencyResolutionManagement {
 rootProject.name = "precompose"
 
 include(":precompose")
-include(":sample:android")
-include(":sample:desktop")
-include(":sample:common")
-include(":sample:ios")
-include(":sample:macos")
-include(":sample:js")
+include(":precompose-molecule")
+include(":sample:todo:android")
+include(":sample:todo:desktop")
+include(":sample:todo:common")
+include(":sample:todo:ios")
+include(":sample:todo:macos")
+include(":sample:todo:js")
+include(":sample:molecule")
