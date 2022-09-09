@@ -148,6 +148,13 @@ publishing {
                     url.set("https://opensource.org/licenses/MIT")
                 }
             }
+            developers {
+                developer {
+                    id.set("Tlaster")
+                    name.set("James Tlaster")
+                    email.set("tlaster@outlook.com")
+                }
+            }
             scm {
                 url.set("https://github.com/Tlaster/PreCompose")
                 connection.set("scm:git:git://github.com/Tlaster/PreCompose.git")
