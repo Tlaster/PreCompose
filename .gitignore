@@ -97,3 +97,5 @@ publish.properties
 yarn.lock
 
 *.xcodeproj
+
+*.gpg

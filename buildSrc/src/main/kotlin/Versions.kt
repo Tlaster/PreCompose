@@ -1,7 +1,7 @@
 import org.gradle.api.JavaVersion
 
 object Versions {
-    const val precompose = "1.3.5"
+    const val precompose = "1.3.6"
     object Android {
         const val min = 21
         const val compile = 33
