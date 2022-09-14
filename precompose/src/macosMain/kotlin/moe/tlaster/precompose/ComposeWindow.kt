@@ -35,8 +35,6 @@ internal class ComposeWindow(
     val inputService = MacosTextInputService()
     private val layer = ComposeLayer(
         layer = createSkiaLayer(),
-        showSoftwareKeyboard = {},
-        hideSoftwareKeyboard = {},
         getTopLeftOffset = { Offset.Zero },
         inputService = inputService,
         input = inputService.input
