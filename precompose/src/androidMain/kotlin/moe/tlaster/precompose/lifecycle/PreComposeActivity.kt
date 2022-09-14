@@ -1,7 +1,9 @@
 package moe.tlaster.precompose.lifecycle
 
+import android.os.Bundle
 import android.view.ViewGroup
 import androidx.activity.ComponentActivity
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionContext
@@ -32,6 +34,15 @@ open class PreComposeActivity :
         viewModel.viewModelStore
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        onBackPressedDispatcher.addCallback(this) {
+            if (!backDispatcher.onBackPress()) {
+                onBackPressedDispatcher.onBackPressed()
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         lifecycle.currentState = Lifecycle.State.Active
@@ -49,12 +60,6 @@ open class PreComposeActivity :
 
     override val backDispatcher by lazy {
         BackDispatcher()
-    }
-
-    override fun onBackPressed() {
-        if (!backDispatcher.onBackPress()) {
-            super.onBackPressed()
-        }
     }
 }
 
