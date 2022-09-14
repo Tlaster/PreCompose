@@ -25,6 +25,6 @@ object Versions {
     const val compose_jb = "1.2.0-alpha01-dev786"
 
     object AndroidX {
-        const val activity = "1.4.0"
+        const val activity = "1.5.1"
     }
 }

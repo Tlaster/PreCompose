@@ -8,7 +8,8 @@ import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.ViewTreeLifecycleOwner
-import androidx.savedstate.ViewTreeSavedStateRegistryOwner
+import androidx.savedstate.findViewTreeSavedStateRegistryOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
@@ -89,8 +90,8 @@ private fun PreComposeActivity.setOwners() {
     if (ViewTreeLifecycleOwner.get(decorView) == null) {
         ViewTreeLifecycleOwner.set(decorView, this)
     }
-    if (ViewTreeSavedStateRegistryOwner.get(decorView) == null) {
-        ViewTreeSavedStateRegistryOwner.set(decorView, this)
+    if (decorView.findViewTreeSavedStateRegistryOwner() == null) {
+        decorView.setViewTreeSavedStateRegistryOwner(this)
     }
 }
 

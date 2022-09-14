@@ -50,6 +50,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 api("androidx.activity:activity-ktx:${Versions.AndroidX.activity}")
+                api("androidx.savedstate:savedstate-ktx:1.2.0")
             }
         }
         val androidTest by getting {
