@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.createSkiaLayer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.native.ComposeLayer
+import androidx.compose.ui.platform.MacosTextInputService
 import kotlinx.cinterop.ObjCAction
 import kotlinx.cinterop.useContents
 import platform.AppKit.NSBackingStoreBuffered
@@ -31,11 +32,14 @@ internal class ComposeWindow(
     initialTitle: String,
     private val onCloseRequest: () -> Unit = {},
 ) : NSObject(), NSWindowDelegateProtocol {
+    val inputService = MacosTextInputService()
     private val layer = ComposeLayer(
         layer = createSkiaLayer(),
         showSoftwareKeyboard = {},
         hideSoftwareKeyboard = {},
         getTopLeftOffset = { Offset.Zero },
+        inputService = inputService,
+        input = inputService.input
     )
 
     val title: String
