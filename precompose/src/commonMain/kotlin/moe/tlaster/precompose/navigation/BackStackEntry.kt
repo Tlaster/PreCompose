@@ -4,6 +4,8 @@ import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
 import moe.tlaster.precompose.navigation.route.ComposeRoute
+import moe.tlaster.precompose.navigation.route.SceneRoute
+import moe.tlaster.precompose.navigation.transition.NavTransition
 import moe.tlaster.precompose.viewmodel.ViewModelStore
 import moe.tlaster.precompose.viewmodel.ViewModelStoreOwner
 
@@ -14,7 +16,11 @@ class BackStackEntry internal constructor(
     val queryString: QueryString? = null,
     internal val viewModel: NavControllerViewModel,
 ) : ViewModelStoreOwner, LifecycleOwner {
+
     private var destroyAfterTransition = false
+
+    internal val navTransition: NavTransition?
+        get() = if (route is SceneRoute) route.navTransition else null
 
     override val viewModelStore: ViewModelStore
         get() = viewModel.get(id = id)
@@ -44,6 +50,10 @@ class BackStackEntry internal constructor(
             lifecycleRegistry.currentState = Lifecycle.State.Destroyed
             viewModelStore.clear()
         }
+    }
+
+    fun hasRoute(route: String): Boolean {
+        return this.route.route == route
     }
 }
 

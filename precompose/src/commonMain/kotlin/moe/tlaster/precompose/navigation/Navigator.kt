@@ -22,9 +22,9 @@ class Navigator {
     private var pendingNavigation: String? = null
     // FIXME: 2022/6/27: Temp workaround for current entry
     internal val currentEntryFlow = MutableStateFlow<BackStackEntry?>(null)
-    private val stackManagerState = mutableStateOf<RouteStackManager?>(null)
+    private val stackManagerState = mutableStateOf<BackStackManager?>(null)
     private val stackManager by stackManagerState
-    internal fun init(manager: RouteStackManager) {
+    internal fun init(manager: BackStackManager) {
         stackManagerState.value = manager
         pendingNavigation?.let { it1 -> manager.navigate(it1) }
     }

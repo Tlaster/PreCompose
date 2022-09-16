@@ -7,7 +7,6 @@ import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleObserver
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.navigation.route.ComposeRoute
-import moe.tlaster.precompose.navigation.route.FloatingRoute
 import moe.tlaster.precompose.navigation.route.SceneRoute
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackHandler
@@ -17,7 +16,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @Stable
-internal class RouteStackManager(
+internal class BackStackManager(
     private val stateHolder: SaveableStateHolder,
     private val routeGraph: RouteGraph,
 ) : LifecycleObserver, BackHandler {
@@ -31,7 +30,6 @@ internal class RouteStackManager(
             value?.register(this)
         }
     private var stackEntryId = Long.MIN_VALUE
-    private var routeStackId = Long.MIN_VALUE
     var lifeCycleOwner: LifecycleOwner? = null
         set(value) {
             field?.lifecycle?.removeObserver(this)
@@ -39,13 +37,17 @@ internal class RouteStackManager(
             value?.lifecycle?.addObserver(this)
         }
     private var viewModel: NavControllerViewModel? = null
-    private val _backStacks = mutableStateListOf<RouteStack>()
-    internal val currentStack: RouteStack?
-        get() = _backStacks.lastOrNull()
+    private val _backStacks = mutableStateListOf<BackStackEntry>()
+
+    internal val backStacks: List<BackStackEntry>
+        get() = _backStacks
+
     internal val currentEntry: BackStackEntry?
-        get() = currentStack?.currentEntry
+        get() = _backStacks.lastOrNull()
+
     val canGoBack: Boolean
-        get() = currentStack?.canGoBack != false || _backStacks.size > 1
+        get() = _backStacks.size > 1
+
     private val routeParser by lazy {
         RouteParser().apply {
             routeGraph.routes
@@ -93,29 +95,17 @@ internal class RouteStackManager(
                 _backStacks.add(it)
             }
         } else {
-            val entry = BackStackEntry(
-                id = stackEntryId++,
-                route = matchResult.route,
-                pathMap = matchResult.pathMap,
-                queryString = query.takeIf { it.isNotEmpty() }?.let {
-                    QueryString(it)
-                },
-                viewModel = vm,
+            _backStacks.add(
+                BackStackEntry(
+                    id = stackEntryId++,
+                    route = matchResult.route,
+                    pathMap = matchResult.pathMap,
+                    queryString = query.takeIf { it.isNotEmpty() }?.let {
+                        QueryString(it)
+                    },
+                    viewModel = vm,
+                )
             )
-            when (matchResult.route) {
-                is SceneRoute -> {
-                    _backStacks.add(
-                        RouteStack(
-                            id = routeStackId++,
-                            backStackEntry = entry,
-                            navTransition = matchResult.route.navTransition,
-                        )
-                    )
-                }
-                is FloatingRoute -> {
-                    currentStack?.stacks?.add(entry)
-                }
-            }
         }
 
         if (options != null && matchResult.route is SceneRoute) {
@@ -135,7 +125,7 @@ internal class RouteStackManager(
                 _backStacks.removeAll(stacks)
                 stacks.forEach {
                     stateHolder.removeState(it.id)
-                    it.destroyAfterTransition()
+                    it.destroy()
                 }
             }
         }
@@ -146,20 +136,9 @@ internal class RouteStackManager(
             backDispatcher?.onBackPress()
             return
         }
-        when {
-            currentStack?.canGoBack == true -> {
-                currentStack?.goBack()
-            }
-            _backStacks.size > 1 -> {
-                val stack = _backStacks.removeLast()
-                val entry = stack.currentEntry
-                stateHolder.removeState(stack.id)
-                stack.destroyAfterTransition()
-                entry
-            }
-            else -> {
-                null
-            }
+        _backStacks.removeLastOrNull()?.apply {
+            stateHolder.removeState(id)
+            destroy()
         }?.takeIf { backStackEntry ->
             _suspendResult.containsKey(backStackEntry)
         }?.let {
@@ -174,11 +153,11 @@ internal class RouteStackManager(
     override fun onStateChanged(state: Lifecycle.State) {
         when (state) {
             Lifecycle.State.Initialized -> Unit
-            Lifecycle.State.Active -> currentStack?.onActive()
-            Lifecycle.State.InActive -> currentStack?.onInActive()
+            Lifecycle.State.Active -> currentEntry?.active()
+            Lifecycle.State.InActive -> currentEntry?.inActive()
             Lifecycle.State.Destroyed -> {
                 _backStacks.forEach {
-                    it.onDestroyed()
+                    it.destroy()
                 }
                 _backStacks.clear()
             }
@@ -204,7 +183,7 @@ internal class RouteStackManager(
         }
     }
 
-    internal fun contains(stack: RouteStack): Boolean {
-        return _backStacks.contains(stack)
+    internal fun contains(entry: BackStackEntry): Boolean {
+        return _backStacks.contains(entry)
     }
 }
