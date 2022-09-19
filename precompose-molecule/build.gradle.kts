@@ -67,6 +67,15 @@ kotlin {
                 runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.0")
             }
         }
+        val macosMain by creating {
+            dependsOn(commonMain)
+        }
+        val macosX64Main by getting {
+            dependsOn(macosMain)
+        }
+        val macosArm64Main by getting {
+            dependsOn(macosMain)
+        }
     }
 }
 
