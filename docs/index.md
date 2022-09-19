@@ -1,6 +1,6 @@
 # PreCompose
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose/badge.svg)](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose)
-[![compose-jb-version](https://img.shields.io/badge/compose--jb-1.2.0--alpha01--dev786-blue)](https://github.com/JetBrains/compose-jb)
+[![compose-jb-version](https://img.shields.io/badge/compose--jb-1.2.0--beta01-blue)](https://github.com/JetBrains/compose-jb)
 ![license](https://img.shields.io/github/license/Tlaster/PreCompose)
 
 ![badge-Android](https://img.shields.io/badge/Platform-Android-brightgreen)
