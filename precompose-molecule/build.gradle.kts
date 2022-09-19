@@ -24,13 +24,16 @@ kotlin {
             useJUnitPlatform()
         }
     }
+    macosArm64()
+    macosX64()
+    ios()
     sourceSets {
         val commonMain by getting {
             dependencies {
                 api(compose.foundation)
                 api(compose.animation)
                 implementation(project(":precompose"))
-                implementation("app.cash.molecule:molecule-runtime:0.4.0")
+                implementation("app.cash.molecule:molecule-runtime:0.5.0-beta01")
             }
         }
         val commonTest by getting {
