@@ -82,7 +82,7 @@ private fun <E> rememberAction(
  */
 @Composable
 fun <T, E> rememberPresenter(
-    keys: List<Any?>,
+    keys: List<Any?> = emptyList(),
     body: @Composable (flow: Flow<E>) -> T
 ): Pair<T, Channel<E>> {
     val (channel, action) = rememberAction<E>(keys = keys)
@@ -98,14 +98,14 @@ fun <T, E> rememberPresenter(
  * @param body The body of the molecule presenter, the flow parameter is the flow of the action channel
  * @return Pair of State and Action channel
  */
-@Composable
-inline fun <reified T, reified E> rememberPresenter(
-    crossinline body: @Composable (flow: Flow<E>) -> T
-): Pair<T, Channel<E>> {
-    return rememberPresenter(keys = listOf(T::class, E::class)) {
-        body.invoke(it)
-    }
-}
+// @Composable
+// inline fun <reified T, reified E> rememberPresenter(
+//     crossinline body: @Composable (flow: Flow<E>) -> T
+// ): Pair<T, Channel<E>> {
+//     return rememberPresenter(keys = listOf(T::class, E::class)) {
+//         body.invoke(it)
+//     }
+// }
 
 /**
  * Return pair of State and Action channel, use it in your Presenter, not Compose UI
