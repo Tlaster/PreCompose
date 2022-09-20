@@ -32,8 +32,8 @@ kotlin {
             dependencies {
                 api(compose.foundation)
                 api(compose.animation)
-                implementation(project(":precompose"))
-                implementation("app.cash.molecule:molecule-runtime:0.5.0-beta01")
+                api(project(":precompose"))
+                api("app.cash.molecule:molecule-runtime:0.5.0-beta01")
             }
         }
         val commonTest by getting {
