@@ -54,44 +54,41 @@ fun PreComposeWindow(
                 }
             }
     }
-    ProvideDesktopCompositionLocals(
-        holder
-    ) {
-        Window(
-            onCloseRequest = {
-                holder.lifecycle.currentState = Lifecycle.State.Destroyed
-                onCloseRequest.invoke()
-            },
-            state = state,
-            visible = visible,
-            title = title,
-            icon = icon,
-            undecorated = undecorated,
-            transparent = transparent,
-            resizable = resizable,
-            enabled = enabled,
-            focusable = focusable,
-            alwaysOnTop = alwaysOnTop,
-            onPreviewKeyEvent = onPreviewKeyEvent,
-            onKeyEvent = onKeyEvent,
-            content = {
+    Window(
+        onCloseRequest = {
+            holder.lifecycle.currentState = Lifecycle.State.Destroyed
+            onCloseRequest.invoke()
+        },
+        state = state,
+        visible = visible,
+        title = title,
+        icon = icon,
+        undecorated = undecorated,
+        transparent = transparent,
+        resizable = resizable,
+        enabled = enabled,
+        focusable = focusable,
+        alwaysOnTop = alwaysOnTop,
+        onPreviewKeyEvent = onPreviewKeyEvent,
+        onKeyEvent = onKeyEvent,
+        content = {
+            ProvideDesktopCompositionLocals(holder) {
                 content.invoke(this)
             }
-        )
-    }
+        }
+    )
 }
 
 @Composable
-private fun ProvideDesktopCompositionLocals(
-    holder: PreComposeWindowHolder = remember {
-        PreComposeWindowHolder()
-    },
+private fun FrameWindowScope.ProvideDesktopCompositionLocals(
+    holder: PreComposeWindowHolder,
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
         LocalLifecycleOwner provides holder,
         LocalViewModelStoreOwner provides holder,
         LocalBackDispatcherOwner provides holder,
+        LocalComposeWindow provides window,
     ) {
         content.invoke()
     }
