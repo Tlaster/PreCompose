@@ -13,7 +13,7 @@ Compose Multiplatform Navigation && ViewModel, inspired by Jetpack Lifecycle, Vi
 
 # Why PreCompose
  - Write your business logic and UI code once in one `commonMain`, and your application can be anywhere, powered by Kotlin and Compose!
- - If you familiar with Jetpack Lifecycle, ViewModel and Navigation, there will be nothing to lean.
+ - If you familiar with Jetpack Lifecycle, ViewModel and Navigation, there will be nothing to learn.
  - Super easy to set up.
  - No need to write platform-specific code and UI.
  - Lifecycle is handled by PreCompose, you don't need to worry about it.
