@@ -27,7 +27,7 @@ kotlin {
     macosArm64()
     macosX64()
     ios()
-    iosSimulatorArm64()
+    // iosSimulatorArm64()
     sourceSets {
         val commonMain by getting {
             dependencies {
