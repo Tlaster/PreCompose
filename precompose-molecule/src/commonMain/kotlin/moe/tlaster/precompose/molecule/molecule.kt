@@ -52,7 +52,7 @@ private fun <T> rememberPresenterState(
 }
 
 private class ActionViewModel<T> : ViewModel() {
-    val channel = Channel<T>()
+    val channel = Channel<T>(Channel.UNLIMITED)
     val pair = channel to channel.consumeAsFlow()
     override fun onCleared() {
         channel.close()
@@ -117,7 +117,7 @@ fun <T, E> rememberPresenter(
 fun <T, E> rememberNestedPresenter(
     body: @Composable (flow: Flow<E>) -> T
 ): Pair<T, Channel<E>> {
-    val channel = remember { Channel<E>() }
+    val channel = remember { Channel<E>(Channel.UNLIMITED) }
     val flow = remember { channel.consumeAsFlow() }
     val presenter = body(flow)
     return presenter to channel
