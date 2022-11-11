@@ -1,11 +1,19 @@
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "EXPOSED_PARAMETER_TYPE")
+@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "EXPOSED_PARAMETER_TYPE", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
 package moe.tlaster.precompose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.createSkiaLayer
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.native.ComposeLayer
+import androidx.compose.ui.node.LayoutNode
+import androidx.compose.ui.platform.AccessibilityController
+import androidx.compose.ui.platform.EmptyFocusManager
 import androidx.compose.ui.platform.MacosTextInputService
+import androidx.compose.ui.platform.Platform
+import androidx.compose.ui.platform.ViewConfiguration
+import androidx.compose.ui.platform.WindowInfoImpl
+import androidx.compose.ui.semantics.SemanticsOwner
 import kotlinx.cinterop.ObjCAction
 import kotlinx.cinterop.useContents
 import platform.AppKit.NSBackingStoreBuffered
@@ -32,14 +40,41 @@ internal class ComposeWindow(
     initialTitle: String,
     private val onCloseRequest: () -> Unit = {},
 ) : NSObject(), NSWindowDelegateProtocol {
-    val inputService = MacosTextInputService()
-    private val layer = ComposeLayer(
-        layer = createSkiaLayer(),
-        getTopLeftOffset = { Offset.Zero },
-        inputService = inputService,
-        input = inputService.input
-    )
+    private val macosTextInputService = MacosTextInputService()
+    private val platform: Platform = object : Platform {
+        override val windowInfo = WindowInfoImpl().apply {
+            // true is a better default if platform doesn't provide WindowInfo.
+            // otherwise UI will be rendered always in unfocused mode
+            // (hidden textfield cursor, gray titlebar, etc)
+            isWindowFocused = true
+        }
 
+        override val focusManager = EmptyFocusManager
+
+        override fun requestFocusForOwner() = false
+
+        override fun accessibilityController(owner: SemanticsOwner) = object : AccessibilityController {
+            override fun onSemanticsChange() = Unit
+            override fun onLayoutChange(layoutNode: LayoutNode) = Unit
+            override suspend fun syncLoop() = Unit
+        }
+
+        override fun setPointerIcon(pointerIcon: PointerIcon) = Unit
+        override val viewConfiguration = object : ViewConfiguration {
+            override val longPressTimeoutMillis: Long = 500
+            override val doubleTapTimeoutMillis: Long = 300
+            override val doubleTapMinTimeMillis: Long = 40
+            override val touchSlop: Float = 18f
+        }
+        override val textInputService = macosTextInputService
+    }
+
+    val layer = ComposeLayer(
+        layer = createSkiaLayer(),
+        platform = platform,
+        getTopLeftOffset = { Offset.Zero },
+        input = macosTextInputService.input
+    )
     val title: String
         get() = nsWindow.title()
 

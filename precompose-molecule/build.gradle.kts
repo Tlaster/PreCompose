@@ -27,13 +27,14 @@ kotlin {
     macosArm64()
     macosX64()
     ios()
+    iosSimulatorArm64()
     sourceSets {
         val commonMain by getting {
             dependencies {
                 api(compose.foundation)
                 api(compose.animation)
                 api(project(":precompose"))
-                api("app.cash.molecule:molecule-runtime:0.5.0-beta01")
+                api("app.cash.molecule:molecule-runtime:0.6.0")
             }
         }
         val commonTest by getting {

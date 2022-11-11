@@ -56,7 +56,7 @@ kotlin {
                 implementation(compose.material)
                 implementation(project(":precompose"))
                 implementation(project(":precompose-molecule"))
-                implementation("app.cash.molecule:molecule-runtime:0.5.0-beta01")
+                implementation("app.cash.molecule:molecule-runtime:0.6.0")
             }
         }
         val jvmMain by getting {

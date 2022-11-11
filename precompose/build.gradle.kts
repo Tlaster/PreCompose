@@ -16,6 +16,7 @@ kotlin {
     macosArm64()
     macosX64()
     ios("uikit")
+    iosSimulatorArm64("uikit")
     android {
         publishLibraryVariants("release", "debug")
     }
