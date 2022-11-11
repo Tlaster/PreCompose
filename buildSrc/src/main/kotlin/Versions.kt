@@ -23,7 +23,7 @@ object Versions {
     const val ktlint = "0.45.2"
     const val compose = "1.2.1"
     const val compose_jb = "1.2.1"
-    const val composeCompiler = "1.3.2"
+    const val composeCompiler = "1.4.0-alpha01"
 
     object AndroidX {
         const val activity = "1.6.1"
