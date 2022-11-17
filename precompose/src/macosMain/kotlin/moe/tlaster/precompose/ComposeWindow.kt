@@ -4,6 +4,7 @@ package moe.tlaster.precompose
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.createSkiaLayer
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.native.ComposeLayer
 import androidx.compose.ui.node.LayoutNode
@@ -11,6 +12,8 @@ import androidx.compose.ui.platform.AccessibilityController
 import androidx.compose.ui.platform.EmptyFocusManager
 import androidx.compose.ui.platform.MacosTextInputService
 import androidx.compose.ui.platform.Platform
+import androidx.compose.ui.platform.TextToolbar
+import androidx.compose.ui.platform.TextToolbarStatus
 import androidx.compose.ui.platform.ViewConfiguration
 import androidx.compose.ui.platform.WindowInfoImpl
 import androidx.compose.ui.semantics.SemanticsOwner
@@ -42,6 +45,18 @@ internal class ComposeWindow(
 ) : NSObject(), NSWindowDelegateProtocol {
     private val macosTextInputService = MacosTextInputService()
     private val platform: Platform = object : Platform {
+
+        override val textToolbar: TextToolbar = object : TextToolbar {
+            override fun hide() = Unit
+            override val status: TextToolbarStatus = TextToolbarStatus.Hidden
+            override fun showMenu(
+                rect: Rect,
+                onCopyRequested: (() -> Unit)?,
+                onPasteRequested: (() -> Unit)?,
+                onCutRequested: (() -> Unit)?,
+                onSelectAllRequested: (() -> Unit)?
+            ) = Unit
+        }
         override val windowInfo = WindowInfoImpl().apply {
             // true is a better default if platform doesn't provide WindowInfo.
             // otherwise UI will be rendered always in unfocused mode
