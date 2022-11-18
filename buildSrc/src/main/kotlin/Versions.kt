@@ -1,7 +1,7 @@
 import org.gradle.api.JavaVersion
 
 object Versions {
-    const val precompose = "1.3.10"
+    const val precompose = "1.3.11"
     object Android {
         const val min = 21
         const val compile = 33
@@ -22,7 +22,7 @@ object Versions {
     const val spotless = "6.7.0"
     const val ktlint = "0.45.2"
     const val compose = "1.3.1"
-    const val compose_jb = "1.3.0-beta01"
+    const val compose_jb = "1.3.0-beta02"
     const val composeCompiler = "1.3.2.1"
 
     object AndroidX {
