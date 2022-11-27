@@ -3,9 +3,10 @@ package moe.tlaster.precompose.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import moe.tlaster.precompose.ui.viewModel
+import moe.tlaster.precompose.viewmodel.ViewModel
 
 /**
  * Creates a [Navigator] that controls the [NavHost].
@@ -14,7 +15,15 @@ import kotlinx.coroutines.flow.asSharedFlow
  */
 @Composable
 fun rememberNavigator(): Navigator {
-    return remember { Navigator() }
+    return viewModel(NavigatorViewModel::class) {
+        NavigatorViewModel()
+    }.navigator
+}
+
+private class NavigatorViewModel : ViewModel() {
+    val navigator by lazy {
+        Navigator()
+    }
 }
 
 class Navigator {
