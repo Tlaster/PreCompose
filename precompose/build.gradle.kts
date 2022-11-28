@@ -43,6 +43,8 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
+                api(compose.foundation)
+                api(compose.animation)
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
                 // implementation(compose("org.jetbrains.compose.ui:ui-test-junit4"))
