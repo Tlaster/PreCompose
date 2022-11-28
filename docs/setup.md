@@ -1,12 +1,14 @@
 # Setup
 
-PreCompose only support [Jetbrains Compose](https://github.com/JetBrains/compose-jb) ATM. If you're using Google's Jetpack Compose please wait for a release in the future.
-
 ## Add Dependency
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose/badge.svg)](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose)
 
 Add the dependency **in your common module's commonMain sourceSet**
 ```
+// Please do remember to add compose.foundation and compose.animation
+api(compose.foundation)
+api(compose.animation)
+//...
 api("moe.tlaster:precompose:$precompose_version")
 ```
 ## Android
