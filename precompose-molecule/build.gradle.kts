@@ -34,7 +34,7 @@ kotlin {
                 compileOnly(compose.foundation)
                 compileOnly(compose.animation)
                 compileOnly(project(":precompose"))
-                compileOnly("app.cash.molecule:molecule-runtime:0.6.1")
+                compileOnly("app.cash.molecule:molecule-runtime:0.7.0")
             }
         }
         val commonTest by getting {

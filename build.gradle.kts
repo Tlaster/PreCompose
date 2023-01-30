@@ -31,12 +31,4 @@ allprojects {
             targetExclude("$buildDir/**/*.java", "bin/**/*.java")
         }
     }
-
-    configurations.all {
-        resolutionStrategy.dependencySubstitution {
-            substitute(module("org.jetbrains.compose.compiler:compiler")).apply {
-                using(module("org.jetbrains.compose.compiler:compiler:${Versions.composeCompiler}"))
-            }
-        }
-    }
 }
