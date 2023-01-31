@@ -15,8 +15,10 @@ version = Versions.precompose
 kotlin {
     macosArm64()
     macosX64()
-    ios("uikit")
-    // iosSimulatorArm64("uikit")
+    // ios("uikit")
+    iosX64("uikitX64")
+    iosArm64("uikitArm64")
+    iosSimulatorArm64("uikitSimulatorArm64")
     android {
         publishLibraryVariants("release", "debug")
     }
@@ -85,6 +87,18 @@ kotlin {
         }
         val jsMain by getting {
             dependsOn(commonMain)
+        }
+        val uikitMain by creating {
+            dependsOn(commonMain)
+        }
+        val uikitX64Main by getting {
+            dependsOn(uikitMain)
+        }
+        val uikitArm64Main by getting {
+            dependsOn(uikitMain)
+        }
+        val uikitSimulatorArm64Main by getting {
+            dependsOn(uikitMain)
         }
     }
 }
