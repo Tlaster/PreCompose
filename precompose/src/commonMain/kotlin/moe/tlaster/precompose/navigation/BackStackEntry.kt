@@ -53,8 +53,16 @@ class BackStackEntry internal constructor(
         }
     }
 
-    fun hasRoute(route: String, path: String): Boolean {
-        return this.route.route == route && this.path == path
+    fun hasRoute(route: String): Boolean {
+        return this.route.route == route
+    }
+}
+
+internal inline fun BackStackEntry.hasRoute(route: String, path: String, includePath: Boolean): Boolean {
+    return if (includePath) {
+        hasRoute(route = route) && this.path == path
+    } else {
+        hasRoute(route = route)
     }
 }
 

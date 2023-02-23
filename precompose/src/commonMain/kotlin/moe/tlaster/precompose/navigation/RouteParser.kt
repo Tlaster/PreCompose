@@ -522,7 +522,7 @@ internal class RouteParser {
         return if (staticRoute == null) {
             findInternal(path)
         } else {
-            return RouteMatchResult(route = staticRoute, path = path)
+            return RouteMatchResult(staticRoute)
         }
     }
 
@@ -530,7 +530,7 @@ internal class RouteParser {
         // use radix tree
         val result = RouteMatch()
         val route = root.findRoute(result, path) ?: return null
-        return RouteMatchResult(route = route, pathMap = result.pathMap, path = path)
+        return RouteMatchResult(route, result.pathMap)
     }
 
     companion object {
