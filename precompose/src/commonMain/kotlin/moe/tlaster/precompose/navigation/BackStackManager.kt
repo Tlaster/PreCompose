@@ -115,7 +115,7 @@ internal class BackStackManager(
                 PopUpTo.None -> return
                 PopUpTo.Prev -> _backStacks.lastIndex - 1
                 is PopUpTo.Route -> if (popUpTo.route.isNotEmpty()) {
-                    _backStacks.indexOfLast { it.hasRoute(popUpTo.route) }
+                    _backStacks.indexOfLast { it.hasRoute(popUpTo.route, path, options.includePath) }
                 } else 0
             }
             if (index != -1 && index != _backStacks.lastIndex) {
