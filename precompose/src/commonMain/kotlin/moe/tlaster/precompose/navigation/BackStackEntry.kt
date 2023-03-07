@@ -12,6 +12,7 @@ import moe.tlaster.precompose.viewmodel.ViewModelStoreOwner
 class BackStackEntry internal constructor(
     val id: Long,
     val route: ComposeRoute,
+    val path: String,
     val pathMap: Map<String, String>,
     val queryString: QueryString? = null,
     internal val viewModel: NavControllerViewModel,
@@ -54,6 +55,14 @@ class BackStackEntry internal constructor(
 
     fun hasRoute(route: String): Boolean {
         return this.route.route == route
+    }
+}
+
+internal inline fun BackStackEntry.hasRoute(route: String, path: String, includePath: Boolean): Boolean {
+    return if (includePath) {
+        hasRoute(route = route) && this.path == path
+    } else {
+        hasRoute(route = route)
     }
 }
 

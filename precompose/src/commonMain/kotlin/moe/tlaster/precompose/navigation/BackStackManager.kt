@@ -88,9 +88,9 @@ internal class BackStackManager(
             options != null &&
             matchResult.route is SceneRoute &&
             options.launchSingleTop &&
-            _backStacks.any { it.hasRoute(matchResult.route.route) }
+            _backStacks.any { it.hasRoute(matchResult.route.route, path, options.includePath) }
         ) {
-            _backStacks.firstOrNull { it.hasRoute(matchResult.route.route) }?.let {
+            _backStacks.firstOrNull { it.hasRoute(matchResult.route.route, path, options.includePath) }?.let {
                 _backStacks.remove(it)
                 _backStacks.add(it)
             }
@@ -104,6 +104,7 @@ internal class BackStackManager(
                         QueryString(it)
                     },
                     viewModel = vm,
+                    path = path
                 )
             )
         }
@@ -114,7 +115,7 @@ internal class BackStackManager(
                 PopUpTo.None -> return
                 PopUpTo.Prev -> _backStacks.lastIndex - 1
                 is PopUpTo.Route -> if (popUpTo.route.isNotEmpty()) {
-                    _backStacks.indexOfLast { it.hasRoute(popUpTo.route) }
+                    _backStacks.indexOfLast { it.hasRoute(popUpTo.route, path, options.includePath) }
                 } else 0
             }
             if (index != -1 && index != _backStacks.lastIndex) {
