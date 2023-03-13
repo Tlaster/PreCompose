@@ -74,6 +74,7 @@ fun NavHost(
         manager.setViewModelStore(viewModelStoreOwner.viewModelStore)
         manager.backDispatcher = backDispatcher
         onDispose {
+            backDispatcher?.unregister(manager)
             manager.lifeCycleOwner = null
         }
     }
