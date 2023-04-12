@@ -165,14 +165,14 @@ internal class BackStackManager(
         }
     }
 
-    override fun handleBackPress(): Boolean {
-        return if (canGoBack) {
+    override fun handleBackPress() {
+        if (canGoBack) {
             goBack()
-            true
-        } else {
-            false
         }
     }
+
+    override val isEnabled: Boolean
+        get() = canGoBack
 
     fun navigateInitial(initialRoute: String) {
         if (_backStacks.isNotEmpty()) {

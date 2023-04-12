@@ -82,8 +82,9 @@ fun NavHost(
     LaunchedEffect(manager, initialRoute) {
         manager.navigateInitial(initialRoute)
     }
-    LaunchedEffect(manager.currentEntry) {
+    LaunchedEffect(manager.currentEntry, backDispatcher) {
         navigator.currentEntryFlow.value = manager.currentEntry
+        backDispatcher?.onBackStackChanged()
     }
 
     val transitionSpec: AnimatedContentScope<BackStackEntry>.() -> ContentTransform = {

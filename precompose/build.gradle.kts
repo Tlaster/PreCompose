@@ -37,8 +37,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                compileOnly(compose.foundation)
-                compileOnly(compose.animation)
+                implementation(compose.foundation)
+                implementation(compose.animation)
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Kotlin.coroutines}")
                 implementation("com.benasher44:uuid:0.6.0")
             }
@@ -55,10 +55,11 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 api("androidx.activity:activity-ktx:${Versions.AndroidX.activity}")
-                api("androidx.savedstate:savedstate-ktx:1.2.0")
+                implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+                api("androidx.savedstate:savedstate-ktx:1.2.1")
             }
         }
-        val androidTest by getting {
+        val androidUnitTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
                 implementation("junit:junit:4.13.2")
@@ -109,7 +110,6 @@ android {
     namespace = "moe.tlaster.precompose"
     defaultConfig {
         minSdk = Versions.Android.min
-        targetSdk = Versions.Android.target
     }
     compileOptions {
         sourceCompatibility = Versions.Java.java

@@ -1,6 +1,10 @@
 package moe.tlaster.precompose.ui
 
 import androidx.compose.runtime.compositionLocalOf
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 
 val LocalBackDispatcherOwner = compositionLocalOf<BackDispatcherOwner?> { null }
 
@@ -11,13 +15,19 @@ interface BackDispatcherOwner {
 class BackDispatcher {
     private val handlers = arrayListOf<BackHandler>()
 
-    fun onBackPress(): Boolean {
-        for (it in handlers) {
-            if (it.handleBackPress()) {
-                return true
-            }
-        }
-        return false
+    fun onBackPress() {
+        handlers.lastOrNull {
+            it.isEnabled
+        }?.handleBackPress()
+    }
+
+    private val canHandleBackPressFlow = MutableStateFlow(0)
+    val canHandleBackPress: Flow<Boolean> = canHandleBackPressFlow.map {
+        handlers.any { it.isEnabled }
+    }
+
+    internal fun onBackStackChanged() {
+        canHandleBackPressFlow.value++
     }
 
     internal fun register(handler: BackHandler) {
@@ -30,5 +40,6 @@ class BackDispatcher {
 }
 
 interface BackHandler {
-    fun handleBackPress(): Boolean
+    val isEnabled: Boolean
+    fun handleBackPress()
 }

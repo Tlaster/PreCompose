@@ -7,6 +7,11 @@ import moe.tlaster.precompose.viewmodel.ViewModelStoreOwner
 import kotlin.reflect.KClass
 
 @Composable
+/**
+ * Returns a [ViewModel] instance that is scoped to the given [ViewModelStoreOwner].
+ * CAUTION: If you're using Kotlin/Native target, please use [viewModel] with modelClass parameter instead.
+ * @param keys A list of keys that will be used to identify the ViewModel.
+ */
 inline fun <reified T : ViewModel> viewModel(
     keys: List<Any?> = emptyList(),
     noinline creator: () -> T,

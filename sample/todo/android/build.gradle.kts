@@ -30,7 +30,4 @@ android {
         sourceCompatibility = Versions.Java.java
         targetCompatibility = Versions.Java.java
     }
-    lintOptions {
-        isCheckReleaseBuilds = false
-    }
 }

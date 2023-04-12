@@ -37,20 +37,6 @@ private class PresenterViewModel<T>(
     }
 }
 
-@Composable
-private fun <T> rememberPresenterState(
-    keys: List<Any?>,
-    body: @Composable () -> T,
-): StateFlow<T> {
-    @Suppress("UNCHECKED_CAST")
-    val viewModel = viewModel(
-        modelClass = PresenterViewModel::class,
-        keys = keys,
-        creator = { PresenterViewModel(body) }
-    ) as PresenterViewModel<T>
-    return viewModel.state
-}
-
 private class ActionViewModel<T> : ViewModel() {
     val channel = Channel<T>(Channel.UNLIMITED)
     val pair = channel to channel.consumeAsFlow()
@@ -70,6 +56,20 @@ private fun <E> rememberAction(
         creator = { ActionViewModel<E>() }
     ) as ActionViewModel<E>
     return viewModel.pair
+}
+
+@Composable
+private fun <T> rememberPresenterState(
+    keys: List<Any?> = emptyList(),
+    body: @Composable () -> T,
+): StateFlow<T> {
+    @Suppress("UNCHECKED_CAST")
+    val viewModel = viewModel(
+        modelClass = PresenterViewModel::class,
+        keys = keys,
+        creator = { PresenterViewModel(body) }
+    ) as PresenterViewModel<T>
+    return viewModel.state
 }
 
 /**
