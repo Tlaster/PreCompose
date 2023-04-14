@@ -9,6 +9,7 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.native.ComposeLayer
 import androidx.compose.ui.node.LayoutNode
 import androidx.compose.ui.platform.AccessibilityController
+import androidx.compose.ui.platform.DefaultInputModeManager
 import androidx.compose.ui.platform.EmptyFocusManager
 import androidx.compose.ui.platform.MacosTextInputService
 import androidx.compose.ui.platform.Platform
@@ -45,18 +46,6 @@ internal class ComposeWindow(
 ) : NSObject(), NSWindowDelegateProtocol {
     private val macosTextInputService = MacosTextInputService()
     private val platform: Platform = object : Platform {
-
-        override val textToolbar: TextToolbar = object : TextToolbar {
-            override fun hide() = Unit
-            override val status: TextToolbarStatus = TextToolbarStatus.Hidden
-            override fun showMenu(
-                rect: Rect,
-                onCopyRequested: (() -> Unit)?,
-                onPasteRequested: (() -> Unit)?,
-                onCutRequested: (() -> Unit)?,
-                onSelectAllRequested: (() -> Unit)?
-            ) = Unit
-        }
         override val windowInfo = WindowInfoImpl().apply {
             // true is a better default if platform doesn't provide WindowInfo.
             // otherwise UI will be rendered always in unfocused mode
@@ -64,6 +53,7 @@ internal class ComposeWindow(
             isWindowFocused = true
         }
 
+        override val inputModeManager = DefaultInputModeManager()
         override val focusManager = EmptyFocusManager
 
         override fun requestFocusForOwner() = false
@@ -81,6 +71,18 @@ internal class ComposeWindow(
             override val doubleTapMinTimeMillis: Long = 40
             override val touchSlop: Float = 18f
         }
+        override val textToolbar: TextToolbar = object : TextToolbar {
+            override fun hide() = Unit
+            override val status: TextToolbarStatus = TextToolbarStatus.Hidden
+            override fun showMenu(
+                rect: Rect,
+                onCopyRequested: (() -> Unit)?,
+                onPasteRequested: (() -> Unit)?,
+                onCutRequested: (() -> Unit)?,
+                onSelectAllRequested: (() -> Unit)?
+            ) = Unit
+        }
+
         override val textInputService = macosTextInputService
     }
 
