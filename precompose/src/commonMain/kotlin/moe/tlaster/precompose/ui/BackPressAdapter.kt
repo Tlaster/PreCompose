@@ -42,3 +42,12 @@ interface BackHandler {
     val isEnabled: Boolean
     fun handleBackPress()
 }
+
+internal class DefaultBackHandler(
+    override var isEnabled: Boolean = true,
+    private val onBackPress: () -> Unit,
+) : BackHandler {
+    override fun handleBackPress() {
+        onBackPress()
+    }
+}
