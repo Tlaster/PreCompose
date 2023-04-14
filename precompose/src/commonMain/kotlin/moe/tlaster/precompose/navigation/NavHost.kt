@@ -16,10 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
+import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
 import moe.tlaster.precompose.navigation.route.ComposeRoute
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import moe.tlaster.precompose.stateholder.LocalStateHolder
-import moe.tlaster.precompose.ui.LocalLifecycleOwner
 
 /**
  * Provides in place in the Compose hierarchy for self contained navigation to occur.

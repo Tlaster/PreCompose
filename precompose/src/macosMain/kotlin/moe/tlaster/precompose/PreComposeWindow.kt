@@ -5,12 +5,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
+import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
 import moe.tlaster.precompose.stateholder.LocalStateHolder
 import moe.tlaster.precompose.stateholder.StateHolder
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
-import moe.tlaster.precompose.ui.LocalLifecycleOwner
 
 fun PreComposeWindow(
     title: String,

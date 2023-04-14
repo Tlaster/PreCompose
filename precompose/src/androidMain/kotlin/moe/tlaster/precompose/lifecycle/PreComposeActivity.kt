@@ -19,7 +19,6 @@ import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import moe.tlaster.precompose.stateholder.LocalStateHolder
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
-import moe.tlaster.precompose.ui.LocalLifecycleOwner
 
 open class PreComposeActivity : ComponentActivity() {
     internal val viewModel by viewModels<PreComposeViewModel>()

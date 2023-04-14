@@ -21,6 +21,11 @@ class StateHolder : AutoCloseable {
         _states.remove(key)
     }
 
+    operator fun <T> get(key: String): T? {
+        @Suppress("UNCHECKED_CAST")
+        return _states[key] as T?
+    }
+
     override fun close() {
         for (value in _states.values) {
             if (value is AutoCloseable) {

@@ -6,9 +6,9 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
 import moe.tlaster.precompose.ui.BackHandler
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
-import moe.tlaster.precompose.ui.LocalLifecycleOwner
 
 @Composable
 public fun BackHandler(enabled: Boolean = true, onBack: () -> Unit) {

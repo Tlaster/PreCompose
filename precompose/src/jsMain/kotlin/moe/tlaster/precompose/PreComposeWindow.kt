@@ -7,13 +7,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.window.ComposeWindow
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
+import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
 import moe.tlaster.precompose.stateholder.LocalStateHolder
 import moe.tlaster.precompose.stateholder.StateHolder
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
-import moe.tlaster.precompose.ui.LocalLifecycleOwner
 
+/**
+ * Creates a new [ComposeWindow] with the given [title] and [content].
+ *
+ * This is a temporary workaround until ComposeJS is more mature.
+ * Eventually this can just be a Window(title, content) call.
+ */
 fun preComposeWindow(
     title: String = "Untitled",
     // We need to pass the ComposeWindow up to the caller for now,
@@ -23,8 +29,6 @@ fun preComposeWindow(
     // Ugly workaround until ComposeJS is more mature.
     // Eventually this can just be a Window(title, content) call.
     ComposeWindow().apply {
-        setTitle(title)
-
         setContent {
             val holder = remember {
                 PreComposeWindowHolder()

@@ -15,12 +15,12 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
+import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
 import moe.tlaster.precompose.stateholder.LocalStateHolder
 import moe.tlaster.precompose.stateholder.StateHolder
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
-import moe.tlaster.precompose.ui.LocalLifecycleOwner
 
 @Composable
 fun PreComposeWindow(

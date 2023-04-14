@@ -1,5 +1,3 @@
-import org.jetbrains.compose.compose
-
 plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose") version Versions.compose_jb
@@ -23,6 +21,7 @@ kotlin {
                 api(compose.foundation)
                 api(compose.material)
                 api(project(":precompose"))
+                api(project(":precompose-viewmodel"))
             }
         }
         val commonTest by getting

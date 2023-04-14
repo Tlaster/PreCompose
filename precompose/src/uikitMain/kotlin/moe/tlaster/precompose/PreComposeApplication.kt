@@ -6,12 +6,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Application
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
+import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
 import moe.tlaster.precompose.stateholder.LocalStateHolder
 import moe.tlaster.precompose.stateholder.StateHolder
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
-import moe.tlaster.precompose.ui.LocalLifecycleOwner
 import platform.UIKit.UIViewController
 
 fun PreComposeApplication(
