@@ -18,6 +18,8 @@ import androidx.compose.ui.platform.TextToolbarStatus
 import androidx.compose.ui.platform.ViewConfiguration
 import androidx.compose.ui.platform.WindowInfoImpl
 import androidx.compose.ui.semantics.SemanticsOwner
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
 import kotlinx.cinterop.ObjCAction
 import kotlinx.cinterop.useContents
 import platform.AppKit.NSBackingStoreBuffered
@@ -44,6 +46,13 @@ internal class ComposeWindow(
     initialTitle: String,
     private val onCloseRequest: () -> Unit = {},
 ) : NSObject(), NSWindowDelegateProtocol {
+
+    private val density by lazy {
+        Density(
+            density = nsWindow.backingScaleFactor.toFloat(),
+            fontScale = 1f
+        )
+    }
     private val macosTextInputService = MacosTextInputService()
     private val platform: Platform = object : Platform {
         override val windowInfo = WindowInfoImpl().apply {
@@ -69,7 +78,7 @@ internal class ComposeWindow(
             override val longPressTimeoutMillis: Long = 500
             override val doubleTapTimeoutMillis: Long = 300
             override val doubleTapMinTimeMillis: Long = 40
-            override val touchSlop: Float = 18f
+            override val touchSlop: Float get() = with(density) { 18.dp.toPx() }
         }
         override val textToolbar: TextToolbar = object : TextToolbar {
             override fun hide() = Unit
@@ -174,7 +183,7 @@ internal class ComposeWindow(
         val (w, h) = nsWindow.contentView!!.frame.useContents {
             size.width to size.height
         }
-        layer.setSize(w.toInt(), h.toInt())
+        layer.setSize(w.toInt() * density.density.toInt(), h.toInt() * density.density.toInt())
         layer.layer.nsView.frame = CGRectMake(0.0, 0.0, w, h)
         layer.layer.redrawer?.syncSize()
         layer.layer.redrawer?.redrawImmediately()
@@ -188,6 +197,7 @@ internal class ComposeWindow(
     fun setContent(
         content: @Composable () -> Unit
     ) {
+        layer.setDensity(density)
         layer.setContent(
             content = content
         )
