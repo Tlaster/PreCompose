@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import moe.tlaster.common.model.Note
 import moe.tlaster.common.viewmodel.NoteListViewModel
-import moe.tlaster.precompose.ui.viewModel
+import moe.tlaster.precompose.viewmodel.viewModel
 
 @ExperimentalMaterialApi
 @Composable

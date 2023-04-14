@@ -2,7 +2,6 @@ package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -48,4 +47,3 @@ public fun BackHandler(enabled: Boolean = true, onBack: () -> Unit) {
         }
     }
 }
-

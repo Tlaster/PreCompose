@@ -1,17 +1,16 @@
 package moe.tlaster.precompose.lifecycle
 
 import androidx.activity.OnBackPressedCallback
+import moe.tlaster.precompose.stateholder.StateHolder
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackDispatcherOwner
-import moe.tlaster.precompose.viewmodel.ViewModelStore
-import moe.tlaster.precompose.viewmodel.ViewModelStoreOwner
 
-internal class PreComposeViewModel : androidx.lifecycle.ViewModel(),
+internal class PreComposeViewModel :
+    androidx.lifecycle.ViewModel(),
     LifecycleOwner,
-    ViewModelStoreOwner,
     BackDispatcherOwner {
-    override val viewModelStore by lazy {
-        ViewModelStore()
+    val stateHolder by lazy {
+        StateHolder()
     }
     val lifecycleRegistry by lazy {
         LifecycleRegistry()

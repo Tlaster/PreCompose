@@ -2,10 +2,7 @@ package moe.tlaster.precompose.lifecycle
 
 import android.os.Bundle
 import android.view.ViewGroup
-import android.window.OnBackInvokedDispatcher
 import androidx.activity.ComponentActivity
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionContext
@@ -14,22 +11,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
-import androidx.core.os.BuildCompat
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
-import moe.tlaster.precompose.ui.BackDispatcher
-import moe.tlaster.precompose.ui.BackDispatcherOwner
+import moe.tlaster.precompose.stateholder.LocalStateHolder
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalLifecycleOwner
-import moe.tlaster.precompose.ui.LocalViewModelStoreOwner
 
-open class PreComposeActivity :
-    ComponentActivity(),
-    androidx.lifecycle.LifecycleObserver {
+open class PreComposeActivity : ComponentActivity() {
     internal val viewModel by viewModels<PreComposeViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,7 +101,7 @@ private fun PreComposeActivity.ProvideAndroidCompositionLocals(
     }
     CompositionLocalProvider(
         LocalLifecycleOwner provides this.viewModel,
-        LocalViewModelStoreOwner provides this.viewModel,
+        LocalStateHolder provides this.viewModel.stateHolder,
         LocalBackDispatcherOwner provides this.viewModel,
     ) {
         content.invoke()

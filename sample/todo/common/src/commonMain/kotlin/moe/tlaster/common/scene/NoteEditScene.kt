@@ -19,7 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import moe.tlaster.common.viewmodel.NoteEditViewModel
-import moe.tlaster.precompose.ui.viewModel
+import moe.tlaster.precompose.viewmodel.viewModel
 
 @ExperimentalMaterialApi
 @Composable

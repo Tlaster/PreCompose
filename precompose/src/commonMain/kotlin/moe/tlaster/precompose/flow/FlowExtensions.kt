@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
@@ -14,7 +13,6 @@ import moe.tlaster.precompose.ui.LocalLifecycleOwner
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-@ExperimentalCoroutinesApi
 @Composable
 fun <T : R, R> Flow<T>.collectAsStateWithLifecycle(
     initial: R,
@@ -27,7 +25,6 @@ fun <T : R, R> Flow<T>.collectAsStateWithLifecycle(
     return flow.collectAsState(initial = initial, context = context)
 }
 
-@ExperimentalCoroutinesApi
 fun <T> Flow<T>.flowWithLifecycle(
     lifecycle: Lifecycle,
 ): Flow<T> = callbackFlow {

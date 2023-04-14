@@ -1,7 +1,6 @@
 package moe.tlaster.precompose.ui
 
 import androidx.compose.runtime.compositionLocalOf
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map

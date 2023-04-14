@@ -10,22 +10,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.SaveableStateHolder
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
-import com.benasher44.uuid.uuid4
-import moe.tlaster.precompose.navigation.route.FloatingRoute
-import moe.tlaster.precompose.navigation.route.SceneRoute
+import moe.tlaster.precompose.navigation.route.ComposeRoute
 import moe.tlaster.precompose.navigation.transition.NavTransition
-import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
+import moe.tlaster.precompose.stateholder.LocalStateHolder
 import moe.tlaster.precompose.ui.LocalLifecycleOwner
-import moe.tlaster.precompose.ui.LocalViewModelStoreOwner
-import moe.tlaster.precompose.viewmodel.getViewModel
 
 /**
  * Provides in place in the Compose hierarchy for self contained navigation to occur.
@@ -50,48 +44,24 @@ fun NavHost(
     navTransition: NavTransition = remember { NavTransition() },
     builder: RouteBuilder.() -> Unit,
 ) {
-    val lifecycleOwner = checkNotNull(LocalLifecycleOwner.current) {
-        "NavHost requires a LifecycleOwner to be provided via LocalLifecycleOwner"
-    }
-    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
-        "NavHost requires a ViewModelStoreOwner to be provided via LocalViewModelStoreOwner"
-    }
-    val id by rememberSaveable { mutableStateOf(uuid4().toString()) }
-
-    val stateHolder = rememberSaveableStateHolder()
-
-    val manager = viewModelStoreOwner.viewModelStore.getViewModel(id, NavHostViewModel::class) {
-        val graph = RouteBuilder(initialRoute = initialRoute).apply(builder).build()
-        val manager = BackStackManager(stateHolder, graph).apply {
-            navigator.init(this)
-        }
-        NavHostViewModel(manager)
-    }.manager
-
-    val backDispatcher = LocalBackDispatcherOwner.current?.backDispatcher
-    DisposableEffect(manager, lifecycleOwner, viewModelStoreOwner, backDispatcher) {
-        manager.lifeCycleOwner = lifecycleOwner
-        manager.setViewModelStore(viewModelStoreOwner.viewModelStore)
-        manager.backDispatcher = backDispatcher
-        onDispose {
-            backDispatcher?.unregister(manager)
-            manager.lifeCycleOwner = null
-        }
-    }
-
-    LaunchedEffect(manager, initialRoute) {
-        manager.navigateInitial(initialRoute)
-    }
-    LaunchedEffect(manager.currentEntry, backDispatcher) {
-        navigator.currentEntryFlow.value = manager.currentEntry
-        backDispatcher?.onBackStackChanged()
+    val lifecycleOwner = requireNotNull(LocalLifecycleOwner.current)
+    val stateHolder = requireNotNull(LocalStateHolder.current)
+    val composeStateHolder = rememberSaveableStateHolder()
+    // true for assuming that lifecycleOwner, stateHolder and composeStateHolder are not changing during the lifetime of the NavHost
+    LaunchedEffect(true) {
+        navigator.init(
+            initialRoute = initialRoute,
+            routeGraph = RouteBuilder(initialRoute).apply(builder).build(),
+            stateHolder = stateHolder,
+            lifecycleOwner = lifecycleOwner,
+        )
     }
 
     val transitionSpec: AnimatedContentScope<BackStackEntry>.() -> ContentTransform = {
         val actualTransaction = run {
-            if (manager.contains(initialState)) targetState else initialState
+            if (navigator.stackManager.contains(initialState)) targetState else initialState
         }.navTransition ?: navTransition
-        if (!manager.contains(initialState)) {
+        if (!navigator.stackManager.contains(initialState)) {
             actualTransaction.resumeTransition.with(actualTransaction.destroyTransition).apply {
                 targetContentZIndex = actualTransaction.enterTargetContentZIndex
             }
@@ -102,25 +72,28 @@ fun NavHost(
         }
     }
 
+    val canGoBack by navigator.stackManager.canGoBack.collectAsState(false)
+
+    BackHandler(canGoBack) {
+        navigator.goBack()
+    }
+
+    val currentEntry by navigator.stackManager.currentBackStackEntry.collectAsState(null)
+    LaunchedEffect(currentEntry) {
+        currentEntry?.composeSaveableStateHolder = composeStateHolder
+    }
+
     Box(modifier) {
-        val currentSceneEntry by remember(manager) {
-            derivedStateOf {
-                manager.backStacks.lastOrNull { it.route is SceneRoute }
-            }
-        }
+        val currentSceneEntry by navigator.stackManager.currentSceneBackStackEntry.collectAsState(null)
         currentSceneEntry?.let {
             AnimatedContent(it, transitionSpec = transitionSpec) { entry ->
-                NavHostContent(stateHolder, entry)
+                NavHostContent(composeStateHolder, entry)
             }
         }
-        val currentFloatingEntry by remember(manager) {
-            derivedStateOf {
-                manager.backStacks.lastOrNull()?.takeIf { it.route is FloatingRoute }
-            }
-        }
+        val currentFloatingEntry by navigator.stackManager.currentFloatingBackStackEntry.collectAsState(null)
         currentFloatingEntry?.let {
             AnimatedContent(it, transitionSpec = transitionSpec) { entry ->
-                NavHostContent(stateHolder, entry)
+                NavHostContent(composeStateHolder, entry)
             }
         }
     }
@@ -137,12 +110,14 @@ private fun NavHostContent(
             entry.inActive()
         }
     }
-    stateHolder.SaveableStateProvider(entry.id) {
+    stateHolder.SaveableStateProvider(entry.stateId) {
         CompositionLocalProvider(
-            LocalViewModelStoreOwner provides entry,
+            LocalStateHolder provides entry.stateHolder,
             LocalLifecycleOwner provides entry,
         ) {
-            entry.route.content.invoke(entry)
+            if (entry.route is ComposeRoute) {
+                entry.route.content.invoke(entry)
+            }
         }
     }
 }

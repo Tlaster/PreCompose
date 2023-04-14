@@ -1,9 +1,9 @@
-package moe.tlaster.precompose.ui
+package moe.tlaster.precompose.viewmodel
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import moe.tlaster.precompose.viewmodel.ViewModel
-import moe.tlaster.precompose.viewmodel.ViewModelStoreOwner
+import moe.tlaster.precompose.stateholder.LocalStateHolder
+import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.reflect.KClass
 
 @Composable
@@ -23,33 +23,23 @@ fun <T : ViewModel> viewModel(
     keys: List<Any?> = emptyList(),
     creator: () -> T,
 ): T {
-    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
-        "Require LocalViewModelStoreOwner not null for $modelClass"
+    val stateHolder = checkNotNull(LocalStateHolder.current) {
+        "Require LocalStateHolder not null for $modelClass"
     }
     return remember(
-        modelClass, keys, creator, viewModelStoreOwner
+        modelClass, keys, creator, stateHolder
     ) {
-        viewModelStoreOwner.getViewModel(keys, modelClass = modelClass, creator = creator)
+        stateHolder.getViewModel(keys, modelClass = modelClass, creator = creator)
     }
 }
 
-private fun <T : ViewModel> ViewModelStoreOwner.getViewModel(
+private fun <T : ViewModel> StateHolder.getViewModel(
     keys: List<Any?> = emptyList(),
     modelClass: KClass<T>,
     creator: () -> T,
 ): T {
     val key = (keys.map { it.hashCode().toString() } + modelClass.simpleName).joinToString()
-    val existing = viewModelStore[key]
-    if (existing != null && modelClass.isInstance(existing)) {
-        @Suppress("UNCHECKED_CAST")
-        return existing as T
-    } else {
-        @Suppress("ControlFlowWithEmptyBody")
-        if (existing != null) {
-            // TODO: log a warning.
-        }
+    return this.getOrPut(key) {
+        creator()
     }
-    val viewModel = creator.invoke()
-    viewModelStore.put(key, viewModel)
-    return viewModel
 }

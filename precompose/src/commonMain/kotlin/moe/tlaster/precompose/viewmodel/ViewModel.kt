@@ -1,8 +1,7 @@
 package moe.tlaster.precompose.viewmodel
 
-import moe.tlaster.precompose.standard.Disposable
-
-abstract class ViewModel {
+@OptIn(ExperimentalStdlibApi::class)
+abstract class ViewModel : AutoCloseable {
     private var disposed = false
     private val bagOfTags = hashMapOf<String, Any>()
 
@@ -35,8 +34,12 @@ abstract class ViewModel {
     }
 
     private fun disposeWithRuntimeException(obj: Any) {
-        if (obj is Disposable) {
-            obj.dispose()
+        if (obj is AutoCloseable) {
+            obj.close()
         }
+    }
+
+    override fun close() {
+        clear()
     }
 }

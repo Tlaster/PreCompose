@@ -1,12 +1,9 @@
 package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import moe.tlaster.precompose.ui.viewModel
-import moe.tlaster.precompose.viewmodel.ViewModel
+import moe.tlaster.precompose.lifecycle.LifecycleOwner
+import moe.tlaster.precompose.stateholder.LocalStateHolder
+import moe.tlaster.precompose.stateholder.StateHolder
 
 /**
  * Creates a [Navigator] that controls the [NavHost].
@@ -15,27 +12,38 @@ import moe.tlaster.precompose.viewmodel.ViewModel
  */
 @Composable
 fun rememberNavigator(): Navigator {
-    return viewModel(NavigatorViewModel::class) {
-        NavigatorViewModel()
-    }.navigator
-}
-
-private class NavigatorViewModel : ViewModel() {
-    val navigator by lazy {
+    val stateHolder = LocalStateHolder.current
+    return stateHolder.getOrPut("Navigator") {
         Navigator()
     }
 }
 
 class Navigator {
     // FIXME: 2021/4/1 Temp workaround for deeplink
-    private var pendingNavigation: String? = null
-    // FIXME: 2022/6/27: Temp workaround for current entry
-    internal val currentEntryFlow = MutableStateFlow<BackStackEntry?>(null)
-    private val stackManagerState = mutableStateOf<BackStackManager?>(null)
-    private val stackManager by stackManagerState
-    internal fun init(manager: BackStackManager) {
-        stackManagerState.value = manager
-        pendingNavigation?.let { it1 -> manager.navigate(it1) }
+    private var _pendingNavigation: String? = null
+    private var _initialized = false
+    internal val stackManager = BackStackManager()
+
+    internal fun init(
+        initialRoute: String,
+        routeGraph: RouteGraph,
+        stateHolder: StateHolder,
+        lifecycleOwner: LifecycleOwner,
+    ) {
+        if (_initialized) {
+            return
+        }
+        _initialized = true
+        stackManager.init(
+            initialRoute = initialRoute,
+            routeGraph = routeGraph,
+            stateHolder = stateHolder,
+            lifecycleOwner = lifecycleOwner,
+        )
+        _pendingNavigation?.let {
+            stackManager.push(it)
+            _pendingNavigation = null
+        }
     }
 
     /**
@@ -45,18 +53,26 @@ class Navigator {
      * @param options navigation options for the destination
      */
     fun navigate(route: String, options: NavOptions? = null) {
-        stackManager?.navigate(route, options) ?: run {
-            pendingNavigation = route
+        if (!_initialized) {
+            _pendingNavigation = route
+            return
         }
+
+        stackManager.push(route, options)
     }
 
+    /**
+     * Navigate to a route in the current RouteGraph and wait for result.
+     * @param route route for the destination
+     * @param options navigation options for the destination
+     * @return result from the destination
+     */
     suspend fun navigateForResult(route: String, options: NavOptions? = null): Any? {
-        stackManager?.navigate(route, options) ?: run {
-            pendingNavigation = route
+        if (!_initialized) {
+            _pendingNavigation = route
             return null
         }
-        val currentEntry = stackManager?.currentEntry ?: return null
-        return stackManager?.waitingForResult(currentEntry)
+        return stackManager.pushForResult(route, options)
     }
 
     /**
@@ -65,25 +81,33 @@ class Navigator {
      * (or starting) corner of the app UI.
      */
     fun goBack() {
-        stackManager?.goBack()
+        if (!_initialized) {
+            return
+        }
+        stackManager.pop()
     }
 
     fun goBackWith(result: Any? = null) {
-        stackManager?.goBack(result)
+        if (!_initialized) {
+            return
+        }
+        stackManager.pop(result)
     }
 
     /**
      * Compatibility layer for Jetpack Navigation
      */
     fun popBackStack() {
+        if (!_initialized) {
+            return
+        }
         goBack()
     }
 
     /**
      * Check if navigator can navigate up
      */
-    val canGoBack: Boolean
-        get() = stackManager?.canGoBack ?: false
+    val canGoBack = stackManager.canGoBack
 
-    val currentEntry = currentEntryFlow.asSharedFlow()
+    val currentEntry = stackManager.currentBackStackEntry
 }
