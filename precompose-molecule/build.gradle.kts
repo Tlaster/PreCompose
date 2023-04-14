@@ -1,4 +1,3 @@
-import org.jetbrains.compose.compose
 import java.util.Properties
 
 plugins {
@@ -30,13 +29,16 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+    js(IR) {
+        browser()
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
                 implementation(compose.foundation)
                 implementation(compose.animation)
                 implementation(project(":precompose"))
-                implementation("app.cash.molecule:molecule-runtime:0.8.0")
+                implementation("app.cash.molecule:molecule-runtime:0.9.0")
             }
         }
         val commonTest by getting {
