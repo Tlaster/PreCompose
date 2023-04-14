@@ -11,7 +11,7 @@ import moe.tlaster.precompose.ui.BackHandler
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 
 @Composable
-public fun BackHandler(enabled: Boolean = true, onBack: () -> Unit) {
+fun BackHandler(enabled: Boolean = true, onBack: () -> Unit) {
     // Safely update the current `onBack` lambda when a new one is provided
     val backDispatcher = checkNotNull(LocalBackDispatcherOwner.current) {
         "No OnBackPressedDispatcherOwner was provided via LocalOnBackPressedDispatcherOwner"
