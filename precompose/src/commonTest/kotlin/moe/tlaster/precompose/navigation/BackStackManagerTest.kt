@@ -1,5 +1,6 @@
 package moe.tlaster.precompose.navigation
 
+import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.TestLifecycleOwner
 import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.test.Test
@@ -224,5 +225,30 @@ class BackStackManagerTest {
         assertEquals("foo/bar", backStacks[0].route.route)
         assertEquals("foo/bar/{id}", backStacks[1].route.route)
         assertEquals("1", backStacks[1].pathMap["id"])
+    }
+
+    @Test
+    fun testLifecycle() {
+        val manager = BackStackManager()
+        val lifecycleOwner = TestLifecycleOwner()
+        manager.init(
+            RouteGraph(
+                "foo/bar",
+                listOf(
+                    TestRoute("foo/bar", "foo/bar"),
+                    TestRoute("foo/bar/{id}", "foo/bar/{id}"),
+                    TestRoute("foo/bar/{id}/baz", "foo/bar/{id}/baz"),
+                )
+            ),
+            StateHolder(),
+            lifecycleOwner
+        )
+        lifecycleOwner.lifecycle.currentState = Lifecycle.State.Active
+        assertEquals(Lifecycle.State.Active, manager.backStacks.value[0].lifecycle.currentState)
+        lifecycleOwner.lifecycle.currentState = Lifecycle.State.InActive
+        assertEquals(Lifecycle.State.InActive, manager.backStacks.value[0].lifecycle.currentState)
+        // TODO: [Android] OnConfigurationChanged also trigger this, which cause backstacks being cleared
+        // lifecycleOwner.lifecycle.currentState = Lifecycle.State.Destroyed
+        // assertEquals(Lifecycle.State.Destroyed, manager.backStacks.value[0].lifecycle.currentState)
     }
 }
