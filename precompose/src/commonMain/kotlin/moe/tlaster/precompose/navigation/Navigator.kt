@@ -25,7 +25,6 @@ class Navigator {
     internal val stackManager = BackStackManager()
 
     internal fun init(
-        initialRoute: String,
         routeGraph: RouteGraph,
         stateHolder: StateHolder,
         lifecycleOwner: LifecycleOwner,
@@ -35,7 +34,6 @@ class Navigator {
         }
         _initialized = true
         stackManager.init(
-            initialRoute = initialRoute,
             routeGraph = routeGraph,
             stateHolder = stateHolder,
             lifecycleOwner = lifecycleOwner,

@@ -18,22 +18,22 @@ import kotlin.coroutines.suspendCoroutine
 @Stable
 internal class BackStackManager : LifecycleObserver {
     private lateinit var _stateHolder: StateHolder
-    private val _backStacks = MutableStateFlow(listOf<BackStackEntry>())
+    // internal for testing
+    internal val backStacks = MutableStateFlow(listOf<BackStackEntry>())
     private val _routeParser = RouteParser()
     private val _suspendResult = linkedMapOf<BackStackEntry, Continuation<Any?>>()
     val currentBackStackEntry: Flow<BackStackEntry?>
-        get() = _backStacks.asSharedFlow().map { it.lastOrNull() }
+        get() = backStacks.asSharedFlow().map { it.lastOrNull() }
     val canGoBack: Flow<Boolean>
-        get() = _backStacks.asSharedFlow().map { it.size > 1 }
+        get() = backStacks.asSharedFlow().map { it.size > 1 }
 
     val currentSceneBackStackEntry: Flow<BackStackEntry?>
-        get() = _backStacks.asSharedFlow().map { it.lastOrNull { it.route is SceneRoute } }
+        get() = backStacks.asSharedFlow().map { it.lastOrNull { it.route is SceneRoute } }
 
     val currentFloatingBackStackEntry: Flow<BackStackEntry?>
-        get() = _backStacks.asSharedFlow().map { it.lastOrNull { it.route is FloatingRoute } }
+        get() = backStacks.asSharedFlow().map { it.lastOrNull { it.route is FloatingRoute } }
 
     fun init(
-        initialRoute: String,
         routeGraph: RouteGraph,
         stateHolder: StateHolder,
         lifecycleOwner: LifecycleOwner,
@@ -56,11 +56,11 @@ internal class BackStackManager : LifecycleObserver {
             .forEach {
                 _routeParser.insert(it.first, it.second)
             }
-        push(initialRoute)
+        push(routeGraph.initialRoute)
     }
 
     fun push(path: String, options: NavOptions? = null) {
-        val currentBackStacks = _backStacks.value
+        val currentBackStacks = backStacks.value
         val query = path.substringAfter('?', "")
         val routePath = path.substringBefore('?')
         val matchResult = _routeParser.find(path = routePath)
@@ -68,16 +68,15 @@ internal class BackStackManager : LifecycleObserver {
         // require(matchResult.route is ComposeRoute) { "RouteStackManager: navigate target $path is not ComposeRoute" }
         if ( // for launchSingleTop
             options != null &&
-            matchResult.route is SceneRoute &&
             options.launchSingleTop &&
             currentBackStacks.any { it.hasRoute(matchResult.route.route, path, options.includePath) }
         ) {
-            currentBackStacks.firstOrNull { it.hasRoute(matchResult.route.route, path, options.includePath) }?.let {
-                _backStacks.value = _backStacks.value.filter { it.id != it.id } + it
+            currentBackStacks.firstOrNull { it.hasRoute(matchResult.route.route, path, options.includePath) }?.let { entry ->
+                backStacks.value = backStacks.value.filter { it.id != entry.id } + entry
             }
         } else {
-            _backStacks.value = _backStacks.value + BackStackEntry(
-                id = _backStacks.value.size.toLong(),
+            backStacks.value = backStacks.value + BackStackEntry(
+                id = backStacks.value.size.toLong(),
                 route = matchResult.route,
                 pathMap = matchResult.pathMap,
                 queryString = query.takeIf { it.isNotEmpty() }?.let {
@@ -88,7 +87,7 @@ internal class BackStackManager : LifecycleObserver {
             )
         }
 
-        if (options != null && matchResult.route is SceneRoute && options.popUpTo != PopUpTo.None) {
+        if (options != null && options.popUpTo != PopUpTo.None) {
             val popUpTo = options.popUpTo
             val index = when (popUpTo) {
                 PopUpTo.None -> -1
@@ -100,9 +99,9 @@ internal class BackStackManager : LifecycleObserver {
             if (index != -1 && index != currentBackStacks.lastIndex) {
                 val stacks = currentBackStacks.subList(
                     if (popUpTo.inclusive) index else index + 1,
-                    currentBackStacks.lastIndex
-                ).toList()
-                _backStacks.value -= stacks
+                    currentBackStacks.size
+                )
+                backStacks.value -= stacks
                 stacks.forEach {
                     it.destroy()
                 }
@@ -111,10 +110,10 @@ internal class BackStackManager : LifecycleObserver {
     }
 
     fun pop(result: Any? = null) {
-        val currentBackStacks = _backStacks.value
+        val currentBackStacks = backStacks.value
         if (currentBackStacks.size > 1) {
             val last = currentBackStacks.last()
-            _backStacks.value = currentBackStacks.dropLast(1)
+            backStacks.value = currentBackStacks.dropLast(1)
             last.destroy()
             _suspendResult.remove(last)?.resume(result)
         }
@@ -123,7 +122,7 @@ internal class BackStackManager : LifecycleObserver {
     suspend fun pushForResult(path: String, options: NavOptions? = null): Any? {
         return suspendCoroutine { continuation ->
             push(path, options)
-            _suspendResult[_backStacks.value.last()] = continuation
+            _suspendResult[backStacks.value.last()] = continuation
         }
     }
 
@@ -131,11 +130,11 @@ internal class BackStackManager : LifecycleObserver {
         when (state) {
             Lifecycle.State.Initialized -> Unit
             Lifecycle.State.Active -> {
-                val currentEntry = _backStacks.value.lastOrNull()
+                val currentEntry = backStacks.value.lastOrNull()
                 currentEntry?.active()
             }
             Lifecycle.State.InActive -> {
-                val currentEntry = _backStacks.value.lastOrNull()
+                val currentEntry = backStacks.value.lastOrNull()
                 currentEntry?.inActive()
             }
             Lifecycle.State.Destroyed -> {
@@ -149,6 +148,6 @@ internal class BackStackManager : LifecycleObserver {
     }
 
     fun contains(entry: BackStackEntry): Boolean {
-        return _backStacks.value.contains(entry)
+        return backStacks.value.contains(entry)
     }
 }

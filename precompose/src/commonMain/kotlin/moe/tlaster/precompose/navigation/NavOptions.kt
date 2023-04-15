@@ -15,7 +15,7 @@ data class NavOptions(
      *  [includePath] overrides the default [launchSingleTop] behavior allowing
      *  single-top launch of destinations with variable path parameters.
      *
-     *  This override has no effect when [launchSingleTop] is false and it is disabled by default.
+     *  This override has no effect when [launchSingleTop] is false, and it is disabled by default.
      */
     val includePath: Boolean = false,
     /**

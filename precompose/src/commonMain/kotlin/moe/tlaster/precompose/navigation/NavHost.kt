@@ -50,7 +50,6 @@ fun NavHost(
     // true for assuming that lifecycleOwner, stateHolder and composeStateHolder are not changing during the lifetime of the NavHost
     LaunchedEffect(true) {
         navigator.init(
-            initialRoute = initialRoute,
             routeGraph = RouteBuilder(initialRoute).apply(builder).build(),
             stateHolder = stateHolder,
             lifecycleOwner = lifecycleOwner,
