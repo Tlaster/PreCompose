@@ -34,6 +34,11 @@ class StateHolder : AutoCloseable {
         }
         _states.clear()
     }
+
+    // for testing
+    internal fun contains(key: String): Boolean {
+        return _states.containsKey(key)
+    }
 }
 
 val LocalStateHolder = compositionLocalOf<StateHolder> {

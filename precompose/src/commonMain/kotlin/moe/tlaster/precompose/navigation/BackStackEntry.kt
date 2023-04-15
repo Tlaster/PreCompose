@@ -14,16 +14,14 @@ class BackStackEntry internal constructor(
     val route: Route,
     val path: String,
     val pathMap: Map<String, String>,
-    val queryString: QueryString? = null,
     private val parentStateHolder: StateHolder,
+    val queryString: QueryString? = null,
 ) : LifecycleOwner {
     private var _destroyAfterTransition = false
     internal val stateId = "$id-${route.route}"
     internal var composeSaveableStateHolder: SaveableStateHolder? = null
-    val stateHolder: StateHolder by lazy {
-        parentStateHolder.getOrPut(stateId) {
-            StateHolder()
-        }
+    val stateHolder: StateHolder = parentStateHolder.getOrPut(stateId) {
+        StateHolder()
     }
     internal val navTransition: NavTransition?
         get() = if (route is SceneRoute) route.navTransition else null
