@@ -1,4 +1,4 @@
-import org.jetbrains.compose.compose
+
 import java.util.Properties
 
 plugins {
@@ -37,8 +37,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(compose.foundation)
-                implementation(compose.animation)
+                compileOnly(compose.foundation)
+                compileOnly(compose.animation)
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Kotlin.coroutines}")
             }
         }
@@ -48,7 +48,8 @@ kotlin {
                 api(compose.animation)
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
-                // implementation(compose("org.jetbrains.compose.ui:ui-test-junit4"))
+                // @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+                // implementation(compose.uiTestJUnit4)
             }
         }
         val androidMain by getting {
