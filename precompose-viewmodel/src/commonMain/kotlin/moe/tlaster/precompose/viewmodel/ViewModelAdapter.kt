@@ -8,15 +8,24 @@ import kotlin.reflect.KClass
 
 @Composable
 /**
- * Returns a [ViewModel] instance that is scoped to the given [ViewModelStoreOwner].
+ * Returns a [ViewModel] instance that is scoped to the given [StateHolder].
  * CAUTION: If you're using Kotlin/Native target, please use [viewModel] with modelClass parameter instead.
  * @param keys A list of keys that will be used to identify the ViewModel.
+ * @param creator A function that will be used to create the ViewModel if it doesn't exist.
+ * @return A ViewModel instance.
  */
 inline fun <reified T : ViewModel> viewModel(
     keys: List<Any?> = emptyList(),
     noinline creator: () -> T,
 ): T = viewModel(T::class, keys, creator = creator)
 
+/**
+ * Returns a [ViewModel] instance that is scoped to the given [StateHolder].
+ * @param modelClass The class of the ViewModel.
+ * @param keys A list of keys that will be used to identify the ViewModel.
+ * @param creator A function that will be used to create the ViewModel if it doesn't exist.
+ * @return A ViewModel instance.
+ */
 @Composable
 fun <T : ViewModel> viewModel(
     modelClass: KClass<T>,
