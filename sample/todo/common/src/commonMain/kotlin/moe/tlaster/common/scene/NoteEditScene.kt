@@ -32,17 +32,6 @@ fun NoteEditScene(
         NoteEditViewModel(id)
     }
 
-    NoteEditScene(viewModel, onDone, id, onBack)
-}
-
-@ExperimentalMaterialApi
-@Composable
-fun NoteEditScene(
-    viewModel: NoteEditViewModel,
-    onDone: () -> Unit,
-    id: Int?,
-    onBack: () -> Unit
-) {
     Scaffold(
         topBar = {
             TopAppBar(

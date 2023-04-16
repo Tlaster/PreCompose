@@ -30,16 +30,6 @@ fun NoteDetailScene(
         NoteDetailViewModel(id)
     }
 
-    NoteDetailScene(onBack, onEdit, viewModel)
-}
-
-@ExperimentalMaterialApi
-@Composable
-fun NoteDetailScene(
-    onBack: () -> Unit,
-    onEdit: () -> Unit,
-    viewModel: NoteDetailViewModel
-) {
     Scaffold(
         topBar = {
             TopAppBar(
