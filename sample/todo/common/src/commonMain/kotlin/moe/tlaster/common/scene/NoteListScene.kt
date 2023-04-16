@@ -33,6 +33,17 @@ fun NoteListScene(
     val viewModel = viewModel(NoteListViewModel::class) {
         NoteListViewModel()
     }
+    NoteListScene(viewModel, onAddClicked, onItemClicked, onEditClicked)
+}
+
+@ExperimentalMaterialApi
+@Composable
+fun NoteListScene(
+    viewModel: NoteListViewModel,
+    onAddClicked: () -> Unit,
+    onItemClicked: (note: Note) -> Unit,
+    onEditClicked: (note: Note) -> Unit
+) {
     val items by viewModel.items.collectAsState()
 
     Scaffold(
