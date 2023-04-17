@@ -15,6 +15,8 @@ api("moe.tlaster:precompose-molecule:$precompose_version")
 ```
 # Usage
 
+## Flow Action
+
 You can write a Presenter like this:
 ```kotlin
 @Composable
@@ -42,3 +44,24 @@ val (state, channel) = rememberPresenter { CounterPresenter(it) }
 The molecule scope and the Event Channel will be managed by the ViewModel, so it has the same lifecycle as the ViewModel.
 
 You can nest your Presenter by using `rememberNestedPresenter`
+
+## State Action
+
+If you prefer using State Action, you can write a Presenter like this:
+```kotlin
+@Composable
+fun CounterPresenter(): CounterState {
+    var count by remember { mutableStateOf(0) }
+    return CounterState("Clicked $count times") {
+        when (it) {
+            CounterAction.Increment -> count++
+            CounterAction.Decrement -> count--
+        }
+    }
+}
+```
+
+in your Compose UI, you can use this `CounterPresenter` with `producePresenter`
+```kotlin
+val state by producePresenter { CounterPresenter() }
+```

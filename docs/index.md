@@ -1,6 +1,6 @@
 # PreCompose
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose/badge.svg)](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose)
-[![compose-jb-version](https://img.shields.io/badge/compose--jb-1.3.0--beta03-blue)](https://github.com/JetBrains/compose-jb)
+[![compose-jb-version](https://img.shields.io/badge/compose--jb-1.4.0-blue)](https://github.com/JetBrains/compose-jb)
 ![license](https://img.shields.io/github/license/Tlaster/PreCompose)
 
 ![badge-Android](https://img.shields.io/badge/Platform-Android-brightgreen)
@@ -12,11 +12,12 @@
 Compose Multiplatform Navigation && ViewModel, inspired by Jetpack Lifecycle, ViewModel, LiveData and Navigation, PreCompose provides similar (or even the same) components for you but in Kotlin, and it's Kotlin Multiplatform project.
 
 # Why PreCompose
-- Write your business logic and UI code once in one `commonMain`, and your application can be anywhere, powered by Kotlin and Compose!
-- If you familiar with Jetpack Lifecycle, ViewModel and Navigation, there will be nothing to lean.
-- Super easy to set up.
-- No need to write platform-specific code and UI.
-- Lifecycle is handled by PreCompose, you don't need to worry about it.
+ - Write your business logic and UI code once in one `commonMain`, and your application can be anywhere, powered by Kotlin and Compose!
+ - If you familiar with Jetpack Lifecycle, ViewModel and Navigation, there will be nothing to learn.
+ - Super easy to set up.
+ - No need to write platform-specific code and UI.
+ - Lifecycle is handled by PreCompose, you don't need to worry about it.
+ - With Molecule integration, you can easily write your business logic in Kotlin Multiplatform project.
 
 # Setup
 [Setup guide for PreCompose](/setup.md)

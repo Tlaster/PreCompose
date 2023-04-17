@@ -1,6 +1,16 @@
 # ViewModel
 
 Basically the same as Jetpack ViewModel
+# Setup
+## Add Dependency
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose-viewmodel/badge.svg)](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose-viewmodel)
+
+Add the dependency **in your common module's commonMain sourceSet**
+```
+api("moe.tlaster:precompose-viewmodel:$precompose_version")
+```
+
+# Usage
 
 You can define you ViewModel like this:
 ```kotlin
