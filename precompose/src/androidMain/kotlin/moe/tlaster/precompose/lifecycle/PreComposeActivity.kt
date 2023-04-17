@@ -1,60 +1,45 @@
 package moe.tlaster.precompose.lifecycle
 
+import android.os.Bundle
 import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
-import androidx.lifecycle.ViewTreeLifecycleOwner
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.findViewTreeViewModelStoreOwner
+import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
-import moe.tlaster.precompose.ui.BackDispatcher
-import moe.tlaster.precompose.ui.BackDispatcherOwner
+import moe.tlaster.precompose.stateholder.LocalStateHolder
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
-import moe.tlaster.precompose.ui.LocalLifecycleOwner
-import moe.tlaster.precompose.ui.LocalViewModelStoreOwner
-import moe.tlaster.precompose.viewmodel.ViewModelStoreOwner
 
-open class PreComposeActivity :
-    ComponentActivity(),
-    LifecycleOwner,
-    ViewModelStoreOwner,
-    BackDispatcherOwner,
-    androidx.lifecycle.LifecycleObserver {
-    private val viewModel by viewModels<PreComposeViewModel>()
-    override val lifecycle by lazy {
-        LifecycleRegistry()
-    }
-
-    override val viewModelStore by lazy {
-        viewModel.viewModelStore
+open class PreComposeActivity : ComponentActivity() {
+    internal val viewModel by viewModels<PreComposeViewModel>()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        onBackPressedDispatcher.addCallback(this, viewModel.backPressedCallback)
     }
 
     override fun onResume() {
         super.onResume()
-        lifecycle.currentState = Lifecycle.State.Active
+        viewModel.lifecycleRegistry.currentState = Lifecycle.State.Active
     }
 
     override fun onPause() {
         super.onPause()
-        lifecycle.currentState = Lifecycle.State.InActive
+        viewModel.lifecycleRegistry.currentState = Lifecycle.State.InActive
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        lifecycle.currentState = Lifecycle.State.Destroyed
-    }
-
-    override val backDispatcher by lazy {
-        BackDispatcher()
-    }
-
-    override fun onBackPressed() {
-        if (!backDispatcher.onBackPress()) {
-            super.onBackPressed()
-        }
+        viewModel.lifecycleRegistry.currentState = Lifecycle.State.Destroyed
     }
 }
 
@@ -87,8 +72,11 @@ fun PreComposeActivity.setContent(
 
 private fun PreComposeActivity.setOwners() {
     val decorView = window.decorView
-    if (ViewTreeLifecycleOwner.get(decorView) == null) {
-        ViewTreeLifecycleOwner.set(decorView, this)
+    if (decorView.findViewTreeLifecycleOwner() == null) {
+        decorView.setViewTreeLifecycleOwner(this)
+    }
+    if (decorView.findViewTreeViewModelStoreOwner() == null) {
+        decorView.setViewTreeViewModelStoreOwner(this)
     }
     if (decorView.findViewTreeSavedStateRegistryOwner() == null) {
         decorView.setViewTreeSavedStateRegistryOwner(this)
@@ -106,10 +94,14 @@ private fun PreComposeActivity.ContentInternal(content: @Composable () -> Unit) 
 private fun PreComposeActivity.ProvideAndroidCompositionLocals(
     content: @Composable () -> Unit,
 ) {
+    val state by viewModel.backDispatcher.canHandleBackPress.collectAsState(false)
+    LaunchedEffect(state) {
+        viewModel.backPressedCallback.isEnabled = state
+    }
     CompositionLocalProvider(
-        LocalLifecycleOwner provides this,
-        LocalViewModelStoreOwner provides this,
-        LocalBackDispatcherOwner provides this,
+        LocalLifecycleOwner provides this.viewModel,
+        LocalStateHolder provides this.viewModel.stateHolder,
+        LocalBackDispatcherOwner provides this.viewModel,
     ) {
         content.invoke()
     }

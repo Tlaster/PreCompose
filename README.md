@@ -1,6 +1,6 @@
 # PreCompose
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose/badge.svg)](https://maven-badges.herokuapp.com/maven-central/moe.tlaster/precompose)
-[![compose-jb-version](https://img.shields.io/badge/compose--jb-1.3.0--beta03-blue)](https://github.com/JetBrains/compose-jb)
+[![compose-jb-version](https://img.shields.io/badge/compose--jb-1.4.0-blue)](https://github.com/JetBrains/compose-jb)
 ![license](https://img.shields.io/github/license/Tlaster/PreCompose)
 
 ![badge-Android](https://img.shields.io/badge/Platform-Android-brightgreen)
@@ -17,6 +17,7 @@ Compose Multiplatform Navigation && ViewModel, inspired by Jetpack Lifecycle, Vi
  - Super easy to set up.
  - No need to write platform-specific code and UI.
  - Lifecycle is handled by PreCompose, you don't need to worry about it.
+ - With Molecule integration, you can easily write your business logic in Kotlin Multiplatform project.
 
 # Setup
 [Setup guide for PreCompose](/docs/setup.md)

@@ -1,4 +1,3 @@
-
 import java.util.Properties
 
 plugins {
@@ -13,12 +12,6 @@ group = "moe.tlaster"
 version = Versions.precompose
 
 kotlin {
-    macosArm64()
-    macosX64()
-    // ios("uikit")
-    iosX64("uikitX64")
-    iosArm64("uikitArm64")
-    iosSimulatorArm64("uikitSimulatorArm64")
     android {
         publishLibraryVariants("release", "debug")
     }
@@ -30,6 +23,12 @@ kotlin {
             useJUnitPlatform()
         }
     }
+    macosArm64()
+    macosX64()
+    // ios()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
     js(IR) {
         browser()
         binaries.executable()
@@ -37,26 +36,22 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                compileOnly(compose.foundation)
-                compileOnly(compose.animation)
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Kotlin.coroutines}")
+                implementation(compose.foundation)
+                implementation(compose.animation)
+                implementation(project(":precompose"))
             }
         }
         val commonTest by getting {
             dependencies {
-                api(compose.foundation)
-                api(compose.animation)
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
-                // @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-                // implementation(compose.uiTestJUnit4)
+                // implementation(compose("org.jetbrains.compose.ui:ui-test-junit4"))
             }
         }
         val androidMain by getting {
             dependencies {
                 api("androidx.activity:activity-ktx:${Versions.AndroidX.activity}")
-                implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-                api("androidx.savedstate:savedstate-ktx:1.2.1")
+                implementation("androidx.compose.ui:ui:${Versions.compose}")
             }
         }
         val androidUnitTest by getting {
@@ -64,15 +59,6 @@ kotlin {
                 implementation(kotlin("test-junit"))
                 implementation("junit:junit:4.13.2")
             }
-        }
-        val macosMain by creating {
-            dependsOn(commonMain)
-        }
-        val macosX64Main by getting {
-            dependsOn(macosMain)
-        }
-        val macosArm64Main by getting {
-            dependsOn(macosMain)
         }
         val jvmMain by getting {
             dependencies {
@@ -86,20 +72,26 @@ kotlin {
                 runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.0")
             }
         }
-        val jsMain by getting {
+        val macosMain by creating {
             dependsOn(commonMain)
         }
-        val uikitMain by creating {
+        val macosX64Main by getting {
+            dependsOn(macosMain)
+        }
+        val macosArm64Main by getting {
+            dependsOn(macosMain)
+        }
+        val iosMain by creating {
             dependsOn(commonMain)
         }
-        val uikitX64Main by getting {
-            dependsOn(uikitMain)
+        val iosX64Main by getting {
+            dependsOn(iosMain)
         }
-        val uikitArm64Main by getting {
-            dependsOn(uikitMain)
+        val iosArm64Main by getting {
+            dependsOn(iosMain)
         }
-        val uikitSimulatorArm64Main by getting {
-            dependsOn(uikitMain)
+        val iosSimulatorArm64Main by getting {
+            dependsOn(iosMain)
         }
     }
 }
@@ -107,7 +99,7 @@ kotlin {
 android {
     compileSdk = Versions.Android.compile
     buildToolsVersion = Versions.Android.buildTools
-    namespace = "moe.tlaster.precompose"
+    namespace = "moe.tlaster.precompose.viewmodel"
     defaultConfig {
         minSdk = Versions.Android.min
     }
@@ -167,8 +159,8 @@ publishing {
     publications.withType<MavenPublication> {
         artifact(javadocJar)
         pom {
-            name.set("PreCompose")
-            description.set("A third-party Jetbrains Compose library with ViewModel, LiveData and Navigation support.")
+            name.set("PreCompose-ViewModel")
+            description.set("PreCompose ViewModel intergration")
             url.set("https://github.com/Tlaster/PreCompose")
 
             licenses {

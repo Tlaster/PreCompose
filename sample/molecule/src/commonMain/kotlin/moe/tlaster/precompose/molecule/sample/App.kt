@@ -14,13 +14,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kotlinx.coroutines.flow.Flow
-import moe.tlaster.precompose.molecule.collectAction
-import moe.tlaster.precompose.molecule.rememberPresenter
+import moe.tlaster.precompose.molecule.producePresenter
 
 @Composable
 fun App() {
-    val (state, channel) = rememberPresenter { Presenter(it) }
+    val state by producePresenter { Presenter() }
     MaterialTheme {
         Scaffold {
             Column(
@@ -31,14 +29,14 @@ fun App() {
                 Text(text = state.count)
                 Button(
                     onClick = {
-                        channel.trySend(Action.Increment)
+                        state.action(Action.Increment)
                     }
                 ) {
                     Text(text = "Increment")
                 }
                 Button(
                     onClick = {
-                        channel.trySend(Action.Decrement)
+                        state.action(Action.Decrement)
                     }
                 ) {
                     Text(text = "Decrement")
@@ -49,19 +47,16 @@ fun App() {
 }
 
 @Composable
-fun Presenter(
-    action: Flow<Action>,
-): State {
+fun Presenter(): State {
     var count by remember { mutableStateOf(0) }
-
-    action.collectAction {
-        when (this) {
+    return State(
+        "Clicked $count times",
+    ) {
+        when (it) {
             Action.Increment -> count++
             Action.Decrement -> count--
         }
     }
-
-    return State("Clicked $count times")
 }
 
 sealed interface Action {
@@ -71,4 +66,5 @@ sealed interface Action {
 
 data class State(
     val count: String,
+    val action: (Action) -> Unit,
 )

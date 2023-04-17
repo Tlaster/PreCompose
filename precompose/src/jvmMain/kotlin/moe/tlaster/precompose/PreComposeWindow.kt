@@ -15,13 +15,12 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
+import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
+import moe.tlaster.precompose.stateholder.LocalStateHolder
+import moe.tlaster.precompose.stateholder.StateHolder
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
-import moe.tlaster.precompose.ui.LocalLifecycleOwner
-import moe.tlaster.precompose.ui.LocalViewModelStoreOwner
-import moe.tlaster.precompose.viewmodel.ViewModelStore
-import moe.tlaster.precompose.viewmodel.ViewModelStoreOwner
 
 @Composable
 fun PreComposeWindow(
@@ -90,19 +89,19 @@ private fun ProvideDesktopCompositionLocals(
 ) {
     CompositionLocalProvider(
         LocalLifecycleOwner provides holder,
-        LocalViewModelStoreOwner provides holder,
+        LocalStateHolder provides holder.stateHolder,
         LocalBackDispatcherOwner provides holder,
     ) {
         content.invoke()
     }
 }
 
-private class PreComposeWindowHolder : LifecycleOwner, ViewModelStoreOwner, BackDispatcherOwner {
+private class PreComposeWindowHolder : LifecycleOwner, BackDispatcherOwner {
     override val lifecycle by lazy {
         LifecycleRegistry()
     }
-    override val viewModelStore by lazy {
-        ViewModelStore()
+    val stateHolder by lazy {
+        StateHolder()
     }
     override val backDispatcher by lazy {
         BackDispatcher()

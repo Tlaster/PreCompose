@@ -21,6 +21,8 @@ sealed interface PopUpTo {
 
     /**
      * The `popUpTo` destination, if it's an empty string will clear all backstack
+     * @param route the route to pop up to
+     * @param inclusive whether the `popUpTo` destination should be popped from the back stack.
      */
     data class Route(
         val route: String,
@@ -31,6 +33,7 @@ sealed interface PopUpTo {
 
         /**
          * popUpTo first back stack
+         * @param inclusive whether the `popUpTo` destination should be popped from the back stack.
          */
         @Suppress("FunctionName")
         fun First(inclusive: Boolean = true): PopUpTo = Route("", inclusive)

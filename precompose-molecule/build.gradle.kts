@@ -1,4 +1,3 @@
-import org.jetbrains.compose.compose
 import java.util.Properties
 
 plugins {
@@ -30,13 +29,16 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+    js(IR) {
+        browser()
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
                 compileOnly(compose.foundation)
                 compileOnly(compose.animation)
                 compileOnly(project(":precompose"))
-                compileOnly("app.cash.molecule:molecule-runtime:0.7.0")
+                compileOnly("app.cash.molecule:molecule-runtime:0.9.0")
             }
         }
         val commonTest by getting {
@@ -52,7 +54,7 @@ kotlin {
                 implementation("androidx.compose.ui:ui:${Versions.compose}")
             }
         }
-        val androidTest by getting {
+        val androidUnitTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
                 implementation("junit:junit:4.13.2")
@@ -100,7 +102,6 @@ android {
     namespace = "moe.tlaster.precompose.molecule"
     defaultConfig {
         minSdk = Versions.Android.min
-        targetSdk = Versions.Android.target
     }
     compileOptions {
         sourceCompatibility = Versions.Java.java

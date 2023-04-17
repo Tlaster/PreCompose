@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="moe.tlaster.android">
     <application
+        android:enableOnBackInvokedCallback="true"
         android:label="PreCompose Sample"
         android:allowBackup="false"
         android:supportsRtl="true"
