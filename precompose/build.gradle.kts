@@ -39,6 +39,7 @@ kotlin {
             dependencies {
                 compileOnly(compose.foundation)
                 compileOnly(compose.animation)
+                compileOnly(compose.material)
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Kotlin.coroutines}")
             }
         }
