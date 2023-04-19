@@ -44,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -169,9 +170,9 @@ fun NavHost(
                 }
             }
 
-            currentSceneEntry?.let { entry ->
+            currentSceneEntry?.let {
                 AnimatedContent(
-                    entry,
+                    it,
                     transitionSpec = {
                         val actualTransaction = run {
                             if (navigator.stackManager.contains(initialState)) targetState else initialState
@@ -198,7 +199,7 @@ fun NavHost(
                             }
                         }
                     }
-                ) {
+                ) {entry ->
 
                     val showPrev by remember(dismissState) {
                         derivedStateOf {
@@ -207,6 +208,9 @@ fun NavHost(
                     }
 
                     CustomSwipeToDismiss(
+                        modifier = Modifier.onSizeChanged {
+                            width = it.width
+                        },
                         state = dismissState,
                         spaceToSwipe = swipeProperties.spaceToSwipe,
                         enabled = prevSceneEntry != null,
@@ -214,12 +218,9 @@ fun NavHost(
                             if (showPrev && transition.isRunning.not()) {
                                 prevSceneEntry?.let { prev ->
                                     Box(modifier = Modifier
-                                        .offset {
-                                            IntOffset(
-                                                (swipeProperties.slideInHorizontally(width)
-                                                    + dismissState.offset.value.absoluteValue / 4).roundToInt(),
-                                                0
-                                            )
+                                        .graphicsLayer {
+                                            translationX = dismissState.offset.value.absoluteValue / 4 +
+                                                swipeProperties.slideInHorizontally(size.width.toInt())
                                         }.drawWithContent {
                                             drawContent()
                                             if (swipeProperties.drawShadow) {
@@ -238,15 +239,7 @@ fun NavHost(
                             }
                         }
                     ) {
-
-                        Box(
-                            modifier = Modifier
-                                .onSizeChanged {
-                                    width = it.width
-                                }
-                        ) {
-                            NavHostContent(composeStateHolder, it)
-                        }
+                        NavHostContent(composeStateHolder, entry)
                     }
                 }
             }
