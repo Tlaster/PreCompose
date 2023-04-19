@@ -17,11 +17,9 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissState
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FixedThreshold
 import androidx.compose.material.ResistanceConfig
 import androidx.compose.material.SwipeableDefaults
 import androidx.compose.material.ThresholdConfig
@@ -206,6 +204,7 @@ fun NavHost(
                         state = dismissState,
                         spaceToSwipe = swipeProperties.spaceToSwipe,
                         enabled = prevSceneEntry != null,
+                        dismissThreshold = swipeProperties.swipeThreshold,
                         background = {
                             if (showPrev && transition.isRunning.not()) {
                                 prevSceneEntry?.let { prev ->
@@ -275,9 +274,7 @@ private fun CustomSwipeToDismiss(
     enabled : Boolean = true,
     spaceToSwipe : Dp = 10.dp,
     modifier: Modifier = Modifier,
-    dismissThresholds: (DismissDirection) -> ThresholdConfig = {
-        FixedThreshold(DISMISS_THRESHOLD)
-    },
+    dismissThreshold : ThresholdConfig,
     background: @Composable RowScope.() -> Unit,
     dismissContent: @Composable RowScope.() -> Unit
 ) = BoxWithConstraints(modifier) {
@@ -289,9 +286,6 @@ private fun CustomSwipeToDismiss(
         width to DismissValue.DismissedToEnd
     )
 
-    val thresholds = { from: DismissValue, to: DismissValue ->
-        dismissThresholds(getDismissDirection(from, to)!!)
-    }
     Box {
         Box(
             Modifier
@@ -301,7 +295,7 @@ private fun CustomSwipeToDismiss(
                 .swipeable(
                     state = state,
                     anchors = anchors,
-                    thresholds = thresholds,
+                    thresholds = { _,_ -> dismissThreshold },
                     orientation = Orientation.Horizontal,
                     enabled = enabled && state.currentValue == DismissValue.Default,
                     reverseDirection = isRtl,
@@ -322,19 +316,3 @@ private fun CustomSwipeToDismiss(
         )
     }
 }
-
-private fun getDismissDirection(from: DismissValue, to: DismissValue): DismissDirection? {
-    return when {
-        // settled at the default state
-        from == to && from == DismissValue.Default -> null
-        // has been dismissed to the end
-        from == to && from == DismissValue.DismissedToEnd -> DismissDirection.StartToEnd
-        // is currently being dismissed to the end
-        from == DismissValue.Default && to == DismissValue.DismissedToEnd -> DismissDirection.StartToEnd
-        // has been dismissed to the end but is now animated back to default
-        from == DismissValue.DismissedToEnd && to == DismissValue.Default -> DismissDirection.StartToEnd
-        else -> null
-    }
-}
-
-private val DISMISS_THRESHOLD = 56.dp
