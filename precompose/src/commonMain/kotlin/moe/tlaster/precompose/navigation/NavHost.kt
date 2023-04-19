@@ -46,7 +46,6 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -138,10 +137,6 @@ fun NavHost(
         } else {
             val scope = rememberCoroutineScope()
 
-            var width by remember {
-                mutableStateOf(0)
-            }
-
             var prevWasSwiped by remember {
                 mutableStateOf(false)
             }
@@ -208,9 +203,6 @@ fun NavHost(
                     }
 
                     CustomSwipeToDismiss(
-                        modifier = Modifier.onSizeChanged {
-                            width = it.width
-                        },
                         state = dismissState,
                         spaceToSwipe = swipeProperties.spaceToSwipe,
                         enabled = prevSceneEntry != null,
