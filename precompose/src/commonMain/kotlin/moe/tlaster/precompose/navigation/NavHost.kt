@@ -126,7 +126,9 @@ fun NavHost(
         val currentSceneEntry by navigator.stackManager.currentSceneBackStackEntry.collectAsState(null)
         val prevSceneEntry by navigator.stackManager.prevSceneBackStackEntry.collectAsState(null)
 
-        if (swipeProperties == null) {
+        val actualSwipeProperties = currentSceneEntry?.swipeProperties ?: swipeProperties
+
+        if (actualSwipeProperties == null) {
             currentSceneEntry?.let {
                 AnimatedContent(it, transitionSpec = transitionSpec) { entry ->
                     NavHostContent(composeStateHolder, entry)
@@ -202,20 +204,20 @@ fun NavHost(
 
                     CustomSwipeToDismiss(
                         state = dismissState,
-                        spaceToSwipe = swipeProperties.spaceToSwipe,
+                        spaceToSwipe = actualSwipeProperties.spaceToSwipe,
                         enabled = prevSceneEntry != null,
-                        dismissThreshold = swipeProperties.swipeThreshold,
+                        dismissThreshold = actualSwipeProperties.swipeThreshold,
                         background = {
                             if (showPrev && transition.isRunning.not()) {
                                 prevSceneEntry?.let { prev ->
                                     Box(
                                         modifier = Modifier
                                             .graphicsLayer {
-                                                translationX = swipeProperties.slideInHorizontally(size.width.toInt()).toFloat() -
-                                                    swipeProperties.slideInHorizontally(dismissState.offset.value.absoluteValue.toInt())
+                                                translationX = actualSwipeProperties.slideInHorizontally(size.width.toInt()).toFloat() -
+                                                    actualSwipeProperties.slideInHorizontally(dismissState.offset.value.absoluteValue.toInt())
                                             }.drawWithContent {
                                                 drawContent()
-                                                if (swipeProperties.drawShadow) {
+                                                if (actualSwipeProperties.drawShadow) {
                                                     drawRect(
                                                         Color.Black,
                                                         alpha = (1f - dismissState.progress.fraction) / 6f

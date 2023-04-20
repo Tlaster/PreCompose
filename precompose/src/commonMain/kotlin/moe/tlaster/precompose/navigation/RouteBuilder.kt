@@ -15,12 +15,14 @@ class RouteBuilder(
      * Add the scene [Composable] to the [RouteBuilder]
      * @param route route for the destination
      * @param navTransition navigation transition for current scene
+     * @param swipeProperties swipe back navigation properties for current scene
      * @param content composable for the destination
      */
     fun scene(
         route: String,
         deepLinks: List<String> = emptyList(),
         navTransition: NavTransition? = null,
+        swipeProperties: SwipeProperties? = null,
         content: @Composable (BackStackEntry) -> Unit,
     ) {
         addRoute(
@@ -28,6 +30,7 @@ class RouteBuilder(
                 route = route,
                 navTransition = navTransition,
                 deepLinks = deepLinks,
+                swipeProperties = swipeProperties,
                 content = content,
             )
         )
