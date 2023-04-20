@@ -210,8 +210,8 @@ fun NavHost(
                                 prevSceneEntry?.let { prev ->
                                     Box(modifier = Modifier
                                         .graphicsLayer {
-                                            translationX = dismissState.offset.value.absoluteValue / 4 +
-                                                swipeProperties.slideInHorizontally(size.width.toInt())
+                                            translationX = swipeProperties.slideInHorizontally(size.width.toInt()).toFloat() -
+                                                swipeProperties.slideInHorizontally(dismissState.offset.value.absoluteValue.toInt())
                                         }.drawWithContent {
                                             drawContent()
                                             if (swipeProperties.drawShadow) {
