@@ -12,11 +12,7 @@ import androidx.compose.animation.with
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.DismissState
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
@@ -44,12 +40,12 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
@@ -202,36 +198,39 @@ fun NavHost(
                         }
                     }
 
+                    if (showPrev && transition.isRunning.not()) {
+                        prevSceneEntry?.let { prev ->
+                            Box(
+                                modifier = Modifier
+                                    .graphicsLayer {
+                                        translationX =
+                                            actualSwipeProperties.slideInHorizontally(size.width.toInt())
+                                            .toFloat() -
+                                            actualSwipeProperties.slideInHorizontally(
+                                                dismissState.offset.value.absoluteValue.toInt()
+                                            )
+                                    }.drawWithContent {
+                                        drawContent()
+                                        if (actualSwipeProperties.drawShadow) {
+                                            drawRect(
+                                                Color.Black,
+                                                alpha = (1f - dismissState.progress.fraction) / 6f
+                                            )
+                                        }
+                                    }.pointerInput(0) {
+                                        // prev entry should not be interactive until fully appeared
+                                    }
+                            ) {
+                                NavHostContent(composeStateHolder, prev)
+                            }
+                        }
+                    }
+
                     CustomSwipeToDismiss(
                         state = dismissState,
                         spaceToSwipe = actualSwipeProperties.spaceToSwipe,
                         enabled = prevSceneEntry != null,
                         dismissThreshold = actualSwipeProperties.swipeThreshold,
-                        background = {
-                            if (showPrev && transition.isRunning.not()) {
-                                prevSceneEntry?.let { prev ->
-                                    Box(
-                                        modifier = Modifier
-                                            .graphicsLayer {
-                                                translationX = actualSwipeProperties.slideInHorizontally(size.width.toInt()).toFloat() -
-                                                    actualSwipeProperties.slideInHorizontally(dismissState.offset.value.absoluteValue.toInt())
-                                            }.drawWithContent {
-                                                drawContent()
-                                                if (actualSwipeProperties.drawShadow) {
-                                                    drawRect(
-                                                        Color.Black,
-                                                        alpha = (1f - dismissState.progress.fraction) / 6f
-                                                    )
-                                                }
-                                            }.pointerInput(0) {
-                                                // prev entry should not be interactive until fully appeared
-                                            }
-                                    ) {
-                                        NavHostContent(composeStateHolder, prev)
-                                    }
-                                }
-                            }
-                        }
                     ) {
                         NavHostContent(composeStateHolder, entry)
                     }
@@ -278,9 +277,9 @@ private fun CustomSwipeToDismiss(
     spaceToSwipe: Dp = 10.dp,
     modifier: Modifier = Modifier,
     dismissThreshold: ThresholdConfig,
-    background: @Composable RowScope.() -> Unit,
-    dismissContent: @Composable RowScope.() -> Unit
+    dismissContent: @Composable () -> Unit
 ) = BoxWithConstraints(modifier) {
+
     val width = constraints.maxWidth.toFloat()
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
@@ -289,33 +288,31 @@ private fun CustomSwipeToDismiss(
         width to DismissValue.DismissedToEnd
     )
 
-    Box {
-        Box(
-            Modifier
-                .fillMaxHeight()
-                .width(spaceToSwipe)
-                .zIndex(Float.MAX_VALUE)
-                .swipeable(
-                    state = state,
-                    anchors = anchors,
-                    thresholds = { _, _ -> dismissThreshold },
-                    orientation = Orientation.Horizontal,
-                    enabled = enabled && state.currentValue == DismissValue.Default,
-                    reverseDirection = isRtl,
-                    resistance = ResistanceConfig(
-                        basis = width,
-                        factorAtMin = SwipeableDefaults.StiffResistanceFactor,
-                        factorAtMax = SwipeableDefaults.StandardResistanceFactor
-                    )
+    val shift = with(LocalDensity.current) {
+        remember(this, width, spaceToSwipe) {
+            (-width + spaceToSwipe.toPx().coerceIn(0f, width)).roundToInt()
+        }
+    }
+    Box(
+        modifier = Modifier
+            .offset { IntOffset(x = shift, 0) }
+            .swipeable(
+                state = state,
+                anchors = anchors,
+                thresholds = { _, _ -> dismissThreshold },
+                orientation = Orientation.Horizontal,
+                enabled = enabled && state.currentValue == DismissValue.Default,
+                reverseDirection = isRtl,
+                resistance = ResistanceConfig(
+                    basis = width,
+                    factorAtMin = SwipeableDefaults.StiffResistanceFactor,
+                    factorAtMax = SwipeableDefaults.StandardResistanceFactor
                 )
-        )
-        Row(
-            content = background,
-            modifier = Modifier.matchParentSize()
-        )
-        Row(
-            content = dismissContent,
-            modifier = Modifier.offset { IntOffset(state.offset.value.roundToInt(), 0) }
-        )
+            )
+            .offset { IntOffset(x = -shift, 0) }
+            .graphicsLayer { translationX = state.offset.value }
+
+    ) {
+        dismissContent()
     }
 }
