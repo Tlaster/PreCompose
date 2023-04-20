@@ -81,7 +81,7 @@ fun NavHost(
     navigator: Navigator,
     initialRoute: String,
     navTransition: NavTransition = remember { NavTransition() },
-    swipeProperties: SwipeProperties ?= null,
+    swipeProperties: SwipeProperties ? = null,
     builder: RouteBuilder.() -> Unit,
 ) {
     val lifecycleOwner = requireNotNull(LocalLifecycleOwner.current)
@@ -192,7 +192,7 @@ fun NavHost(
                             }
                         }
                     }
-                ) {entry ->
+                ) { entry ->
 
                     val showPrev by remember(dismissState) {
                         derivedStateOf {
@@ -208,21 +208,22 @@ fun NavHost(
                         background = {
                             if (showPrev && transition.isRunning.not()) {
                                 prevSceneEntry?.let { prev ->
-                                    Box(modifier = Modifier
-                                        .graphicsLayer {
-                                            translationX = swipeProperties.slideInHorizontally(size.width.toInt()).toFloat() -
-                                                swipeProperties.slideInHorizontally(dismissState.offset.value.absoluteValue.toInt())
-                                        }.drawWithContent {
-                                            drawContent()
-                                            if (swipeProperties.drawShadow) {
-                                                drawRect(
-                                                    Color.Black,
-                                                    alpha = (1f - dismissState.progress.fraction) / 6f
-                                                )
+                                    Box(
+                                        modifier = Modifier
+                                            .graphicsLayer {
+                                                translationX = swipeProperties.slideInHorizontally(size.width.toInt()).toFloat() -
+                                                    swipeProperties.slideInHorizontally(dismissState.offset.value.absoluteValue.toInt())
+                                            }.drawWithContent {
+                                                drawContent()
+                                                if (swipeProperties.drawShadow) {
+                                                    drawRect(
+                                                        Color.Black,
+                                                        alpha = (1f - dismissState.progress.fraction) / 6f
+                                                    )
+                                                }
+                                            }.pointerInput(0) {
+                                                // prev entry should not be interactive until fully appeared
                                             }
-                                        }.pointerInput(0){
-                                            // prev entry should not be interactive until fully appeared
-                                        }
                                     ) {
                                         NavHostContent(composeStateHolder, prev)
                                     }
@@ -271,10 +272,10 @@ private fun NavHostContent(
 @ExperimentalMaterialApi
 private fun CustomSwipeToDismiss(
     state: DismissState,
-    enabled : Boolean = true,
-    spaceToSwipe : Dp = 10.dp,
+    enabled: Boolean = true,
+    spaceToSwipe: Dp = 10.dp,
     modifier: Modifier = Modifier,
-    dismissThreshold : ThresholdConfig,
+    dismissThreshold: ThresholdConfig,
     background: @Composable RowScope.() -> Unit,
     dismissContent: @Composable RowScope.() -> Unit
 ) = BoxWithConstraints(modifier) {
@@ -295,7 +296,7 @@ private fun CustomSwipeToDismiss(
                 .swipeable(
                     state = state,
                     anchors = anchors,
-                    thresholds = { _,_ -> dismissThreshold },
+                    thresholds = { _, _ -> dismissThreshold },
                     orientation = Orientation.Horizontal,
                     enabled = enabled && state.currentValue == DismissValue.Default,
                     reverseDirection = isRtl,

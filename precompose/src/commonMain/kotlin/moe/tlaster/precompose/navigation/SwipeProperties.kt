@@ -19,8 +19,8 @@ import moe.tlaster.precompose.navigation.transition.NavTransition
  * @param drawShadow draw shadow on top of previous sliding entry
  * */
 class SwipeProperties(
-    val slideInHorizontally : (fullWidth: Int) -> Int = {-it/4},
-    val spaceToSwipe : Dp = 10.dp,
-    val swipeThreshold : ThresholdConfig = FixedThreshold(56.dp),
-    val drawShadow : Boolean = true
+    val slideInHorizontally: (fullWidth: Int) -> Int = { -it / 4 },
+    val spaceToSwipe: Dp = 10.dp,
+    val swipeThreshold: ThresholdConfig = FixedThreshold(56.dp),
+    val drawShadow: Boolean = true
 )
