@@ -23,6 +23,9 @@ class BackStackEntry internal constructor(
     val stateHolder: StateHolder = parentStateHolder.getOrPut(stateId) {
         StateHolder()
     }
+    internal val swipeProperties: SwipeProperties?
+        get() = (route as? SceneRoute)?.swipeProperties
+
     internal val navTransition: NavTransition?
         get() = if (route is SceneRoute) route.navTransition else null
 

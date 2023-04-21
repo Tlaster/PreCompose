@@ -24,11 +24,19 @@ internal class BackStackManager : LifecycleObserver {
     private val _suspendResult = linkedMapOf<BackStackEntry, Continuation<Any?>>()
     val currentBackStackEntry: Flow<BackStackEntry?>
         get() = backStacks.asSharedFlow().map { it.lastOrNull() }
+
     val canGoBack: Flow<Boolean>
         get() = backStacks.asSharedFlow().map { it.size > 1 }
 
     val currentSceneBackStackEntry: Flow<BackStackEntry?>
         get() = backStacks.asSharedFlow().map { it.lastOrNull { it.route is SceneRoute } }
+
+    val prevSceneBackStackEntry: Flow<BackStackEntry?>
+        get() = backStacks.asSharedFlow().map {
+            it.dropLastWhile { it.route !is SceneRoute }
+                .dropLast(1)
+                .lastOrNull { it.route is SceneRoute }
+        }
 
     val currentFloatingBackStackEntry: Flow<BackStackEntry?>
         get() = backStacks.asSharedFlow().map { it.lastOrNull { it.route is FloatingRoute } }

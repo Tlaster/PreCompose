@@ -37,6 +37,7 @@ kotlin {
             dependencies {
                 compileOnly(compose.foundation)
                 compileOnly(compose.animation)
+                compileOnly(compose.material)
                 compileOnly(project(":precompose"))
                 compileOnly("app.cash.molecule:molecule-runtime:0.9.0")
             }

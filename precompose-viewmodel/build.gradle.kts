@@ -38,6 +38,7 @@ kotlin {
             dependencies {
                 implementation(compose.foundation)
                 implementation(compose.animation)
+                implementation(compose.material)
                 implementation(project(":precompose"))
             }
         }
