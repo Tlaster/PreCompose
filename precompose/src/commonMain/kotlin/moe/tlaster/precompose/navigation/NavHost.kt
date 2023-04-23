@@ -70,14 +70,14 @@ import kotlin.math.roundToInt
  * @param swipeProperties properties of swipe back navigation
  * @param builder the builder used to construct the graph
  */
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun NavHost(
     modifier: Modifier = Modifier,
     navigator: Navigator,
     initialRoute: String,
     navTransition: NavTransition = remember { NavTransition() },
-    swipeProperties: SwipeProperties ? = null,
+    swipeProperties: SwipeProperties? = null,
     builder: RouteBuilder.() -> Unit,
 ) {
     val lifecycleOwner = requireNotNull(LocalLifecycleOwner.current)
@@ -114,8 +114,15 @@ fun NavHost(
     }
 
     val currentEntry by navigator.stackManager.currentBackStackEntry.collectAsState(null)
-    LaunchedEffect(currentEntry) {
-        currentEntry?.composeSaveableStateHolder = composeStateHolder
+
+    LaunchedEffect(currentEntry, composeStateHolder) {
+        val entry = currentEntry
+        if (entry != null && entry.route is ComposeRoute) {
+            val closable = entry.uiClosable
+            if (closable == null || closable !is ComposeUiClosable || closable.composeSaveableStateHolder != composeStateHolder) {
+                entry.uiClosable = ComposeUiClosable(composeStateHolder)
+            }
+        }
     }
 
     Box(modifier) {
