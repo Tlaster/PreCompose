@@ -158,11 +158,10 @@ internal class BackStackManager : LifecycleObserver {
                 currentEntry?.inActive()
             }
             Lifecycle.State.Destroyed -> {
-                // TODO: [Android] OnConfigurationChanged also trigger this, which cause backstacks being cleared
-                // _backStacks.value.forEach {
-                //     it.destroy()
-                // }
-                // _backStacks.value = emptyList()
+                backStacks.value.forEach {
+                    it.destroy()
+                }
+                backStacks.value = emptyList()
             }
         }
     }

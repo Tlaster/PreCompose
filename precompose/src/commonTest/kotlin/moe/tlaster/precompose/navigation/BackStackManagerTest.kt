@@ -249,9 +249,9 @@ class BackStackManagerTest {
         assertEquals(Lifecycle.State.Active, manager.backStacks.value[0].lifecycle.currentState)
         lifecycleOwner.lifecycle.currentState = Lifecycle.State.InActive
         assertEquals(Lifecycle.State.InActive, manager.backStacks.value[0].lifecycle.currentState)
-        // TODO: [Android] OnConfigurationChanged also trigger this, which cause backstacks being cleared
-        // lifecycleOwner.lifecycle.currentState = Lifecycle.State.Destroyed
-        // assertEquals(Lifecycle.State.Destroyed, manager.backStacks.value[0].lifecycle.currentState)
+        lifecycleOwner.lifecycle.currentState = Lifecycle.State.Destroyed
+        assertEquals(Lifecycle.State.Destroyed, manager.backStacks.value[0].lifecycle.currentState)
+    }
 
     @Test
     fun testRequestNavigationLock() {
