@@ -41,6 +41,9 @@ internal class BackStackManager : LifecycleObserver {
     val currentFloatingBackStackEntry: Flow<BackStackEntry?>
         get() = backStacks.asSharedFlow().map { it.lastOrNull { it.route is FloatingRoute } }
 
+    // internal for testing
+    internal var canNavigate = true
+
     fun init(
         routeGraph: RouteGraph,
         stateHolder: StateHolder,
@@ -68,6 +71,9 @@ internal class BackStackManager : LifecycleObserver {
     }
 
     fun push(path: String, options: NavOptions? = null) {
+        if (!canNavigate) {
+            return
+        }
         val currentBackStacks = backStacks.value
         val query = path.substringAfter('?', "")
         val routePath = path.substringBefore('?')
@@ -92,6 +98,9 @@ internal class BackStackManager : LifecycleObserver {
                 },
                 path = path,
                 parentStateHolder = _stateHolder,
+                requestNavigationLock = {
+                    canNavigate = !it
+                }
             )
         }
 
@@ -118,6 +127,9 @@ internal class BackStackManager : LifecycleObserver {
     }
 
     fun pop(result: Any? = null) {
+        if (!canNavigate) {
+            return
+        }
         val currentBackStacks = backStacks.value
         if (currentBackStacks.size > 1) {
             val last = currentBackStacks.last()
