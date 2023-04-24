@@ -148,7 +148,7 @@ fun NavHost(
                 prevWasSwiped = false
             }
 
-            val dismissState = key(currentEntry) {
+            val dismissState = key(currentSceneEntry) {
                 rememberDismissState {
                     if (it == DismissValue.DismissedToEnd) {
                         scope.launch {
