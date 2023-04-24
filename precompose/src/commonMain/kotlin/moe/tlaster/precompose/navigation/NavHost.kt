@@ -35,7 +35,6 @@ import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -194,12 +193,11 @@ fun NavHost(
                                                     )
                                             }.drawWithContent {
                                                 drawContent()
-                                                if (actualSwipeProperties.drawShadow) {
-                                                    drawRect(
-                                                        Color.Black,
-                                                        alpha = (1f - dismissState.progress.fraction) / 6f
-                                                    )
-                                                }
+                                                drawRect(
+                                                    actualSwipeProperties.shadowColor,
+                                                    alpha = (1f - dismissState.progress.fraction) *
+                                                        actualSwipeProperties.shadowColor.alpha
+                                                )
                                             }.pointerInput(0) {
                                                 // prev entry should not be interactive until fully appeared
                                             }
