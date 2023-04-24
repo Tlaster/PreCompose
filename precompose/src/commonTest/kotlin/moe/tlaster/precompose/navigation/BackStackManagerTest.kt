@@ -245,12 +245,14 @@ class BackStackManagerTest {
             StateHolder(),
             lifecycleOwner
         )
+        val entry = manager.backStacks.value[0]
         lifecycleOwner.lifecycle.currentState = Lifecycle.State.Active
-        assertEquals(Lifecycle.State.Active, manager.backStacks.value[0].lifecycle.currentState)
+        assertEquals(Lifecycle.State.Active, entry.lifecycle.currentState)
         lifecycleOwner.lifecycle.currentState = Lifecycle.State.InActive
-        assertEquals(Lifecycle.State.InActive, manager.backStacks.value[0].lifecycle.currentState)
+        assertEquals(Lifecycle.State.InActive, entry.lifecycle.currentState)
         lifecycleOwner.lifecycle.currentState = Lifecycle.State.Destroyed
-        assertEquals(Lifecycle.State.Destroyed, manager.backStacks.value[0].lifecycle.currentState)
+        assertEquals(0, manager.backStacks.value.size)
+        assertEquals(Lifecycle.State.Destroyed, entry.lifecycle.currentState)
     }
 
     @Test
