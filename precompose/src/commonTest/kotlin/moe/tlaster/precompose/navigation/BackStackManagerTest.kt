@@ -5,7 +5,9 @@ import moe.tlaster.precompose.lifecycle.TestLifecycleOwner
 import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 class BackStackManagerTest {
     @Test
@@ -243,12 +245,42 @@ class BackStackManagerTest {
             StateHolder(),
             lifecycleOwner
         )
+        val entry = manager.backStacks.value[0]
         lifecycleOwner.lifecycle.currentState = Lifecycle.State.Active
-        assertEquals(Lifecycle.State.Active, manager.backStacks.value[0].lifecycle.currentState)
+        assertEquals(Lifecycle.State.Active, entry.lifecycle.currentState)
         lifecycleOwner.lifecycle.currentState = Lifecycle.State.InActive
-        assertEquals(Lifecycle.State.InActive, manager.backStacks.value[0].lifecycle.currentState)
-        // TODO: [Android] OnConfigurationChanged also trigger this, which cause backstacks being cleared
-        // lifecycleOwner.lifecycle.currentState = Lifecycle.State.Destroyed
-        // assertEquals(Lifecycle.State.Destroyed, manager.backStacks.value[0].lifecycle.currentState)
+        assertEquals(Lifecycle.State.InActive, entry.lifecycle.currentState)
+        lifecycleOwner.lifecycle.currentState = Lifecycle.State.Destroyed
+        assertEquals(0, manager.backStacks.value.size)
+        assertEquals(Lifecycle.State.Destroyed, entry.lifecycle.currentState)
+    }
+
+    @Test
+    fun testRequestNavigationLock() {
+        val manager = BackStackManager()
+        val lifecycleOwner = TestLifecycleOwner()
+        manager.init(
+            RouteGraph(
+                "foo/bar",
+                listOf(
+                    TestRoute("foo/bar", "foo/bar"),
+                    TestRoute("foo/bar/{id}", "foo/bar/{id}"),
+                    TestRoute("foo/bar/{id}/baz", "foo/bar/{id}/baz"),
+                )
+            ),
+            StateHolder(),
+            lifecycleOwner
+        )
+        assertTrue(manager.canNavigate)
+        var currentEntry = manager.backStacks.value.last()
+        currentEntry.active()
+        manager.push("foo/bar/1")
+        assertTrue(manager.canNavigate)
+        currentEntry = manager.backStacks.value.last()
+        currentEntry.active()
+        manager.pop()
+        assertFalse(manager.canNavigate)
+        currentEntry.inActive()
+        assertTrue(manager.canNavigate)
     }
 }

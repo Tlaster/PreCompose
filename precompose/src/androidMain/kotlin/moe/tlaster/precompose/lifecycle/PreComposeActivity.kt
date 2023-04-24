@@ -39,7 +39,9 @@ open class PreComposeActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        viewModel.lifecycleRegistry.currentState = Lifecycle.State.Destroyed
+        if (!isChangingConfigurations) {
+            viewModel.lifecycleRegistry.currentState = Lifecycle.State.Destroyed
+        }
     }
 }
 

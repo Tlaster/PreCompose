@@ -1,6 +1,5 @@
 package moe.tlaster.precompose.navigation
 
-import androidx.compose.runtime.saveable.SaveableStateHolder
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
@@ -16,10 +15,12 @@ class BackStackEntry internal constructor(
     val pathMap: Map<String, String>,
     private val parentStateHolder: StateHolder,
     val queryString: QueryString? = null,
+    // TODO: dirty callback for disabling push back -> immediate navigate
+    private val requestNavigationLock: (locked: Boolean) -> Unit = {},
 ) : LifecycleOwner {
+    internal var uiClosable: UiClosable? = null
     private var _destroyAfterTransition = false
     internal val stateId = "$id-${route.route}"
-    internal var composeSaveableStateHolder: SaveableStateHolder? = null
     val stateHolder: StateHolder = parentStateHolder.getOrPut(stateId) {
         StateHolder()
     }
@@ -50,11 +51,13 @@ class BackStackEntry internal constructor(
     fun destroy() {
         if (lifecycleRegistry.currentState != Lifecycle.State.InActive) {
             _destroyAfterTransition = true
+            requestNavigationLock.invoke(true)
         } else {
             lifecycleRegistry.currentState = Lifecycle.State.Destroyed
             stateHolder.close()
             parentStateHolder.remove(stateId)
-            composeSaveableStateHolder?.removeState(stateId)
+            uiClosable?.close(stateId)
+            requestNavigationLock.invoke(false)
         }
     }
 
