@@ -36,10 +36,10 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(compose.foundation)
-                implementation(compose.animation)
-                implementation(compose.material)
-                implementation(project(":precompose"))
+                api(compose.foundation)
+                api(compose.animation)
+                api(compose.material)
+                api(project(":precompose"))
             }
         }
         val commonTest by getting {

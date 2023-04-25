@@ -35,11 +35,11 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                compileOnly(compose.foundation)
-                compileOnly(compose.animation)
-                compileOnly(compose.material)
-                compileOnly(project(":precompose"))
-                compileOnly("app.cash.molecule:molecule-runtime:0.9.0")
+                api(compose.foundation)
+                api(compose.animation)
+                api(compose.material)
+                api(project(":precompose"))
+                api("app.cash.molecule:molecule-runtime:0.9.0")
             }
         }
         val commonTest by getting {
