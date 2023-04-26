@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose") version Versions.compose_jb
-    // id("com.android.application")
+    id("com.android.application")
 }
 
 kotlin {
@@ -20,7 +20,7 @@ kotlin {
             }
         }
     }
-    // android()
+    android()
     macosX64 {
         binaries {
             executable {
@@ -150,30 +150,30 @@ compose {
         }
     }
 }
-//
-// android {
-//     compileSdk = Versions.Android.compile
-//     buildToolsVersion = Versions.Android.buildTools
-//     namespace = "moe.tlaster.precompose.molecule.sample"
-//     defaultConfig {
-//         applicationId = "moe.tlaster.precompose.molecule.sample"
-//         minSdk = Versions.Android.min
-//         targetSdk = Versions.Android.target
-//         versionCode = 1
-//         versionName = "0.1.0"
-//     }
-//     sourceSets {
-//         getByName("main") {
-//             manifest.srcFile("src/androidMain/AndroidManifest.xml")
-//         }
-//     }
-//     buildTypes {
-//         getByName("release") {
-//             isMinifyEnabled = false
-//         }
-//     }
-//     compileOptions {
-//         sourceCompatibility = Versions.Java.java
-//         targetCompatibility = Versions.Java.java
-//     }
-// }
+
+android {
+    compileSdk = Versions.Android.compile
+    buildToolsVersion = Versions.Android.buildTools
+    namespace = "moe.tlaster.precompose.molecule.sample"
+    defaultConfig {
+        applicationId = "moe.tlaster.precompose.molecule.sample"
+        minSdk = Versions.Android.min
+        targetSdk = Versions.Android.target
+        versionCode = 1
+        versionName = "0.1.0"
+    }
+    sourceSets {
+        getByName("main") {
+            manifest.srcFile("src/androidMain/AndroidManifest.xml")
+        }
+    }
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+        }
+    }
+    compileOptions {
+        sourceCompatibility = Versions.Java.java
+        targetCompatibility = Versions.Java.java
+    }
+}

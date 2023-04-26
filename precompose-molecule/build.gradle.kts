@@ -35,11 +35,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(compose.foundation)
-                api(compose.animation)
-                api(compose.material)
-                api(project(":precompose"))
-                api("app.cash.molecule:molecule-runtime:0.9.0")
+                compileOnly(compose.foundation)
+                compileOnly(project(":precompose"))
+                compileOnly("app.cash.molecule:molecule-runtime:0.9.0")
             }
         }
         val commonTest by getting {
@@ -52,7 +50,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 api("androidx.activity:activity-ktx:${Versions.AndroidX.activity}")
-                implementation("androidx.compose.ui:ui:${Versions.compose}")
+                implementation("androidx.compose.foundation:foundation:${Versions.compose}")
             }
         }
         val androidUnitTest by getting {
@@ -63,6 +61,7 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
+                implementation(compose.foundation)
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-swing:${Versions.Kotlin.coroutines}")
             }
         }
@@ -73,8 +72,16 @@ kotlin {
                 runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.0")
             }
         }
+        val jsMain by getting {
+            dependencies {
+                implementation(compose.foundation)
+            }
+        }
         val macosMain by creating {
             dependsOn(commonMain)
+            dependencies {
+                implementation(compose.foundation)
+            }
         }
         val macosX64Main by getting {
             dependsOn(macosMain)
@@ -84,6 +91,9 @@ kotlin {
         }
         val iosMain by creating {
             dependsOn(commonMain)
+            dependencies {
+                implementation(compose.foundation)
+            }
         }
         val iosX64Main by getting {
             dependsOn(iosMain)

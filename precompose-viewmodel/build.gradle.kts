@@ -36,10 +36,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(compose.foundation)
-                api(compose.animation)
-                api(compose.material)
-                api(project(":precompose"))
+                compileOnly(compose.foundation)
+                compileOnly(project(":precompose"))
             }
         }
         val commonTest by getting {
@@ -52,7 +50,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 api("androidx.activity:activity-ktx:${Versions.AndroidX.activity}")
-                implementation("androidx.compose.ui:ui:${Versions.compose}")
+                implementation("androidx.compose.foundation:foundation:${Versions.compose}")
             }
         }
         val androidUnitTest by getting {
@@ -63,6 +61,7 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
+                implementation(compose.foundation)
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-swing:${Versions.Kotlin.coroutines}")
             }
         }
@@ -75,6 +74,9 @@ kotlin {
         }
         val macosMain by creating {
             dependsOn(commonMain)
+            dependencies {
+                implementation(compose.foundation)
+            }
         }
         val macosX64Main by getting {
             dependsOn(macosMain)
@@ -82,8 +84,16 @@ kotlin {
         val macosArm64Main by getting {
             dependsOn(macosMain)
         }
+        val jsMain by getting {
+            dependencies {
+                implementation(compose.foundation)
+            }
+        }
         val iosMain by creating {
             dependsOn(commonMain)
+            dependencies {
+                implementation(compose.foundation)
+            }
         }
         val iosX64Main by getting {
             dependsOn(iosMain)

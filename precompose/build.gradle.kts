@@ -37,9 +37,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(compose.foundation)
-                api(compose.animation)
-                api(compose.material)
+                compileOnly(compose.foundation)
+                compileOnly(compose.animation)
+                compileOnly(compose.material)
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Kotlin.coroutines}")
             }
         }
@@ -55,6 +55,9 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation("androidx.compose.foundation:foundation:${Versions.compose}")
+                implementation("androidx.compose.animation:animation:${Versions.compose}")
+                implementation("androidx.compose.material:material:${Versions.compose}")
                 api("androidx.activity:activity-ktx:${Versions.AndroidX.activity}")
                 implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
                 api("androidx.savedstate:savedstate-ktx:1.2.1")
@@ -68,6 +71,11 @@ kotlin {
         }
         val macosMain by creating {
             dependsOn(commonMain)
+            dependencies {
+                implementation(compose.foundation)
+                implementation(compose.animation)
+                implementation(compose.material)
+            }
         }
         val macosX64Main by getting {
             dependsOn(macosMain)
@@ -77,6 +85,9 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
+                implementation(compose.foundation)
+                implementation(compose.animation)
+                implementation(compose.material)
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-swing:${Versions.Kotlin.coroutines}")
             }
         }
@@ -89,9 +100,19 @@ kotlin {
         }
         val jsMain by getting {
             dependsOn(commonMain)
+            dependencies {
+                implementation(compose.foundation)
+                implementation(compose.animation)
+                implementation(compose.material)
+            }
         }
         val uikitMain by creating {
             dependsOn(commonMain)
+            dependencies {
+                implementation(compose.foundation)
+                implementation(compose.animation)
+                implementation(compose.material)
+            }
         }
         val uikitX64Main by getting {
             dependsOn(uikitMain)
