@@ -26,5 +26,6 @@ object Versions {
 
     object AndroidX {
         const val activity = "1.7.0"
+        const val appcompat = "1.6.1"
     }
 }
