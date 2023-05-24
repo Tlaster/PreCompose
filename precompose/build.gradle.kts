@@ -59,6 +59,7 @@ kotlin {
                 implementation("androidx.compose.animation:animation:${Versions.compose}")
                 implementation("androidx.compose.material:material:${Versions.compose}")
                 api("androidx.activity:activity-ktx:${Versions.AndroidX.activity}")
+                api("androidx.appcompat:appcompat:${Versions.AndroidX.appcompat}")
                 implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
                 api("androidx.savedstate:savedstate-ktx:1.2.1")
             }
