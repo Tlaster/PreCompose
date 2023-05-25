@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.produceState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
@@ -62,4 +63,15 @@ fun <T> Flow<T>.collectAsStateWithLifecycle(
             }
         }
     }
+}
+
+fun <T> Flow<T>.flowWithLifecycle(
+    lifecycle: Lifecycle,
+): Flow<T> = callbackFlow {
+    lifecycle.repeatOnLifecycle {
+        this@flowWithLifecycle.collect {
+            send(it)
+        }
+    }
+    close()
 }
