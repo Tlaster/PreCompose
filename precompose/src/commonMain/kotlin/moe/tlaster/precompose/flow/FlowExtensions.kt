@@ -31,10 +31,10 @@ fun <T : R, R> StateFlow<T>.collectAsStateWithLifecycle(
  */
 
 @Composable
-fun <T> Flow<T>.collectAsStateWithLifecycle(
-    initial: T,
+fun <T : R, R> Flow<T>.collectAsStateWithLifecycle(
+    initial: R,
     context: CoroutineContext = EmptyCoroutineContext
-): State<T> {
+): State<R> {
     val lifecycleOwner = checkNotNull(LocalLifecycleOwner.current)
     return collectAsStateWithLifecycle(
         initial = initial,
@@ -49,11 +49,11 @@ fun <T> Flow<T>.collectAsStateWithLifecycle(
  */
 
 @Composable
-fun <T> Flow<T>.collectAsStateWithLifecycle(
-    initial: T,
+fun <T: R, R> Flow<T>.collectAsStateWithLifecycle(
+    initial: R,
     lifecycle: Lifecycle,
     context: CoroutineContext = EmptyCoroutineContext
-): State<T> {
+): State<R> {
     return produceState(initial, this, lifecycle, context) {
         lifecycle.repeatOnLifecycle {
             if (context == EmptyCoroutineContext) {
