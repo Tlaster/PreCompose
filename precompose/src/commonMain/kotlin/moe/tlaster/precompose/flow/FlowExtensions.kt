@@ -49,7 +49,7 @@ fun <T : R, R> Flow<T>.collectAsStateWithLifecycle(
  */
 
 @Composable
-fun <T: R, R> Flow<T>.collectAsStateWithLifecycle(
+fun <T : R, R> Flow<T>.collectAsStateWithLifecycle(
     initial: R,
     lifecycle: Lifecycle,
     context: CoroutineContext = EmptyCoroutineContext
