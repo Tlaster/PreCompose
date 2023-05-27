@@ -15,10 +15,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import moe.tlaster.common.viewmodel.NoteEditViewModel
+import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.viewmodel.viewModel
 
 @ExperimentalMaterialApi
@@ -61,8 +61,8 @@ fun NoteEditScene(
         }
     ) {
         Column {
-            val title by viewModel.title.collectAsState()
-            val content by viewModel.content.collectAsState()
+            val title by viewModel.title.collectAsStateWithLifecycle()
+            val content by viewModel.content.collectAsStateWithLifecycle()
             ListItem {
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
