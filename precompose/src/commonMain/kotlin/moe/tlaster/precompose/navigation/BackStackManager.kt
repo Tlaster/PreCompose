@@ -113,7 +113,7 @@ internal class BackStackManager : LifecycleObserver {
                     currentBackStacks.indexOfLast { it.hasRoute(popUpTo.route, path, options.includePath) }
                 } else 0
             }
-            if (index != -1 && index != currentBackStacks.lastIndex) {
+            if (index != -1) {
                 val stacks = currentBackStacks.subList(
                     if (popUpTo.inclusive) index else index + 1,
                     currentBackStacks.size

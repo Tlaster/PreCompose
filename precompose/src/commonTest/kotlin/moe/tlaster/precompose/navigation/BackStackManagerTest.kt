@@ -176,6 +176,36 @@ class BackStackManagerTest {
     }
 
     @Test
+    fun testPopUpToWithInclusiveLast() {
+        val manager = BackStackManager()
+        manager.init(
+            RouteGraph(
+                "foo/bar",
+                listOf(
+                    TestRoute("foo/bar", "foo/bar"),
+                    TestRoute("foo/bar/{id}", "foo/bar/{id}"),
+                    TestRoute("foo/bar/{id}/baz", "foo/bar/{id}/baz"),
+                )
+            ),
+            StateHolder(),
+            TestLifecycleOwner()
+        )
+        manager.push("foo/bar/1")
+        manager.push("foo/bar/1/baz")
+        manager.push("foo/bar/2")
+        manager.push("foo/bar/3", NavOptions(popUpTo = PopUpTo("foo/bar/{id}", inclusive = true)))
+        val backStacks = manager.backStacks.value
+        assertEquals(4, backStacks.size)
+        assertEquals("foo/bar", backStacks[0].route.route)
+        assertEquals("foo/bar/{id}", backStacks[1].route.route)
+        assertEquals("1", backStacks[1].pathMap["id"])
+        assertEquals("foo/bar/{id}/baz", backStacks[2].route.route)
+        assertEquals("1", backStacks[2].pathMap["id"])
+        assertEquals("foo/bar/{id}", backStacks[3].route.route)
+        assertEquals("3", backStacks[3].pathMap["id"])
+    }
+
+    @Test
     fun testPopUpToWithInclusive() {
         val manager = BackStackManager()
         manager.init(
