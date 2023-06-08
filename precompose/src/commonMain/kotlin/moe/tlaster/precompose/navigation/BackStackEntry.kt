@@ -3,8 +3,9 @@ package moe.tlaster.precompose.navigation
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
+import moe.tlaster.precompose.navigation.route.GroupRoute
 import moe.tlaster.precompose.navigation.route.Route
-import moe.tlaster.precompose.navigation.route.SceneRoute
+import moe.tlaster.precompose.navigation.route.toSceneRoute
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import moe.tlaster.precompose.stateholder.StateHolder
 
@@ -25,10 +26,10 @@ class BackStackEntry internal constructor(
         StateHolder()
     }
     internal val swipeProperties: SwipeProperties?
-        get() = (route as? SceneRoute)?.swipeProperties
+        get() = route.toSceneRoute()?.swipeProperties
 
     internal val navTransition: NavTransition?
-        get() = if (route is SceneRoute) route.navTransition else null
+        get() = route.toSceneRoute()?.navTransition
 
     private val lifecycleRegistry by lazy {
         LifecycleRegistry()
@@ -62,11 +63,11 @@ class BackStackEntry internal constructor(
     }
 
     fun hasRoute(route: String): Boolean {
-        return this.route.route == route
+        return this.route.route == route || this.route is GroupRoute && this.route.hasRoute(route)
     }
 }
 
-internal inline fun BackStackEntry.hasRoute(route: String, path: String, includePath: Boolean): Boolean {
+internal fun BackStackEntry.hasRoute(route: String, path: String, includePath: Boolean): Boolean {
     return if (includePath) {
         hasRoute(route = route) && this.path == path
     } else {

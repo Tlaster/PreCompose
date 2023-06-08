@@ -2,6 +2,7 @@ package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Composable
 import moe.tlaster.precompose.navigation.route.FloatingRoute
+import moe.tlaster.precompose.navigation.route.GroupRoute
 import moe.tlaster.precompose.navigation.route.Route
 import moe.tlaster.precompose.navigation.route.SceneRoute
 import moe.tlaster.precompose.navigation.transition.NavTransition
@@ -32,6 +33,28 @@ class RouteBuilder(
                 deepLinks = deepLinks,
                 swipeProperties = swipeProperties,
                 content = content,
+            )
+        )
+    }
+
+    /**
+     * Add a group of [Composable] to the [RouteBuilder]
+     * @param route route for the destination
+     * @param initialRoute initial route for the group
+     * @param content composable for the destination
+     */
+    fun group(
+        route: String,
+        initialRoute: String,
+        content: RouteBuilder.() -> Unit,
+    ) {
+        content.invoke(this)
+        val actualInitialRoute = this.route.firstOrNull { it.route == initialRoute }
+            ?: throw IllegalArgumentException("Initial route $initialRoute not found")
+        addRoute(
+            GroupRoute(
+                route = route,
+                initialRoute = actualInitialRoute,
             )
         )
     }

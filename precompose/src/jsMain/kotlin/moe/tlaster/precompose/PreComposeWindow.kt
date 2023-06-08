@@ -21,6 +21,7 @@ import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
  * Eventually this can just be a Window(title, content) call.
  */
 fun preComposeWindow(
+    @Suppress("UNUSED_PARAMETER")
     title: String = "Untitled",
     // We need to pass the ComposeWindow up to the caller for now,
     // since ComposeJS can't handle window resizes itself yet.

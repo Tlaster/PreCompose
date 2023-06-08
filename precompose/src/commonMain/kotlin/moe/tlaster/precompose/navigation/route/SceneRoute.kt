@@ -6,9 +6,9 @@ import moe.tlaster.precompose.navigation.SwipeProperties
 import moe.tlaster.precompose.navigation.transition.NavTransition
 
 internal class SceneRoute(
-    route: String,
+    override val route: String,
     val deepLinks: List<String>,
     val navTransition: NavTransition?,
     val swipeProperties: SwipeProperties?,
-    content: @Composable (BackStackEntry) -> Unit,
-) : ComposeRoute(route, content)
+    override val content: @Composable (BackStackEntry) -> Unit,
+) : ComposeRoute, ComposeSceneRoute

@@ -105,6 +105,7 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.animation)
                 implementation(compose.material)
+                implementation(kotlin("test-js"))
             }
         }
         val uikitMain by creating {

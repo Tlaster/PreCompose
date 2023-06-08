@@ -8,8 +8,10 @@ import kotlinx.coroutines.flow.map
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleObserver
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
-import moe.tlaster.precompose.navigation.route.FloatingRoute
+import moe.tlaster.precompose.navigation.route.Route
 import moe.tlaster.precompose.navigation.route.SceneRoute
+import moe.tlaster.precompose.navigation.route.isFloatingRoute
+import moe.tlaster.precompose.navigation.route.isSceneRoute
 import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
@@ -29,17 +31,17 @@ internal class BackStackManager : LifecycleObserver {
         get() = backStacks.asSharedFlow().map { it.size > 1 }
 
     val currentSceneBackStackEntry: Flow<BackStackEntry?>
-        get() = backStacks.asSharedFlow().map { it.lastOrNull { it.route is SceneRoute } }
+        get() = backStacks.asSharedFlow().map { it.lastOrNull { it.route.isSceneRoute() } }
 
     val prevSceneBackStackEntry: Flow<BackStackEntry?>
         get() = backStacks.asSharedFlow().map {
-            it.dropLastWhile { it.route !is SceneRoute }
+            it.dropLastWhile { !it.route.isSceneRoute() }
                 .dropLast(1)
-                .lastOrNull { it.route is SceneRoute }
+                .lastOrNull { it.route.isSceneRoute() }
         }
 
     val currentFloatingBackStackEntry: Flow<BackStackEntry?>
-        get() = backStacks.asSharedFlow().map { it.lastOrNull { it.route is FloatingRoute } }
+        get() = backStacks.asSharedFlow().map { it.lastOrNull { it.route.isFloatingRoute() } }
 
     // internal for testing
     internal var canNavigate = true

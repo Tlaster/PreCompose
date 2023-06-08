@@ -47,6 +47,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
 import moe.tlaster.precompose.navigation.route.ComposeRoute
+import moe.tlaster.precompose.navigation.route.GroupRoute
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import moe.tlaster.precompose.stateholder.LocalStateHolder
 import kotlin.math.absoluteValue
@@ -114,7 +115,8 @@ fun NavHost(
 
     LaunchedEffect(currentEntry, composeStateHolder) {
         val entry = currentEntry
-        if (entry != null && entry.route is ComposeRoute) {
+        val route = entry?.route
+        if (route is ComposeRoute || route is GroupRoute && route.initialRoute is ComposeRoute) {
             val closable = entry.uiClosable
             if (closable == null || closable !is ComposeUiClosable || closable.composeSaveableStateHolder != composeStateHolder) {
                 entry.uiClosable = ComposeUiClosable(composeStateHolder)
@@ -172,7 +174,7 @@ fun NavHost(
 
                     NavHostContent(composeStateHolder, entry) {
                         if (transition.isRunning) {
-                            (entry.route as? ComposeRoute)?.content?.invoke(entry)
+                            entry.ComposeContent()
                         } else {
                             val showPrev by remember(dismissState) {
                                 derivedStateOf {
@@ -213,7 +215,7 @@ fun NavHost(
                                 enabled = prevSceneEntry != null,
                                 dismissThreshold = actualSwipeProperties.swipeThreshold,
                             ) {
-                                (entry.route as? ComposeRoute)?.content?.invoke(entry)
+                                entry.ComposeContent()
                             }
                         }
                     }
@@ -234,7 +236,7 @@ private fun NavHostContent(
     stateHolder: SaveableStateHolder,
     entry: BackStackEntry,
     content: @Composable (() -> Unit) = {
-        (entry.route as? ComposeRoute)?.content?.invoke(entry)
+        entry.ComposeContent()
     }
 ) {
     DisposableEffect(entry) {
@@ -250,6 +252,23 @@ private fun NavHostContent(
             content = content
         )
     }
+}
+
+private fun GroupRoute.composeRoute(): ComposeRoute? {
+    return if (initialRoute is GroupRoute) {
+        initialRoute.composeRoute()
+    } else {
+        initialRoute as? ComposeRoute
+    }
+}
+
+@Composable
+private fun BackStackEntry.ComposeContent() {
+    if (route is GroupRoute) {
+        route.composeRoute()
+    } else {
+        route as? ComposeRoute
+    }?.content?.invoke(this)
 }
 
 @Composable
