@@ -171,53 +171,46 @@ fun NavHost(
                         else transitionSpec()
                     }
                 ) { entry ->
+                    val showPrev by remember(dismissState) {
+                        derivedStateOf {
+                            dismissState.progress.fraction < 1
+                        }
+                    }
 
-                    NavHostContent(composeStateHolder, entry) {
-                        if (transition.isRunning) {
-                            entry.ComposeContent()
-                        } else {
-                            val showPrev by remember(dismissState) {
-                                derivedStateOf {
-                                    dismissState.progress.fraction < 1
-                                }
-                            }
-
-                            if (showPrev) {
-                                prevSceneEntry?.let { prev ->
-                                    Box(
-                                        modifier = Modifier
-                                            .graphicsLayer {
-                                                translationX =
-                                                    actualSwipeProperties.slideInHorizontally(size.width.toInt())
-                                                    .toFloat() -
-                                                    actualSwipeProperties.slideInHorizontally(
-                                                        dismissState.offset.value.absoluteValue.toInt()
-                                                    )
-                                            }.drawWithContent {
-                                                drawContent()
-                                                drawRect(
-                                                    actualSwipeProperties.shadowColor,
-                                                    alpha = (1f - dismissState.progress.fraction) *
-                                                        actualSwipeProperties.shadowColor.alpha
-                                                )
-                                            }.pointerInput(0) {
-                                                // prev entry should not be interactive until fully appeared
-                                            }
-                                    ) {
-                                        NavHostContent(composeStateHolder, prev)
+                    if (showPrev && !transition.isRunning) {
+                        prevSceneEntry?.let { prev ->
+                            Box(
+                                modifier = Modifier
+                                    .graphicsLayer {
+                                        translationX =
+                                            actualSwipeProperties.slideInHorizontally(size.width.toInt())
+                                            .toFloat() -
+                                            actualSwipeProperties.slideInHorizontally(
+                                                dismissState.offset.value.absoluteValue.toInt()
+                                            )
+                                    }.drawWithContent {
+                                        drawContent()
+                                        drawRect(
+                                            actualSwipeProperties.shadowColor,
+                                            alpha = (1f - dismissState.progress.fraction) *
+                                                actualSwipeProperties.shadowColor.alpha
+                                        )
+                                    }.pointerInput(0) {
+                                        // prev entry should not be interactive until fully appeared
                                     }
-                                }
-                            }
-
-                            CustomSwipeToDismiss(
-                                state = dismissState,
-                                spaceToSwipe = actualSwipeProperties.spaceToSwipe,
-                                enabled = prevSceneEntry != null,
-                                dismissThreshold = actualSwipeProperties.swipeThreshold,
                             ) {
-                                entry.ComposeContent()
+                                NavHostContent(composeStateHolder, prev)
                             }
                         }
+                    }
+
+                    CustomSwipeToDismiss(
+                        state = dismissState,
+                        spaceToSwipe = actualSwipeProperties.spaceToSwipe,
+                        enabled = prevSceneEntry != null,
+                        dismissThreshold = actualSwipeProperties.swipeThreshold,
+                    ) {
+                        NavHostContent(composeStateHolder, entry)
                     }
                 }
             }
@@ -235,9 +228,6 @@ fun NavHost(
 private fun NavHostContent(
     stateHolder: SaveableStateHolder,
     entry: BackStackEntry,
-    content: @Composable (() -> Unit) = {
-        entry.ComposeContent()
-    }
 ) {
     DisposableEffect(entry) {
         entry.active()
@@ -249,7 +239,9 @@ private fun NavHostContent(
         CompositionLocalProvider(
             LocalStateHolder provides entry.stateHolder,
             LocalLifecycleOwner provides entry,
-            content = content
+            content = {
+                entry.ComposeContent()
+            }
         )
     }
 }
