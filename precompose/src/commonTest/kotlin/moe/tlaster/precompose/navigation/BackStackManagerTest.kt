@@ -2,6 +2,7 @@ package moe.tlaster.precompose.navigation
 
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.TestLifecycleOwner
+import moe.tlaster.precompose.navigation.route.GroupRoute
 import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -312,5 +313,89 @@ class BackStackManagerTest {
         assertFalse(manager.canNavigate)
         currentEntry.inActive()
         assertTrue(manager.canNavigate)
+    }
+
+    @Test
+    fun testGroupNavigation() {
+        val manager = BackStackManager()
+        val lifecycleOwner = TestLifecycleOwner()
+        manager.init(
+            RouteBuilder("/home").apply {
+                testRoute("/home", "home")
+                group("/group", "/detail") {
+                    testRoute("/detail", "detail")
+                }
+            }.build(),
+            StateHolder(),
+            lifecycleOwner
+        )
+        manager.push("/group")
+        assertEquals(2, manager.backStacks.value.size)
+        assertEquals("/home", manager.backStacks.value[0].route.route)
+        assertEquals("/group", manager.backStacks.value[1].route.route)
+        val groupRoute = manager.backStacks.value[1].route
+        assertIs<GroupRoute>(groupRoute)
+        assertEquals("/detail", groupRoute.initialRoute.route)
+    }
+
+    @Test
+    fun testNestedGroupNavigation() {
+        val manager = BackStackManager()
+        val lifecycleOwner = TestLifecycleOwner()
+        manager.init(
+            RouteBuilder("/home").apply {
+                testRoute("/home", "home")
+                group("/group", "/detail") {
+                    testRoute("/detail", "detail")
+                    group("/nested", "/nestedDetail") {
+                        testRoute("/nestedDetail", "nestedDetail")
+                    }
+                }
+            }.build(),
+            StateHolder(),
+            lifecycleOwner
+        )
+        manager.push("/group")
+        assertEquals(2, manager.backStacks.value.size)
+        assertEquals("/home", manager.backStacks.value[0].route.route)
+        assertEquals("/group", manager.backStacks.value[1].route.route)
+        val groupRoute = manager.backStacks.value[1].route
+        assertIs<GroupRoute>(groupRoute)
+        assertEquals("/detail", groupRoute.initialRoute.route)
+        manager.push("/nested")
+        assertEquals(3, manager.backStacks.value.size)
+        assertEquals("/home", manager.backStacks.value[0].route.route)
+        assertEquals("/group", manager.backStacks.value[1].route.route)
+        assertEquals("/nested", manager.backStacks.value[2].route.route)
+        val nestedGroupRoute = manager.backStacks.value[2].route
+        assertIs<GroupRoute>(nestedGroupRoute)
+        assertEquals("/nestedDetail", nestedGroupRoute.initialRoute.route)
+    }
+
+    @Test
+    fun testGroupNavigationWithPopUpTo() {
+        val manager = BackStackManager()
+        val lifecycleOwner = TestLifecycleOwner()
+        manager.init(
+            RouteBuilder("/home").apply {
+                testRoute("/home", "home")
+                group("/group", "/detail") {
+                    testRoute("/detail", "detail")
+                }
+            }.build(),
+            StateHolder(),
+            lifecycleOwner
+        )
+        manager.push("/group")
+        assertEquals(2, manager.backStacks.value.size)
+        assertEquals("/home", manager.backStacks.value[0].route.route)
+        assertEquals("/group", manager.backStacks.value[1].route.route)
+        val groupRoute = manager.backStacks.value[1].route
+        assertIs<GroupRoute>(groupRoute)
+        assertEquals("/detail", groupRoute.initialRoute.route)
+        manager.push("/detail", NavOptions(popUpTo = PopUpTo("/group", inclusive = true)))
+        assertEquals(2, manager.backStacks.value.size)
+        assertEquals("/home", manager.backStacks.value[0].route.route)
+        assertEquals("/detail", manager.backStacks.value[1].route.route)
     }
 }

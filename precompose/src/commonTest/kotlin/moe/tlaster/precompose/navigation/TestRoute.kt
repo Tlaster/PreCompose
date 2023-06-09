@@ -2,7 +2,7 @@ package moe.tlaster.precompose.navigation
 
 import moe.tlaster.precompose.navigation.route.Route
 
-class TestRoute(
+data class TestRoute(
     override val route: String,
     val id: String,
 ) : Route

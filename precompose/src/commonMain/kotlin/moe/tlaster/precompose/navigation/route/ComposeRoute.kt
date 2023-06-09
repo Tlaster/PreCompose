@@ -3,7 +3,10 @@ package moe.tlaster.precompose.navigation.route
 import androidx.compose.runtime.Composable
 import moe.tlaster.precompose.navigation.BackStackEntry
 
-abstract class ComposeRoute(
-    override val route: String,
+interface ComposeRoute : Route {
     val content: @Composable (BackStackEntry) -> Unit
-) : Route
+}
+
+interface ComposeSceneRoute : ComposeRoute
+
+interface ComposeFloatingRoute : ComposeRoute
