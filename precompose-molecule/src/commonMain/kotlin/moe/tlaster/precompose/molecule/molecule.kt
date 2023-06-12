@@ -23,10 +23,11 @@ internal expect fun providePlatformDispatcher(): CoroutineContext
 
 @OptIn(ExperimentalStdlibApi::class)
 private class PresenterHolder<T>(
+    useImmediateClock: Boolean,
     body: @Composable () -> T,
 ) : AutoCloseable {
     private val dispatcher = providePlatformDispatcher()
-    private val clock = if (dispatcher[MonotonicFrameClock] == null) {
+    private val clock = if (dispatcher[MonotonicFrameClock] == null || useImmediateClock) {
         RecompositionClock.Immediate
     } else {
         RecompositionClock.ContextClock
@@ -71,6 +72,7 @@ private fun <E> rememberAction(
 @Composable
 private fun <T> rememberPresenterState(
     keys: List<Any?> = emptyList(),
+    useImmediateClock: Boolean,
     body: @Composable () -> T,
 ): StateFlow<T> {
     val stateHolder = LocalStateHolder.current
@@ -78,7 +80,7 @@ private fun <T> rememberPresenterState(
         (keys.map { it.hashCode().toString() } + PresenterHolder::class.simpleName).joinToString()
     }
     return stateHolder.getOrPut(key) {
-        PresenterHolder(body)
+        PresenterHolder(useImmediateClock, body)
     }.state
 }
 
@@ -86,15 +88,17 @@ private fun <T> rememberPresenterState(
  * Return State, use it in your Compose UI
  * The molecule scope will be managed by the [StateHolder], so it has the same lifecycle as the [StateHolder]
  * @param keys The keys to use to identify the Presenter
+ * @param useImmediateClock Use immediate clock or not, for text input, you should set it to true
  * @param body The body of the molecule presenter
  * @return State
  */
 @Composable
 fun <T> producePresenter(
     keys: List<Any?> = emptyList(),
+    useImmediateClock: Boolean = false,
     body: @Composable () -> T,
 ): State<T> {
-    val presenter = rememberPresenterState(keys = keys) { body() }
+    val presenter = rememberPresenterState(keys = keys, useImmediateClock = useImmediateClock) { body() }
     return presenter.collectAsState()
 }
 
@@ -103,16 +107,18 @@ fun <T> producePresenter(
  * The molecule scope and the Action Channel will be managed by the [StateHolder], so it has the same lifecycle as the [StateHolder]
  *
  * @param keys The keys to use to identify the Presenter
+ * @param useImmediateClock Use immediate clock or not, for text input, you should set it to true
  * @param body The body of the molecule presenter, the flow parameter is the flow of the action channel
  * @return Pair of State and Action channel
  */
 @Composable
 fun <T, E> rememberPresenter(
     keys: List<Any?> = emptyList(),
+    useImmediateClock: Boolean = false,
     body: @Composable (flow: Flow<E>) -> T
 ): Pair<T, Channel<E>> {
     val (channel, action) = rememberAction<E>(keys = keys)
-    val presenter = rememberPresenterState(keys = keys) { body(action) }
+    val presenter = rememberPresenterState(keys = keys, useImmediateClock = useImmediateClock) { body(action) }
     val state by presenter.collectAsState()
     return state to channel
 }
