@@ -2,6 +2,8 @@
 
 package moe.tlaster.precompose.navigation
 
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.tween
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FixedThreshold
 import androidx.compose.material.ThresholdConfig
@@ -25,5 +27,6 @@ class SwipeProperties(
     val slideInHorizontally: (fullWidth: Int) -> Int = { -it / 4 },
     val spaceToSwipe: Dp = 10.dp,
     val swipeThreshold: ThresholdConfig = FixedThreshold(56.dp),
-    val shadowColor: Color = Color.Black.copy(alpha = .25f)
+    val shadowColor: Color = Color.Black.copy(alpha = .25f),
+    val swipeAnimSpec: AnimationSpec<Float> = tween()
 )
