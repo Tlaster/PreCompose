@@ -3,6 +3,8 @@ package moe.tlaster.precompose.navigation
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.with
 import androidx.compose.foundation.gestures.Orientation
@@ -26,10 +28,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.graphicsLayer
@@ -40,7 +43,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
+import androidx.compose.ui.zIndex
 import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
 import moe.tlaster.precompose.navigation.route.ComposeRoute
 import moe.tlaster.precompose.navigation.route.GroupRoute
@@ -50,7 +53,7 @@ import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 /**
- * Provides in place in the Compose hierarchy for self contained navigation to occur.
+ * Provides in place in the Compose hierarchy for self-contained navigation to occur.
  *
  * Once this is called, any Composable within the given [RouteBuilder] can be navigated to from
  * the provided [RouteBuilder].
@@ -74,7 +77,6 @@ fun NavHost(
     swipeProperties: SwipeProperties? = null,
     builder: RouteBuilder.() -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
     val lifecycleOwner = requireNotNull(LocalLifecycleOwner.current)
     val stateHolder = requireNotNull(LocalStateHolder.current)
     val composeStateHolder = rememberSaveableStateHolder()
@@ -123,29 +125,33 @@ fun NavHost(
         val prevSceneEntry by navigator.stackManager
             .prevSceneBackStackEntry.collectAsState(null)
 
-        val actualSwipeProperties = currentSceneEntry?.swipeProperties ?: swipeProperties
+        BackHandler(canGoBack) {
+            navigator.goBack()
+        }
 
         currentSceneEntry?.let { sceneEntry ->
+            val actualSwipeProperties = sceneEntry.swipeProperties ?: swipeProperties
             if (actualSwipeProperties == null) {
-                BackHandler(canGoBack) {
-                    navigator.goBack()
-                }
                 AnimatedContent(sceneEntry, transitionSpec = transitionSpec) { entry ->
                     NavHostContent(composeStateHolder, entry)
                 }
             } else {
+
+                var prevWasSwiped by remember {
+                    mutableStateOf(false)
+                }
+
+                LaunchedEffect(currentSceneEntry) {
+                    prevWasSwiped = false
+                }
+
                 val dismissState = key(sceneEntry) {
                     rememberDismissState()
                 }
 
-                BackHandler(canGoBack) {
-                    scope.launch {
-                        dismissState.animateTo(DismissValue.DismissedToEnd, actualSwipeProperties.swipeAnimSpec)
-                    }
-                }
-
                 LaunchedEffect(dismissState.isDismissed(DismissDirection.StartToEnd)) {
                     if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+                        prevWasSwiped = true
                         navigator.goBack()
                     }
                 }
@@ -159,7 +165,7 @@ fun NavHost(
 
                 val visibleItems = remember(sceneEntry, prevSceneEntry, showPrev) {
                     if (showPrev) {
-                        listOfNotNull(prevSceneEntry, sceneEntry)
+                        listOfNotNull(sceneEntry, prevSceneEntry)
                     } else {
                         listOfNotNull(sceneEntry)
                     }
@@ -167,15 +173,34 @@ fun NavHost(
 
                 // display visible items using SwipeItem
                 visibleItems.forEachIndexed { index, backStackEntry ->
-                    key(backStackEntry.stateId) {
+                    val isPrev = remember(index, visibleItems.size) {
+                        index == 1 && visibleItems.size > 1
+                    }
+                    AnimatedContent(
+                        backStackEntry,
+                        transitionSpec = {
+                            if (prevWasSwiped) {
+                                EnterTransition.None with ExitTransition.None
+                            } else {
+                                transitionSpec()
+                            }
+                        },
+                        modifier = Modifier.zIndex(
+                            if (isPrev) {
+                                0f
+                            } else {
+                                1f
+                            }
+                        )
+                    ) {
                         SwipeItem(
                             dismissState = dismissState,
                             swipeProperties = actualSwipeProperties,
-                            entry = backStackEntry,
-                            isPrev = index == 0 && visibleItems.size > 1,
-                            composeStateHolder = composeStateHolder,
+                            isPrev = isPrev,
                             isLast = !canGoBack,
-                        )
+                        ) {
+                            NavHostContent(composeStateHolder, it)
+                        }
                     }
                 }
             }
@@ -194,17 +219,18 @@ fun NavHost(
 @Composable
 private fun SwipeItem(
     dismissState: DismissState,
-    entry: BackStackEntry,
-    composeStateHolder: SaveableStateHolder,
     swipeProperties: SwipeProperties,
     isPrev: Boolean,
     isLast: Boolean,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
 ) {
     CustomSwipeToDismiss(
         state = if (isPrev) rememberDismissState() else dismissState,
         spaceToSwipe = swipeProperties.spaceToSwipe,
         enabled = !isLast,
         dismissThreshold = swipeProperties.swipeThreshold,
+        modifier = modifier,
     ) {
         Box(
             modifier = Modifier
@@ -227,7 +253,7 @@ private fun SwipeItem(
                     // prev entry should not be interactive until fully appeared
                 } ?: Modifier,
         ) {
-            NavHostContent(composeStateHolder, entry)
+            content.invoke()
         }
     }
 }
