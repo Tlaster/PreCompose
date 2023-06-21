@@ -156,10 +156,9 @@ fun NavHost(
                     }
                 }
 
-                val offset by dismissState.offset
-                val showPrev by remember(offset) {
+                val showPrev by remember(dismissState) {
                     derivedStateOf {
-                        offset > 0f
+                        dismissState.offset.value > 0f
                     }
                 }
 
