@@ -105,6 +105,10 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.animation)
                 implementation(compose.material)
+            }
+        }
+        val jsTest by getting {
+            dependencies {
                 implementation(kotlin("test-js"))
             }
         }
