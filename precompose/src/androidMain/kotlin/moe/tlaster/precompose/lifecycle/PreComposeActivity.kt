@@ -9,6 +9,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.findViewTreeLifecycleOwner
@@ -17,7 +19,9 @@ import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import moe.tlaster.precompose.stateholder.LocalSavedStateHolder
 import moe.tlaster.precompose.stateholder.LocalStateHolder
+import moe.tlaster.precompose.stateholder.SavedStateHolder
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 
 open class PreComposeActivity : FragmentActivity() {
@@ -97,6 +101,15 @@ private fun PreComposeActivity.ProvideAndroidCompositionLocals(
     content: @Composable () -> Unit,
 ) {
     val state by viewModel.backDispatcher.canHandleBackPress.collectAsState(false)
+
+    val saveableStateRegistry = LocalSaveableStateRegistry.current
+    val savedStateHolder = remember(saveableStateRegistry) {
+        SavedStateHolder(
+            "root",
+            saveableStateRegistry
+        )
+    }
+
     LaunchedEffect(state) {
         viewModel.backPressedCallback.isEnabled = state
     }
@@ -104,6 +117,7 @@ private fun PreComposeActivity.ProvideAndroidCompositionLocals(
         LocalLifecycleOwner provides this.viewModel,
         LocalStateHolder provides this.viewModel.stateHolder,
         LocalBackDispatcherOwner provides this.viewModel,
+        LocalSavedStateHolder provides savedStateHolder,
     ) {
         content.invoke()
     }

@@ -24,6 +24,7 @@ class BackStackManagerTest {
                 )
             ),
             StateHolder(),
+            TestSavedStateHolder(),
             TestLifecycleOwner()
         )
         val backStacks = manager.backStacks.value
@@ -46,6 +47,7 @@ class BackStackManagerTest {
                 )
             ),
             StateHolder(),
+            TestSavedStateHolder(),
             TestLifecycleOwner()
         )
         manager.push("foo/bar/1")
@@ -70,7 +72,8 @@ class BackStackManagerTest {
                 )
             ),
             StateHolder(),
-            TestLifecycleOwner()
+            TestSavedStateHolder(),
+            TestLifecycleOwner(),
         )
         manager.push("foo/bar/1")
         manager.push("foo/bar/1/baz")
@@ -96,7 +99,8 @@ class BackStackManagerTest {
                 )
             ),
             StateHolder(),
-            TestLifecycleOwner()
+            TestSavedStateHolder(),
+            TestLifecycleOwner(),
         )
         manager.push("foo/bar/1")
         manager.push("foo/bar/1/baz")
@@ -129,7 +133,8 @@ class BackStackManagerTest {
                 )
             ),
             StateHolder(),
-            TestLifecycleOwner()
+
+            TestSavedStateHolder(), TestLifecycleOwner(),
         )
         manager.push("foo/bar/1")
         manager.push("foo/bar/1/baz")
@@ -159,7 +164,8 @@ class BackStackManagerTest {
                 )
             ),
             StateHolder(),
-            TestLifecycleOwner()
+
+            TestSavedStateHolder(), TestLifecycleOwner(),
         )
         manager.push("foo/bar/1")
         manager.push("foo/bar/1/baz")
@@ -189,7 +195,8 @@ class BackStackManagerTest {
                 )
             ),
             StateHolder(),
-            TestLifecycleOwner()
+
+            TestSavedStateHolder(), TestLifecycleOwner(),
         )
         manager.push("foo/bar/1")
         manager.push("foo/bar/1/baz")
@@ -219,12 +226,16 @@ class BackStackManagerTest {
                 )
             ),
             StateHolder(),
-            TestLifecycleOwner()
+
+            TestSavedStateHolder(), TestLifecycleOwner(),
         )
         manager.push("foo/bar/1")
         manager.push("foo/bar/1/baz")
         manager.push("foo/bar/2")
-        manager.push("foo/bar/3", NavOptions(popUpTo = PopUpTo("foo/bar/{id}/baz", inclusive = true)))
+        manager.push(
+            "foo/bar/3",
+            NavOptions(popUpTo = PopUpTo("foo/bar/{id}/baz", inclusive = true))
+        )
         val backStacks = manager.backStacks.value
         assertEquals(3, backStacks.size)
         assertEquals("foo/bar", backStacks[0].route.route)
@@ -247,7 +258,8 @@ class BackStackManagerTest {
                 )
             ),
             StateHolder(),
-            TestLifecycleOwner()
+            TestSavedStateHolder(),
+            TestLifecycleOwner(),
         )
         manager.push("foo/bar/1")
         manager.push("foo/bar/1/baz")
@@ -274,7 +286,8 @@ class BackStackManagerTest {
                 )
             ),
             StateHolder(),
-            lifecycleOwner
+            TestSavedStateHolder(),
+            lifecycleOwner,
         )
         val entry = manager.backStacks.value[0]
         lifecycleOwner.lifecycle.currentState = Lifecycle.State.Active
@@ -300,6 +313,7 @@ class BackStackManagerTest {
                 )
             ),
             StateHolder(),
+            TestSavedStateHolder(),
             lifecycleOwner
         )
         assertTrue(manager.canNavigate)
@@ -327,6 +341,7 @@ class BackStackManagerTest {
                 }
             }.build(),
             StateHolder(),
+            TestSavedStateHolder(),
             lifecycleOwner
         )
         manager.push("/group")
@@ -353,6 +368,7 @@ class BackStackManagerTest {
                 }
             }.build(),
             StateHolder(),
+            TestSavedStateHolder(),
             lifecycleOwner
         )
         manager.push("/group")
@@ -384,6 +400,7 @@ class BackStackManagerTest {
                 }
             }.build(),
             StateHolder(),
+            TestSavedStateHolder(),
             lifecycleOwner
         )
         manager.push("/group")
@@ -397,5 +414,66 @@ class BackStackManagerTest {
         assertEquals(2, manager.backStacks.value.size)
         assertEquals("/home", manager.backStacks.value[0].route.route)
         assertEquals("/detail", manager.backStacks.value[1].route.route)
+    }
+
+    @Test
+    fun testSavingBackStack() {
+        val manager = BackStackManager()
+        val lifecycleOwner = TestLifecycleOwner()
+        val saveableStateHolder = TestSavedStateHolder()
+
+        manager.init(
+            RouteGraph(
+                "foo/bar",
+                listOf(
+                    TestRoute("foo/bar", "foo/bar"),
+                    TestRoute("foo/bar/{id}", "foo/bar/{id}"),
+                    TestRoute("foo/bar/{id}/baz", "foo/bar/{id}/baz"),
+                )
+            ),
+            StateHolder(),
+            saveableStateHolder,
+            lifecycleOwner
+        )
+
+        manager.push("foo/bar/1")
+        manager.push("foo/bar/1/baz")
+
+        saveableStateHolder.performSave().apply {
+            assertEquals(
+                listOf("foo/bar", "foo/bar/1", "foo/bar/1/baz"),
+                get(STACK_SAVED_STATE_KEY)!!.single()
+            )
+        }
+    }
+
+    @Test
+    fun testRestoringBackStack() {
+        val manager = BackStackManager()
+        val lifecycleOwner = TestLifecycleOwner()
+        val savedStateHolder = TestSavedStateHolder(
+            restored = mapOf(
+                STACK_SAVED_STATE_KEY to listOf(listOf("foo/bar", "foo/bar/1", "foo/bar/1/baz"))
+            )
+        )
+
+        manager.init(
+            RouteGraph(
+                "foo/bar",
+                listOf(
+                    TestRoute("foo/bar", "foo/bar"),
+                    TestRoute("foo/bar/{id}", "foo/bar/{id}"),
+                    TestRoute("foo/bar/{id}/baz", "foo/bar/{id}/baz"),
+                )
+            ),
+            StateHolder(),
+            savedStateHolder,
+            lifecycleOwner
+        )
+
+        assertEquals(
+            listOf("foo/bar", "foo/bar/1", "foo/bar/1/baz"),
+            manager.backStacks.value.map { it.path }
+        )
     }
 }

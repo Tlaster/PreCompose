@@ -48,6 +48,7 @@ import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
 import moe.tlaster.precompose.navigation.route.ComposeRoute
 import moe.tlaster.precompose.navigation.route.GroupRoute
 import moe.tlaster.precompose.navigation.transition.NavTransition
+import moe.tlaster.precompose.stateholder.LocalSavedStateHolder
 import moe.tlaster.precompose.stateholder.LocalStateHolder
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -79,13 +80,16 @@ fun NavHost(
 ) {
     val lifecycleOwner = requireNotNull(LocalLifecycleOwner.current)
     val stateHolder = requireNotNull(LocalStateHolder.current)
+    val savedStateHolder = requireNotNull(LocalSavedStateHolder.current)
     val composeStateHolder = rememberSaveableStateHolder()
+
     // true for assuming that lifecycleOwner, stateHolder and composeStateHolder are not changing during the lifetime of the NavHost
     LaunchedEffect(true) {
         navigator.init(
             routeGraph = RouteBuilder(initialRoute).apply(builder).build(),
             stateHolder = stateHolder,
-            lifecycleOwner = lifecycleOwner,
+            savedStateHolder = savedStateHolder,
+            lifecycleOwner = lifecycleOwner
         )
     }
 
@@ -271,6 +275,7 @@ private fun NavHostContent(
     stateHolder.SaveableStateProvider(entry.stateId) {
         CompositionLocalProvider(
             LocalStateHolder provides entry.stateHolder,
+            LocalSavedStateHolder provides entry.savedStateHolder,
             LocalLifecycleOwner provides entry,
             content = {
                 entry.ComposeContent()

@@ -19,6 +19,7 @@ class NavigatorTest {
                 )
             ),
             StateHolder(),
+            TestSavedStateHolder(),
             TestLifecycleOwner(),
         )
         navigator.navigate("foo/bar/1")
@@ -43,7 +44,8 @@ class NavigatorTest {
                 )
             ),
             StateHolder(),
-            TestLifecycleOwner(),
+            TestSavedStateHolder(),
+            TestLifecycleOwner()
         )
         assertEquals(2, navigator.stackManager.backStacks.value.size)
         assertEquals("foo/bar/{id}", navigator.stackManager.backStacks.value.last().route.route)
