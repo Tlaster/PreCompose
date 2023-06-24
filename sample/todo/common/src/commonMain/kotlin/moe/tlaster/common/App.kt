@@ -8,7 +8,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import moe.tlaster.common.scene.NoteDetailScene
 import moe.tlaster.common.scene.NoteEditScene
 import moe.tlaster.common.scene.NoteListScene

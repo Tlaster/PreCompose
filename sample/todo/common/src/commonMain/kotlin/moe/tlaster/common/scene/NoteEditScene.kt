@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import moe.tlaster.common.viewmodel.NoteEditViewModel
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
+import moe.tlaster.precompose.stateholder.LocalSavedStateHolder
 import moe.tlaster.precompose.viewmodel.viewModel
 
 @ExperimentalMaterialApi
@@ -28,8 +29,9 @@ fun NoteEditScene(
     onDone: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
-    val viewModel = viewModel(NoteEditViewModel::class, listOf(id)) {
-        NoteEditViewModel(id)
+    val savedSateHolder = LocalSavedStateHolder.current
+    val viewModel = viewModel(NoteEditViewModel::class, listOf(id, savedSateHolder)) {
+        NoteEditViewModel(id, savedSateHolder)
     }
 
     Scaffold(
