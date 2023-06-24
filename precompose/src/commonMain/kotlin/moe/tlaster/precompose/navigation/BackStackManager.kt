@@ -116,9 +116,9 @@ internal class BackStackManager : LifecycleObserver {
                 } else 0
             }
             if (index != -1) {
-                val stacks = currentBackStacks.subList(
+                val stacks = backStacks.value.subList(
                     if (popUpTo.inclusive) index else index + 1,
-                    currentBackStacks.size
+                    backStacks.value.size - 1
                 )
                 backStacks.value -= stacks
                 stacks.forEach {
