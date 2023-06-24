@@ -30,7 +30,7 @@ class BackDispatcher {
     }
 
     internal fun register(handler: BackHandler) {
-        handlers.add(0, handler)
+        handlers.add(handler)
     }
 
     internal fun unregister(handler: BackHandler) {
