@@ -31,10 +31,12 @@ class BackDispatcher {
 
     internal fun register(handler: BackHandler) {
         handlers.add(handler)
+        onBackStackChanged()
     }
 
     internal fun unregister(handler: BackHandler) {
         handlers.remove(handler)
+        onBackStackChanged()
     }
 }
 
