@@ -5,7 +5,6 @@ import moe.tlaster.precompose.navigation.route.FloatingRoute
 import moe.tlaster.precompose.navigation.route.GroupRoute
 import moe.tlaster.precompose.navigation.route.Route
 import moe.tlaster.precompose.navigation.route.SceneRoute
-import moe.tlaster.precompose.navigation.route.isFloatingRoute
 import moe.tlaster.precompose.navigation.transition.NavTransition
 
 class RouteBuilder(
