@@ -18,7 +18,8 @@ class SavedStateHolder(
 ) : SaveableStateRegistry by SaveableStateRegistry(
     saveableStateRegistry?.consumeRestored(key) as? Map<String, List<Any?>>,
     { saveableStateRegistry?.canBeSaved(it) ?: true }
-), AutoCloseable {
+),
+    AutoCloseable {
     private val registryEntry = saveableStateRegistry?.registerProvider(key) {
         performSave()
     }

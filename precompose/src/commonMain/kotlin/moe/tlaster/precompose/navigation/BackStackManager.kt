@@ -21,7 +21,7 @@ import kotlin.coroutines.suspendCoroutine
 internal const val STACK_SAVED_STATE_KEY = "BackStackManager"
 
 @Stable
-internal class BackStackManager: LifecycleObserver {
+internal class BackStackManager : LifecycleObserver {
     private lateinit var _stateHolder: StateHolder
     private lateinit var _savedStateHolder: SavedStateHolder
 
