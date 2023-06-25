@@ -30,6 +30,7 @@ class Navigator {
         stateHolder: StateHolder,
         savedStateHolder: SavedStateHolder,
         lifecycleOwner: LifecycleOwner,
+        persistNavState: Boolean,
     ) {
         if (_initialized) {
             return
@@ -39,7 +40,8 @@ class Navigator {
             routeGraph = routeGraph,
             stateHolder = stateHolder,
             savedStateHolder = savedStateHolder,
-            lifecycleOwner = lifecycleOwner
+            lifecycleOwner = lifecycleOwner,
+            persistNavState = persistNavState
         )
         _pendingNavigation?.let {
             stackManager.push(it)

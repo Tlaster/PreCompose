@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.map
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleObserver
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
-import moe.tlaster.precompose.navigation.route.Route
 import moe.tlaster.precompose.navigation.route.SceneRoute
 import moe.tlaster.precompose.navigation.route.isFloatingRoute
 import moe.tlaster.precompose.navigation.route.isSceneRoute
@@ -55,14 +54,17 @@ internal class BackStackManager : LifecycleObserver {
         routeGraph: RouteGraph,
         stateHolder: StateHolder,
         savedStateHolder: SavedStateHolder,
-        lifecycleOwner: LifecycleOwner
+        lifecycleOwner: LifecycleOwner,
+        persistNavState: Boolean,
     ) {
         _stateHolder = stateHolder
         _savedStateHolder = savedStateHolder
         lifecycleOwner.lifecycle.addObserver(this)
 
-        _savedStateHolder.registerProvider(STACK_SAVED_STATE_KEY) {
-            backStacks.value.map { backStackEntry -> backStackEntry.path }
+        if (persistNavState) {
+            _savedStateHolder.registerProvider(STACK_SAVED_STATE_KEY) {
+                backStacks.value.map { backStackEntry -> backStackEntry.path }
+            }
         }
         routeGraph.routes
             .map { route ->
@@ -82,9 +84,8 @@ internal class BackStackManager : LifecycleObserver {
             }
 
         @Suppress("UNCHECKED_CAST")
-        (_savedStateHolder.consumeRestored(STACK_SAVED_STATE_KEY) as? List<String>)?.let {
-            val stack = it
-            stack.forEach {
+        (_savedStateHolder.consumeRestored(STACK_SAVED_STATE_KEY) as? List<String>)?.let { restoredStacks ->
+            restoredStacks.forEach {
                 push(it)
             }
         } ?: push(routeGraph.initialRoute)

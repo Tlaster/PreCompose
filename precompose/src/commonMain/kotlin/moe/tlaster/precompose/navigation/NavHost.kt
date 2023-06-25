@@ -66,6 +66,7 @@ import kotlin.math.roundToInt
  * @param initialRoute the route for the start destination
  * @param navTransition navigation transition for the scenes in this [NavHost]
  * @param swipeProperties properties of swipe back navigation
+ * @param persistNavState whether to persist navigation state to the Saved State Registry, defaults to false
  * @param builder the builder used to construct the graph
  */
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
@@ -76,6 +77,7 @@ fun NavHost(
     initialRoute: String,
     navTransition: NavTransition = remember { NavTransition() },
     swipeProperties: SwipeProperties? = null,
+    persistNavState: Boolean = false,
     builder: RouteBuilder.() -> Unit,
 ) {
     val lifecycleOwner = requireNotNull(LocalLifecycleOwner.current)
@@ -89,7 +91,8 @@ fun NavHost(
             routeGraph = RouteBuilder(initialRoute).apply(builder).build(),
             stateHolder = stateHolder,
             savedStateHolder = savedStateHolder,
-            lifecycleOwner = lifecycleOwner
+            lifecycleOwner = lifecycleOwner,
+            persistNavState = persistNavState,
         )
     }
 
