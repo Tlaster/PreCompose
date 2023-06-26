@@ -7,6 +7,7 @@ import moe.tlaster.precompose.navigation.route.GroupRoute
 import moe.tlaster.precompose.navigation.route.Route
 import moe.tlaster.precompose.navigation.route.toSceneRoute
 import moe.tlaster.precompose.navigation.transition.NavTransition
+import moe.tlaster.precompose.stateholder.SavedStateHolder
 import moe.tlaster.precompose.stateholder.StateHolder
 
 class BackStackEntry internal constructor(
@@ -15,6 +16,7 @@ class BackStackEntry internal constructor(
     val path: String,
     val pathMap: Map<String, String>,
     private val parentStateHolder: StateHolder,
+    parentSavedStateHolder: SavedStateHolder,
     val queryString: QueryString? = null,
     // TODO: dirty callback for disabling push back -> immediate navigate
     private val requestNavigationLock: (locked: Boolean) -> Unit = {},
@@ -25,6 +27,7 @@ class BackStackEntry internal constructor(
     val stateHolder: StateHolder = parentStateHolder.getOrPut(stateId) {
         StateHolder()
     }
+    val savedStateHolder: SavedStateHolder = parentSavedStateHolder.child(stateId)
     internal val swipeProperties: SwipeProperties?
         get() = route.toSceneRoute()?.swipeProperties
 
@@ -57,6 +60,7 @@ class BackStackEntry internal constructor(
             lifecycleRegistry.currentState = Lifecycle.State.Destroyed
             stateHolder.close()
             parentStateHolder.remove(stateId)
+            savedStateHolder.close()
             uiClosable?.close(stateId)
             requestNavigationLock.invoke(false)
         }

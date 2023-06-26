@@ -2,7 +2,9 @@ package moe.tlaster.precompose.viewmodel
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import moe.tlaster.precompose.stateholder.LocalSavedStateHolder
 import moe.tlaster.precompose.stateholder.LocalStateHolder
+import moe.tlaster.precompose.stateholder.SavedStateHolder
 import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.reflect.KClass
 
@@ -16,7 +18,7 @@ import kotlin.reflect.KClass
  */
 inline fun <reified T : ViewModel> viewModel(
     keys: List<Any?> = emptyList(),
-    noinline creator: () -> T,
+    noinline creator: (SavedStateHolder) -> T,
 ): T = viewModel(T::class, keys, creator = creator)
 
 /**
@@ -30,15 +32,20 @@ inline fun <reified T : ViewModel> viewModel(
 fun <T : ViewModel> viewModel(
     modelClass: KClass<T>,
     keys: List<Any?> = emptyList(),
-    creator: () -> T,
+    creator: (SavedStateHolder) -> T,
 ): T {
     val stateHolder = checkNotNull(LocalStateHolder.current) {
         "Require LocalStateHolder not null for $modelClass"
     }
+    val savedStateHolder = checkNotNull(LocalSavedStateHolder.current) {
+        "Require LocalSavedStateHolder not null"
+    }
     return remember(
-        modelClass, keys, creator, stateHolder
+        modelClass, keys, creator, stateHolder, savedStateHolder
     ) {
-        stateHolder.getViewModel(keys, modelClass = modelClass, creator = creator)
+        stateHolder.getViewModel(keys, modelClass = modelClass) {
+            creator(savedStateHolder)
+        }
     }
 }
 

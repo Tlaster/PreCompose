@@ -11,14 +11,19 @@ import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.navigation.route.SceneRoute
 import moe.tlaster.precompose.navigation.route.isFloatingRoute
 import moe.tlaster.precompose.navigation.route.isSceneRoute
+import moe.tlaster.precompose.stateholder.SavedStateHolder
 import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+internal const val STACK_SAVED_STATE_KEY = "BackStackManager"
+
 @Stable
 internal class BackStackManager : LifecycleObserver {
     private lateinit var _stateHolder: StateHolder
+    private lateinit var _savedStateHolder: SavedStateHolder
+
     // internal for testing
     internal val backStacks = MutableStateFlow(listOf<BackStackEntry>())
     private val _routeParser = RouteParser()
@@ -48,10 +53,19 @@ internal class BackStackManager : LifecycleObserver {
     fun init(
         routeGraph: RouteGraph,
         stateHolder: StateHolder,
+        savedStateHolder: SavedStateHolder,
         lifecycleOwner: LifecycleOwner,
+        persistNavState: Boolean,
     ) {
         _stateHolder = stateHolder
+        _savedStateHolder = savedStateHolder
         lifecycleOwner.lifecycle.addObserver(this)
+
+        if (persistNavState) {
+            _savedStateHolder.registerProvider(STACK_SAVED_STATE_KEY) {
+                backStacks.value.map { backStackEntry -> backStackEntry.path }
+            }
+        }
         routeGraph.routes
             .map { route ->
                 RouteParser.expandOptionalVariables(route.route).let {
@@ -68,7 +82,13 @@ internal class BackStackManager : LifecycleObserver {
             .forEach {
                 _routeParser.insert(it.first, it.second)
             }
-        push(routeGraph.initialRoute)
+
+        @Suppress("UNCHECKED_CAST")
+        (_savedStateHolder.consumeRestored(STACK_SAVED_STATE_KEY) as? List<String>)?.let { restoredStacks ->
+            restoredStacks.forEach {
+                push(it)
+            }
+        } ?: push(routeGraph.initialRoute)
     }
 
     fun push(path: String, options: NavOptions? = null) {
@@ -99,6 +119,7 @@ internal class BackStackManager : LifecycleObserver {
                 },
                 path = path,
                 parentStateHolder = _stateHolder,
+                parentSavedStateHolder = _savedStateHolder,
                 requestNavigationLock = {
                     canNavigate = !it
                 }

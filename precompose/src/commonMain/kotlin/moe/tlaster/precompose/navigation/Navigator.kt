@@ -3,6 +3,7 @@ package moe.tlaster.precompose.navigation
 import androidx.compose.runtime.Composable
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.stateholder.LocalStateHolder
+import moe.tlaster.precompose.stateholder.SavedStateHolder
 import moe.tlaster.precompose.stateholder.StateHolder
 
 /**
@@ -27,7 +28,9 @@ class Navigator {
     internal fun init(
         routeGraph: RouteGraph,
         stateHolder: StateHolder,
+        savedStateHolder: SavedStateHolder,
         lifecycleOwner: LifecycleOwner,
+        persistNavState: Boolean,
     ) {
         if (_initialized) {
             return
@@ -36,7 +39,9 @@ class Navigator {
         stackManager.init(
             routeGraph = routeGraph,
             stateHolder = stateHolder,
+            savedStateHolder = savedStateHolder,
             lifecycleOwner = lifecycleOwner,
+            persistNavState = persistNavState
         )
         _pendingNavigation?.let {
             stackManager.push(it)
