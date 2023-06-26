@@ -49,6 +49,7 @@ kotlin {
                 api(compose.animation)
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.Kotlin.coroutines}")
                 // @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 // implementation(compose.uiTestJUnit4)
             }

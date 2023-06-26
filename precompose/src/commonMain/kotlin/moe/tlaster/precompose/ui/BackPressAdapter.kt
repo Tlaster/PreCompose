@@ -12,7 +12,8 @@ interface BackDispatcherOwner {
 }
 
 class BackDispatcher {
-    private val handlers = arrayListOf<BackHandler>()
+    // internal for testing
+    internal val handlers = arrayListOf<BackHandler>()
 
     fun onBackPress() {
         handlers.lastOrNull {
