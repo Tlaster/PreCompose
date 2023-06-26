@@ -292,8 +292,10 @@ class BackStackManagerTest {
                     TestRoute("foo/baz", "foo/baz"),
                 )
             ),
-            StateHolder(),
-            TestLifecycleOwner()
+            stateHolder = StateHolder(),
+            savedStateHolder = TestSavedStateHolder(),
+            lifecycleOwner = TestLifecycleOwner(),
+            persistNavState = false,
         )
 
         fun navigate(path: String, navOptions: NavOptions) {
