@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.map
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleObserver
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
-import moe.tlaster.precompose.navigation.route.Route
 import moe.tlaster.precompose.navigation.route.SceneRoute
 import moe.tlaster.precompose.navigation.route.isFloatingRoute
 import moe.tlaster.precompose.navigation.route.isSceneRoute
@@ -107,21 +106,27 @@ internal class BackStackManager : LifecycleObserver {
         }
 
         if (options != null && options.popUpTo != PopUpTo.None) {
+            val backStack = if (options.launchSingleTop) {
+                backStacks.value.dropLast(1)
+            } else {
+                currentBackStacks
+            }
+
             val popUpTo = options.popUpTo
             val index = when (popUpTo) {
                 PopUpTo.None -> -1
-                PopUpTo.Prev -> currentBackStacks.lastIndex - 1
+                PopUpTo.Prev -> backStack.lastIndex - 1
                 is PopUpTo.Route -> if (popUpTo.route.isNotEmpty()) {
-                    currentBackStacks.indexOfLast { it.hasRoute(popUpTo.route, path, options.includePath) }
+                    backStack.indexOfLast { it.hasRoute(popUpTo.route, path, options.includePath) }
                 } else 0
             }
             if (index != -1) {
-                val stacks = currentBackStacks.subList(
+                val stacksToDrop = backStack.subList(
                     if (popUpTo.inclusive) index else index + 1,
-                    currentBackStacks.size
+                    backStack.size
                 )
-                backStacks.value -= stacks
-                stacks.forEach {
+                backStacks.value -= stacksToDrop
+                stacksToDrop.forEach {
                     it.destroy()
                 }
             }

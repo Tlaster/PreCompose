@@ -261,6 +261,38 @@ class BackStackManagerTest {
     }
 
     @Test
+    fun testMultipleLaunchSingleTopWithPopUpTo() {
+        val manager = BackStackManager()
+        manager.init(
+            RouteGraph(
+                "foo/bar",
+                listOf(
+                    TestRoute("foo/bar", "foo/bar"),
+                    TestRoute("foo/baz", "foo/baz"),
+                )
+            ),
+            StateHolder(),
+            TestLifecycleOwner()
+        )
+
+        fun navigate(path: String, navOptions: NavOptions) {
+            val previousEntry = manager.backStacks.value.lastOrNull()
+            manager.push(path, navOptions)
+            // Mark the previous entry as inactive to simulate the lifecycle change by the NavHost
+            previousEntry?.inActive()
+        }
+
+        navigate("foo/bar", NavOptions(launchSingleTop = true, popUpTo = PopUpTo.First(inclusive = true)))
+        navigate("foo/baz", NavOptions(launchSingleTop = true, popUpTo = PopUpTo.First(inclusive = false)))
+        navigate("foo/bar", NavOptions(launchSingleTop = true, popUpTo = PopUpTo.First(inclusive = true)))
+        navigate("foo/baz", NavOptions(launchSingleTop = true, popUpTo = PopUpTo.First(inclusive = false)))
+        val backStacks = manager.backStacks.value
+        assertEquals(2, backStacks.size)
+        assertEquals("foo/bar", backStacks[0].route.route)
+        assertEquals("foo/baz", backStacks[1].route.route)
+    }
+
+    @Test
     fun testLifecycle() {
         val manager = BackStackManager()
         val lifecycleOwner = TestLifecycleOwner()
