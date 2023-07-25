@@ -3,7 +3,7 @@ package moe.tlaster.precompose
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
-import androidx.compose.ui.window.Application
+import androidx.compose.ui.window.ComposeUIViewController
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
 import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
@@ -15,12 +15,9 @@ import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 import platform.UIKit.UIViewController
 
 fun PreComposeApplication(
-    title: String,
     content: @Composable () -> Unit
 ): UIViewController {
-    return Application(
-        title
-    ) {
+    return ComposeUIViewController {
         val holder = remember {
             PreComposeWindowHolder()
         }

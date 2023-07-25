@@ -47,7 +47,7 @@ class SkikoAppDelegate : UIResponder, UIApplicationDelegateProtocol {
 
     override fun application(application: UIApplication, didFinishLaunchingWithOptions: Map<Any?, *>?): Boolean {
         window = UIWindow(frame = UIScreen.mainScreen.bounds).apply {
-            rootViewController = PreComposeApplication("PreCompose") {
+            rootViewController = PreComposeApplication {
                 Column {
                     Spacer(
                         modifier = Modifier
