@@ -1,12 +1,12 @@
 package moe.tlaster.precompose.navigation
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -96,16 +96,16 @@ fun NavHost(
         )
     }
 
-    val transitionSpec: AnimatedContentScope<BackStackEntry>.() -> ContentTransform = {
+    val transitionSpec: AnimatedContentTransitionScope<BackStackEntry>.() -> ContentTransform = {
         val actualTransaction = run {
             if (navigator.stackManager.contains(initialState)) targetState else initialState
         }.navTransition ?: navTransition
         if (!navigator.stackManager.contains(initialState)) {
-            actualTransaction.resumeTransition.with(actualTransaction.destroyTransition).apply {
+            actualTransaction.resumeTransition.togetherWith(actualTransaction.destroyTransition).apply {
                 targetContentZIndex = actualTransaction.enterTargetContentZIndex
             }
         } else {
-            actualTransaction.createTransition.with(actualTransaction.pauseTransition).apply {
+            actualTransaction.createTransition.togetherWith(actualTransaction.pauseTransition).apply {
                 targetContentZIndex = actualTransaction.exitTargetContentZIndex
             }
         }
@@ -186,7 +186,7 @@ fun NavHost(
                         backStackEntry,
                         transitionSpec = {
                             if (prevWasSwiped) {
-                                EnterTransition.None with ExitTransition.None
+                                EnterTransition.None togetherWith ExitTransition.None
                             } else {
                                 transitionSpec()
                             }
