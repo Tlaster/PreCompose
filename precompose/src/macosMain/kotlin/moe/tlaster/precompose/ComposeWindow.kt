@@ -98,7 +98,6 @@ internal class ComposeWindow(
     val layer = ComposeLayer(
         layer = createSkiaLayer(),
         platform = platform,
-        getTopLeftOffset = { Offset.Zero },
         input = macosTextInputService.input
     )
     val title: String
