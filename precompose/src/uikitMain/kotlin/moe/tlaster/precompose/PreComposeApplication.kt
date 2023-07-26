@@ -3,6 +3,7 @@ package moe.tlaster.precompose
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.ui.uikit.ComposeUIViewControllerConfiguration
 import androidx.compose.ui.window.ComposeUIViewController
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
@@ -16,10 +17,10 @@ import platform.UIKit.UIViewController
 
 @Suppress("FunctionName")
 fun PreComposeApplication(
-    title: String,
+    configure: ComposeUIViewControllerConfiguration.() -> Unit,
     content: @Composable () -> Unit
 ): UIViewController {
-    return ComposeUIViewController {
+    return ComposeUIViewController(configure) {
         val holder = remember {
             PreComposeWindowHolder()
         }
