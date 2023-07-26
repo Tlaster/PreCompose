@@ -11,7 +11,7 @@ object Versions {
 
     object Kotlin {
         const val lang = "1.9.0"
-        const val coroutines = "1.7.2"
+        const val coroutines = "1.7.3"
     }
 
     object Java {
