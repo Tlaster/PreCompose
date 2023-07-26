@@ -11,7 +11,7 @@ object Versions {
 
     object Kotlin {
         const val lang = "1.9.0"
-        const val coroutines = "1.7.1"
+        const val coroutines = "1.7.2"
     }
 
     object Java {
@@ -25,7 +25,7 @@ object Versions {
     const val compose_jb = "1.5.0-dev1122"
 
     object AndroidX {
-        const val activity = "1.7.0"
+        const val activity = "1.7.2"
         const val appcompat = "1.6.1"
     }
 }
