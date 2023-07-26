@@ -14,6 +14,7 @@ import moe.tlaster.precompose.ui.BackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 import platform.UIKit.UIViewController
 
+@Suppress("FunctionName")
 fun PreComposeApplication(
     title: String,
     content: @Composable () -> Unit
