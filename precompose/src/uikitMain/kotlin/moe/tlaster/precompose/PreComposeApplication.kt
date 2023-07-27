@@ -17,7 +17,7 @@ import platform.UIKit.UIViewController
 
 @Suppress("FunctionName")
 fun PreComposeApplication(
-    configure: ComposeUIViewControllerConfiguration.() -> Unit ={},
+    configure: ComposeUIViewControllerConfiguration.() -> Unit = {},
     content: @Composable () -> Unit
 ): UIViewController {
     return ComposeUIViewController(configure) {
