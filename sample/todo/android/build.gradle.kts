@@ -30,4 +30,5 @@ android {
         sourceCompatibility = Versions.Java.java
         targetCompatibility = Versions.Java.java
     }
+    namespace = "moe.tlaster.android"
 }
