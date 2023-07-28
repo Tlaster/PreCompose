@@ -12,8 +12,6 @@ kotlin {
     jvm("desktop")
     js(IR) {
         browser()
-        binaries.executable()
-        nodejs()
     }
     sourceSets {
         val commonMain by getting {
