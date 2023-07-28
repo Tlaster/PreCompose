@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version Versions.compose_jb
+    alias(libs.plugins.jetbrains.compose)
 }
 
 kotlin {
@@ -63,7 +63,7 @@ compose.desktop.nativeApplication {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = Versions.Java.jvmTarget
+    kotlinOptions.jvmTarget = rootProject.extra.get("jvmTarget") as String
 }
 
 kotlin {

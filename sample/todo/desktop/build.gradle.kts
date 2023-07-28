@@ -3,7 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version Versions.compose_jb
+    alias(libs.plugins.jetbrains.compose)
 }
 
 group = "moe.tlaster"
@@ -12,7 +12,7 @@ version = "1.0"
 kotlin {
     jvm {
         compilations.all {
-            kotlinOptions.jvmTarget = Versions.Java.jvmTarget
+            kotlinOptions.jvmTarget = rootProject.extra.get("jvmTarget") as String
         }
     }
     sourceSets {

@@ -1,6 +1,6 @@
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version Versions.compose_jb
+    alias(libs.plugins.jetbrains.compose)
     id("com.android.library")
 }
 
@@ -13,6 +13,7 @@ kotlin {
     js(IR) {
         browser()
         binaries.executable()
+        nodejs()
     }
     sourceSets {
         val commonMain by getting {
@@ -27,8 +28,8 @@ kotlin {
         val commonTest by getting
         val androidMain by getting {
             dependencies {
-                api("androidx.appcompat:appcompat:${Versions.AndroidX.appcompat}")
-                api("androidx.core:core-ktx:${Versions.AndroidX.coreKtx}")
+                api(libs.androidx.appcompat)
+                api(libs.androidx.coreKtx)
             }
         }
         val androidUnitTest by getting {
@@ -43,14 +44,13 @@ kotlin {
 }
 
 android {
-    compileSdk = Versions.Android.compile
-    buildToolsVersion = Versions.Android.buildTools
+    compileSdk = rootProject.extra.get("android-compile") as Int
+    buildToolsVersion = rootProject.extra.get("android-build-tools") as String
     namespace = "moe.tlaster.common"
     defaultConfig {
-        minSdk = Versions.Android.min
-        targetSdk = Versions.Android.target
+        minSdk = rootProject.extra.get("androidMinSdk") as Int
     }
-    kotlin.jvmToolchain(Versions.Java.jvmTarget.toInt())
+    kotlin.jvmToolchain((rootProject.extra.get("jvmTarget") as String).toInt())
 }
 
 compose.experimental {
@@ -63,7 +63,7 @@ tasks.withType<ProcessResources> {
 
 afterEvaluate {
     rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
-        versions.webpackCli.version = Versions.Js.webpackCli
-        nodeVersion = Versions.Js.node
+        versions.webpackCli.version = rootProject.extra.get("webpackCliVersion") as String
+        nodeVersion = rootProject.extra.get("nodeVersion") as String
     }
 }

@@ -1,14 +1,14 @@
 plugins {
-    id("com.android.application").apply(false)
-    id("com.android.library").apply(false)
-    kotlin("android").apply(false)
-    id("com.diffplug.spotless").version(Versions.spotless)
+    alias(libs.plugins.android.application).apply(false)
+    alias(libs.plugins.android.library).apply(false)
+    alias(libs.plugins.kotlin.multiplatform).apply(false)
+    alias(libs.plugins.spotless)
 }
 
 allprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
-            jvmTarget = Versions.Java.jvmTarget
+            jvmTarget = rootProject.extra.get("jvmTarget") as String
             allWarningsAsErrors = true
             freeCompilerArgs = listOf(
                 "-opt-in=kotlin.RequiresOptIn",
@@ -20,15 +20,33 @@ allprojects {
         kotlin {
             target("**/*.kt")
             targetExclude("$buildDir/**/*.kt", "bin/**/*.kt", "buildSrc/**/*.kt")
-            ktlint(Versions.ktlint)
+            ktlint(rootProject.extra.get("ktlintVersion") as String)
         }
         kotlinGradle {
             target("*.gradle.kts")
-            ktlint(Versions.ktlint)
+            ktlint(rootProject.extra.get("ktlintVersion") as String)
         }
         java {
             target("**/*.java")
             targetExclude("$buildDir/**/*.java", "bin/**/*.java")
         }
     }
+}
+
+extra.apply {
+    set("precomposeVersion", "1.4.4")
+
+    set("jvmTarget", "17")
+
+    // Android configurations
+    set("android-compile", 33)
+    set("android-build-tools", "34.0.0")
+    set("androidMinSdk", 21)
+    set("androidTargetSdk", 33)
+
+    // Js & Node
+    set("webpackCliVersion", "5.1.4")
+    set("nodeVersion", "16.13.0")
+
+    set("ktlintVersion", "0.42.1")
 }
