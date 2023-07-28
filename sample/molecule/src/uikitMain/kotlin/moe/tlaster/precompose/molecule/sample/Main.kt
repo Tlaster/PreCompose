@@ -1,5 +1,7 @@
 package moe.tlaster.precompose.molecule.sample
 
+import kotlinx.cinterop.BetaInteropApi
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.autoreleasepool
 import kotlinx.cinterop.cstr
 import kotlinx.cinterop.memScoped
@@ -15,6 +17,7 @@ import platform.UIKit.UIResponderMeta
 import platform.UIKit.UIScreen
 import platform.UIKit.UIWindow
 
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 fun main() {
     val args = emptyArray<String>()
     memScoped {
@@ -26,12 +29,14 @@ fun main() {
     }
 }
 
+@BetaInteropApi
 class SkikoAppDelegate : UIResponder, UIApplicationDelegateProtocol {
     companion object : UIResponderMeta(), UIApplicationDelegateProtocolMeta
 
     @OverrideInit
     constructor() : super()
 
+    @OptIn(ExperimentalForeignApi::class)
     override fun application(application: UIApplication, didFinishLaunchingWithOptions: Map<Any?, *>?): Boolean {
         window = UIWindow(frame = UIScreen.mainScreen.bounds).apply {
             rootViewController = PreComposeApplication {

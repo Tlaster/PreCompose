@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.autoreleasepool
 import kotlinx.cinterop.cstr
 import kotlinx.cinterop.memScoped
@@ -22,6 +23,7 @@ import platform.UIKit.UIResponderMeta
 import platform.UIKit.UIScreen
 import platform.UIKit.UIWindow
 
+@OptIn(ExperimentalForeignApi::class)
 fun main() {
     val args = emptyArray<String>()
     memScoped {
@@ -45,6 +47,7 @@ class SkikoAppDelegate : UIResponder, UIApplicationDelegateProtocol {
         _window = window
     }
 
+    @OptIn(ExperimentalForeignApi::class)
     override fun application(application: UIApplication, didFinishLaunchingWithOptions: Map<Any?, *>?): Boolean {
         window = UIWindow(frame = UIScreen.mainScreen.bounds).apply {
             rootViewController = PreComposeApplication {
