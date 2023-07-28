@@ -10,7 +10,7 @@ object Versions {
     }
 
     object Kotlin {
-        const val lang = "1.9.0"
+        const val lang = "1.9.0" // also check buildSrc/build.gradle.kts
         const val coroutines = "1.7.3"
     }
 
