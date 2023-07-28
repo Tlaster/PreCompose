@@ -20,7 +20,7 @@ kotlin {
             }
         }
     }
-    android()
+    androidTarget()
     macosX64 {
         binaries {
             executable {

@@ -12,7 +12,7 @@ group = "moe.tlaster"
 version = Versions.precompose
 
 kotlin {
-    android {
+    androidTarget {
         publishLibraryVariants("release", "debug")
     }
     jvm {

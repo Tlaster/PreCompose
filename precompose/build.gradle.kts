@@ -19,7 +19,7 @@ kotlin {
     iosX64("uikitX64")
     iosArm64("uikitArm64")
     iosSimulatorArm64("uikitSimulatorArm64")
-    android {
+    androidTarget {
         publishLibraryVariants("release", "debug")
     }
     jvm {

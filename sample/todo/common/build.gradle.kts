@@ -8,7 +8,7 @@ kotlin {
     macosX64()
     macosArm64()
     ios()
-    android()
+    androidTarget()
     jvm("desktop")
     js(IR) {
         browser()
