@@ -120,7 +120,7 @@ android {
     }
 }
 
-ext {
+extra.apply {
     val publishPropFile = rootProject.file("publish.properties")
     if (publishPropFile.exists()) {
         Properties().apply {
