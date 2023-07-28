@@ -6,12 +6,11 @@ plugins {
 }
 
 val resourcesDir = "$buildDir/resources/"
-val skikoVersion = "0.7.26"
 
 val skikoWasm by configurations.creating
 
 dependencies {
-    skikoWasm("org.jetbrains.skiko:skiko-js-wasm-runtime:$skikoVersion")
+    skikoWasm("org.jetbrains.skiko:skiko-js-wasm-runtime:${Versions.skiko}")
 }
 
 val unzipTask = tasks.register("unzipWasm", Copy::class) {
@@ -35,7 +34,7 @@ kotlin {
                 implementation(project(":sample:todo:common"))
                 implementation(compose.ui)
                 implementation(compose.web.core)
-                implementation("org.jetbrains.skiko:skiko:$skikoVersion")
+                implementation("org.jetbrains.skiko:skiko:${Versions.skiko}")
             }
 
             resources.setSrcDirs(resources.srcDirs)
@@ -68,7 +67,7 @@ tasks.withType<ProcessResources> {
 
 afterEvaluate {
     rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
-        versions.webpackCli.version = "4.10.0"
-        nodeVersion = "16.0.0"
+        versions.webpackCli.version = Versions.Js.webpackCli
+        nodeVersion = Versions.Js.node
     }
 }

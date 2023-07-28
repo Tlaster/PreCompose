@@ -27,8 +27,8 @@ kotlin {
         val commonTest by getting
         val androidMain by getting {
             dependencies {
-                api("androidx.appcompat:appcompat:1.4.2")
-                api("androidx.core:core-ktx:1.8.0")
+                api("androidx.appcompat:appcompat:${Versions.AndroidX.appcompat}")
+                api("androidx.core:core-ktx:${Versions.AndroidX.coreKtx}")
             }
         }
         val androidUnitTest by getting {
@@ -50,6 +50,7 @@ android {
         minSdk = Versions.Android.min
         targetSdk = Versions.Android.target
     }
+    kotlin.jvmToolchain(Versions.Java.jvmTarget.toInt())
 }
 
 compose.experimental {
@@ -62,7 +63,7 @@ tasks.withType<ProcessResources> {
 
 afterEvaluate {
     rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
-        versions.webpackCli.version = "4.10.0"
-        nodeVersion = "16.0.0"
+        versions.webpackCli.version = Versions.Js.webpackCli
+        nodeVersion = Versions.Js.node
     }
 }
