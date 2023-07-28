@@ -15,8 +15,8 @@ object Versions {
     }
 
     object Java {
-        const val jvmTarget = "11"
-        val java = JavaVersion.VERSION_11
+        const val jvmTarget = "17"
+        val java = JavaVersion.VERSION_17
     }
 
     const val spotless = "6.7.0"
