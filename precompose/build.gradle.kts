@@ -11,8 +11,6 @@ plugins {
 group = "moe.tlaster"
 version = rootProject.extra.get("precomposeVersion") as String
 
-// val jvmTarget: String by rootProject.extra
-
 kotlin {
     macosArm64()
     macosX64()
@@ -33,8 +31,6 @@ kotlin {
     }
     js(IR) {
         browser()
-        binaries.executable()
-        nodejs()
     }
     sourceSets {
         val commonMain by getting {

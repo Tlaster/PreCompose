@@ -37,7 +37,7 @@ kotlin {
         }
         val desktopMain by getting
         val desktopTest by getting
-        val jsMain by getting
+        // val jsMain by getting
     }
 }
 
