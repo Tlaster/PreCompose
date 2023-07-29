@@ -33,13 +33,13 @@ jobs:
 #      run: ./.github/apply_signing.sh
 
     - name: Build with Gradle
-      run: ./gradlew spotlessCheck lint assemble --stacktrace --no-daemon --no-parallel
+      run: ./gradlew spotlessCheck lint assemble --stacktrace
 
     - name: Testing
-      run: ./gradlew test --no-daemon --no-parallel
+      run: ./gradlew test
 
 #    - name: Publishing
 #      if: startsWith(github.ref, 'refs/tags/')
-#      run: ./gradlew publish --no-daemon --no-parallel
+#      run: ./gradlew publish
 
 
