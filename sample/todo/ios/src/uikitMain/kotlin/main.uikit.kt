@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.autoreleasepool
 import kotlinx.cinterop.cstr
@@ -23,7 +24,7 @@ import platform.UIKit.UIResponderMeta
 import platform.UIKit.UIScreen
 import platform.UIKit.UIWindow
 
-@OptIn(ExperimentalForeignApi::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 fun main() {
     val args = emptyArray<String>()
     memScoped {
@@ -38,6 +39,7 @@ fun main() {
 class SkikoAppDelegate : UIResponder, UIApplicationDelegateProtocol {
     companion object : UIResponderMeta(), UIApplicationDelegateProtocolMeta
 
+    @OptIn(BetaInteropApi::class)
     @OverrideInit
     constructor() : super()
 
