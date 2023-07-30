@@ -89,6 +89,11 @@ kotlin {
                 implementation(compose.foundation)
             }
         }
+        val jsTest by getting {
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
+        }
         val iosMain by creating {
             dependsOn(commonMain)
             dependencies {
