@@ -68,13 +68,18 @@ kotlin {
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit5"))
-                implementation(libs.junit.jupiter.api.v580)
-                runtimeOnly(libs.junit.jupiter.engine.v582)
+                implementation(libs.junit.jupiter.api)
+                runtimeOnly(libs.junit.jupiter.engine)
             }
         }
         val jsMain by getting {
             dependencies {
                 implementation(compose.foundation)
+            }
+        }
+        val jsTest by getting {
+            dependencies {
+                implementation(kotlin("test-js"))
             }
         }
         val macosMain by creating {

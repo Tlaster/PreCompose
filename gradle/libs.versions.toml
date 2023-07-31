@@ -6,8 +6,6 @@ androidx-coreKtx = "1.10.1"
 androidxActivityVer = "1.7.2"
 androidGradlePlugin = "8.1.0"
 junit = "4.13.2"
-junit-junitJupiterApi = "5.8.2"
-junit-junitJupiterEngine = "5.8.2"
 junitJupiterEngine = "5.8.2"
 junitJupiterApi = "5.8.2"
 kotlin = "1.9.0"
@@ -30,10 +28,8 @@ androidx-savedstate-ktx = { module = "androidx.savedstate:savedstate-ktx", versi
 animation = { module = "androidx.compose.animation:animation", version.ref = "androidx-animation" }
 foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-foundation" }
 junit = { module = "junit:junit", version.ref = "junit" }
-junit-jupiter-api-v580 = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-junitJupiterApi" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
-junit-jupiter-engine-v582 = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-junitJupiterEngine" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesCore" }
