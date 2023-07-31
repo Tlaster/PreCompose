@@ -3,7 +3,6 @@ package moe.tlaster.precompose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.createSkiaLayer
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.native.ComposeLayer
@@ -98,7 +97,6 @@ internal class ComposeWindow(
     val layer = ComposeLayer(
         layer = createSkiaLayer(),
         platform = platform,
-        getTopLeftOffset = { Offset.Zero },
         input = macosTextInputService.input
     )
     val title: String
