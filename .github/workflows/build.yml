@@ -14,7 +14,6 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
-        distribution: 'zulu'
         java-version: 17
 
     - name: Apply Signing
