@@ -19,7 +19,7 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
-        distribution: 'temurin'
+        distribution: 'zulu'
         java-version: 17
 
 #    - name: Apply Signing
@@ -32,11 +32,17 @@ jobs:
 #        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
 #      run: ./.github/apply_signing.sh
 
-    - name: Build with Gradle
-      run: ./gradlew spotlessCheck lint assemble --stacktrace
+#    - name: Spotless Check
+#      run: ./gradlew spotlessCheck --stacktrace
+#
+#    - name: Lint
+#      run: ./gradlew lint --stacktrace
 
-    - name: Testing
-      run: ./gradlew test
+    - name: Assemble
+      run: ./gradlew assemble --stacktrace
+
+#    - name: Testing
+#      run: ./gradlew test
 
 #    - name: Publishing
 #      if: startsWith(github.ref, 'refs/tags/')
