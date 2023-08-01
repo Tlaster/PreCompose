@@ -2,16 +2,15 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version Versions.compose_jb
+    alias(libs.plugins.jetbrains.compose)
 }
 
 val resourcesDir = "$buildDir/resources/"
-val skikoVersion = "0.7.26"
 
 val skikoWasm by configurations.creating
 
 dependencies {
-    skikoWasm("org.jetbrains.skiko:skiko-js-wasm-runtime:$skikoVersion")
+    skikoWasm(libs.skiko.js)
 }
 
 val unzipTask = tasks.register("unzipWasm", Copy::class) {
@@ -34,8 +33,8 @@ kotlin {
             dependencies {
                 implementation(project(":sample:todo:common"))
                 implementation(compose.ui)
-                implementation(compose.web.core)
-                implementation("org.jetbrains.skiko:skiko:$skikoVersion")
+                implementation(compose.html.core)
+                implementation(libs.skiko)
             }
 
             resources.setSrcDirs(resources.srcDirs)
@@ -55,7 +54,7 @@ kotlin {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = Versions.Java.jvmTarget
+    kotlinOptions.jvmTarget = rootProject.extra.get("jvmTarget") as String
 }
 
 compose.experimental {
@@ -68,7 +67,7 @@ tasks.withType<ProcessResources> {
 
 afterEvaluate {
     rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
-        versions.webpackCli.version = "4.10.0"
-        nodeVersion = "16.0.0"
+        versions.webpackCli.version = rootProject.extra.get("webpackCliVersion") as String
+        nodeVersion = rootProject.extra.get("nodeVersion") as String
     }
 }

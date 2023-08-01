@@ -1,12 +1,7 @@
-name: CI
+name: CI Assemble, Test, and Publish
 
 on:
-  push:
-    paths-ignore:
-      - '**.md'
-  pull_request:
-    paths-ignore:
-      - '**.md'
+  workflow_call:
 
 jobs:
   build:
@@ -14,11 +9,12 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     
     - name: Set up JDK
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v3
       with:
+        distribution: 'zulu'
         java-version: 17
 
     - name: Apply Signing
@@ -31,14 +27,24 @@ jobs:
         OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
       run: ./.github/apply_signing.sh
 
-    - name: Build with Gradle
-      run: ./gradlew spotlessCheck lint assemble --stacktrace --no-daemon --no-parallel
+    - name: Assemble
+      run: ./gradlew assembleRelease --stacktrace
 
     - name: Testing
-      run: ./gradlew test --no-daemon --no-parallel
+      run: ./gradlew testRelease --stacktrace
+
+    - name: Upload Precompose Test Reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: precompose-reports
+        path: "precompose/build/reports/tests"
+
+    - name: Upload Precompose ViewModel Test Reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: precompose-viewmodel-reports
+        path: "precompose-viewmodel/build/reports/tests"
 
     - name: Publishing
       if: startsWith(github.ref, 'refs/tags/')
-      run: ./gradlew publish --no-daemon --no-parallel
-
-
+      run: ./gradlew publish

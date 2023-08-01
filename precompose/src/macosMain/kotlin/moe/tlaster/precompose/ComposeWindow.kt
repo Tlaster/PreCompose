@@ -19,6 +19,8 @@ import androidx.compose.ui.platform.WindowInfoImpl
 import androidx.compose.ui.semantics.SemanticsOwner
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import kotlinx.cinterop.BetaInteropApi
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
 import kotlinx.cinterop.useContents
 import platform.AppKit.NSBackingStoreBuffered
@@ -40,6 +42,7 @@ import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSSelectorFromString
 import platform.darwin.NSObject
 
+@OptIn(ExperimentalForeignApi::class)
 internal class ComposeWindow(
     hideTitleBar: Boolean = false,
     initialTitle: String,
@@ -162,16 +165,19 @@ internal class ComposeWindow(
         setTitle(initialTitle)
     }
 
+    @OptIn(BetaInteropApi::class)
     @ObjCAction
     override fun windowDidChangeBackingProperties(notification: NSNotification) {
         updateLayerSize()
     }
 
+    @OptIn(BetaInteropApi::class)
     @ObjCAction
     override fun windowDidResize(notification: NSNotification) {
         updateLayerSize()
     }
 
+    @OptIn(BetaInteropApi::class)
     @ObjCAction
     override fun windowWillClose(notification: NSNotification) {
         onCloseRequest.invoke()

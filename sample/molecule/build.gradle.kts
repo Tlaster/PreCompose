@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version Versions.compose_jb
+    alias(libs.plugins.jetbrains.compose)
     id("com.android.application")
 }
 
@@ -20,7 +20,7 @@ kotlin {
             }
         }
     }
-    android()
+    androidTarget()
     macosX64 {
         binaries {
             executable {
@@ -44,7 +44,7 @@ kotlin {
 
     jvm {
         compilations.all {
-            kotlinOptions.jvmTarget = Versions.Java.jvmTarget
+            kotlinOptions.jvmTarget = rootProject.extra.get("jvmTarget") as String
         }
     }
     sourceSets {
@@ -56,7 +56,7 @@ kotlin {
                 implementation(compose.material)
                 implementation(project(":precompose"))
                 implementation(project(":precompose-molecule"))
-                implementation("app.cash.molecule:molecule-runtime:0.9.0")
+                implementation(libs.molecule.runtime)
             }
         }
         val jvmMain by getting {
@@ -152,13 +152,13 @@ compose {
 }
 
 android {
-    compileSdk = Versions.Android.compile
-    buildToolsVersion = Versions.Android.buildTools
+    compileSdk = rootProject.extra.get("android-compile") as Int
+    buildToolsVersion = rootProject.extra.get("android-build-tools") as String
     namespace = "moe.tlaster.precompose.molecule.sample"
     defaultConfig {
         applicationId = "moe.tlaster.precompose.molecule.sample"
-        minSdk = Versions.Android.min
-        targetSdk = Versions.Android.target
+        minSdk = rootProject.extra.get("androidMinSdk") as Int
+        targetSdk = rootProject.extra.get("androidTargetSdk") as Int
         versionCode = 1
         versionName = "0.1.0"
     }
@@ -173,7 +173,7 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = Versions.Java.java
-        targetCompatibility = Versions.Java.java
+        sourceCompatibility = JavaVersion.toVersion(rootProject.extra.get("jvmTarget") as String)
+        targetCompatibility = JavaVersion.toVersion(rootProject.extra.get("jvmTarget") as String)
     }
 }

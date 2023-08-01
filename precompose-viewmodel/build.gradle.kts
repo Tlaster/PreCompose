@@ -2,22 +2,22 @@ import java.util.Properties
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version Versions.compose_jb
+    alias(libs.plugins.jetbrains.compose)
     id("com.android.library")
     id("maven-publish")
     id("signing")
 }
 
 group = "moe.tlaster"
-version = Versions.precompose
+version = rootProject.extra.get("precomposeVersion") as String
 
 kotlin {
-    android {
+    androidTarget {
         publishLibraryVariants("release", "debug")
     }
     jvm {
         compilations.all {
-            kotlinOptions.jvmTarget = Versions.Java.jvmTarget
+            kotlinOptions.jvmTarget = rootProject.extra.get("jvmTarget") as String
         }
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
@@ -31,7 +31,6 @@ kotlin {
     iosSimulatorArm64()
     js(IR) {
         browser()
-        binaries.executable()
     }
     sourceSets {
         val commonMain by getting {
@@ -49,27 +48,27 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                api("androidx.activity:activity-ktx:${Versions.AndroidX.activity}")
-                implementation("androidx.compose.foundation:foundation:${Versions.compose}")
+                api(libs.androidx.activity.ktx)
+                implementation(libs.foundation)
             }
         }
         val androidUnitTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
-                implementation("junit:junit:4.13.2")
+                implementation(libs.junit)
             }
         }
         val jvmMain by getting {
             dependencies {
                 implementation(compose.foundation)
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-swing:${Versions.Kotlin.coroutines}")
+                api(libs.kotlinx.coroutines.swing)
             }
         }
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit5"))
-                implementation("org.junit.jupiter:junit-jupiter-api:5.8.0")
-                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.0")
+                implementation(libs.junit.jupiter.api)
+                runtimeOnly(libs.junit.jupiter.engine)
             }
         }
         val macosMain by creating {
@@ -113,19 +112,19 @@ kotlin {
 }
 
 android {
-    compileSdk = Versions.Android.compile
-    buildToolsVersion = Versions.Android.buildTools
+    compileSdk = rootProject.extra.get("android-compile") as Int
+    buildToolsVersion = rootProject.extra.get("android-build-tools") as String
     namespace = "moe.tlaster.precompose.viewmodel"
     defaultConfig {
-        minSdk = Versions.Android.min
+        minSdk = rootProject.extra.get("androidMinSdk") as Int
     }
     compileOptions {
-        sourceCompatibility = Versions.Java.java
-        targetCompatibility = Versions.Java.java
+        sourceCompatibility = JavaVersion.toVersion(rootProject.extra.get("jvmTarget") as String)
+        targetCompatibility = JavaVersion.toVersion(rootProject.extra.get("jvmTarget") as String)
     }
 }
 
-ext {
+extra.apply {
     val publishPropFile = rootProject.file("publish.properties")
     if (publishPropFile.exists()) {
         Properties().apply {

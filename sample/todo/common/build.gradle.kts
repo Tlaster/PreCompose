@@ -1,6 +1,6 @@
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version Versions.compose_jb
+    alias(libs.plugins.jetbrains.compose)
     id("com.android.library")
 }
 
@@ -8,11 +8,10 @@ kotlin {
     macosX64()
     macosArm64()
     ios()
-    android()
+    androidTarget()
     jvm("desktop")
     js(IR) {
         browser()
-        binaries.executable()
     }
     sourceSets {
         val commonMain by getting {
@@ -27,29 +26,29 @@ kotlin {
         val commonTest by getting
         val androidMain by getting {
             dependencies {
-                api("androidx.appcompat:appcompat:1.4.2")
-                api("androidx.core:core-ktx:1.8.0")
+                api(libs.androidx.appcompat)
+                api(libs.androidx.coreKtx)
             }
         }
         val androidUnitTest by getting {
             dependencies {
-                implementation("junit:junit:4.13.2")
+                implementation(libs.junit)
             }
         }
         val desktopMain by getting
         val desktopTest by getting
-        val jsMain by getting
+        // val jsMain by getting
     }
 }
 
 android {
-    compileSdk = Versions.Android.compile
-    buildToolsVersion = Versions.Android.buildTools
+    compileSdk = rootProject.extra.get("android-compile") as Int
+    buildToolsVersion = rootProject.extra.get("android-build-tools") as String
     namespace = "moe.tlaster.common"
     defaultConfig {
-        minSdk = Versions.Android.min
-        targetSdk = Versions.Android.target
+        minSdk = rootProject.extra.get("androidMinSdk") as Int
     }
+    kotlin.jvmToolchain((rootProject.extra.get("jvmTarget") as String).toInt())
 }
 
 compose.experimental {
@@ -62,7 +61,7 @@ tasks.withType<ProcessResources> {
 
 afterEvaluate {
     rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
-        versions.webpackCli.version = "4.10.0"
-        nodeVersion = "16.0.0"
+        versions.webpackCli.version = rootProject.extra.get("webpackCliVersion") as String
+        nodeVersion = rootProject.extra.get("nodeVersion") as String
     }
 }
