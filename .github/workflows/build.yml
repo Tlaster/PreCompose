@@ -1,12 +1,7 @@
-name: CI
+name: CI Assemble, Test, and Publish
 
 on:
-  push:
-    paths-ignore:
-      - '**.md'
-  pull_request:
-    paths-ignore:
-      - '**.md'
+  workflow_call:
 
 jobs:
   build:
@@ -22,30 +17,34 @@ jobs:
         distribution: 'zulu'
         java-version: 17
 
-#    - name: Apply Signing
-#      if: ${{ github.event_name != 'pull_request' }}
-#      env:
-#        SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-#        SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
-#        SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-#        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-#        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-#      run: ./.github/apply_signing.sh
-
-#    - name: Spotless Check
-#      run: ./gradlew spotlessCheck --stacktrace
-#
-#    - name: Lint
-#      run: ./gradlew lint --stacktrace
+    - name: Apply Signing
+      if: ${{ github.event_name != 'pull_request' }}
+      env:
+        SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+        SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+      run: ./.github/apply_signing.sh
 
     - name: Assemble
-      run: ./gradlew assemble --stacktrace
+      run: ./gradlew assembleRelease --stacktrace
 
-#    - name: Testing
-#      run: ./gradlew test
+    - name: Testing
+      run: ./gradlew testRelease --stacktrace
 
-#    - name: Publishing
-#      if: startsWith(github.ref, 'refs/tags/')
-#      run: ./gradlew publish
+    - name: Upload Precompose Test Reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: precompose-reports
+        path: "precompose/build/reports/tests"
 
+    - name: Upload Precompose ViewModel Test Reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: precompose-viewmodel-reports
+        path: "precompose-viewmodel/build/reports/tests"
 
+    - name: Publishing
+      if: startsWith(github.ref, 'refs/tags/')
+      run: ./gradlew publish
