@@ -28,23 +28,24 @@ jobs:
         run: ./gradlew lint --stacktrace
 
       - name: Upload Precompose Lint Report
-        uses: github/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: precompose-lint-report
           path: precompose/build/reports
 
       - name: Upload Precompose Molecule Lint Report
-        uses: github/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: precompose-molecule-lint-report
           path: precompose-molecule/build/reports
 
       - name: Upload Precompose ViewModel Lint Report
-        uses: github/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: precompose-viewmodel-lint-report
           path: precompose-viewmodel/build/reports
 
   call-build:
+    needs: validate
     uses: ./.github/workflows/build.yml
     secrets: inherit
