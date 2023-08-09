@@ -34,3 +34,27 @@ val viewModel = viewModel(modelClass = SomeViewModel::class, keys = listOf(someK
     SomeViewModel(someKey)
 }
 ```
+
+If you need to save and restore state in the ViewModel, you can use SavedStateHolder.
+```kotlin
+val viewModel = viewModel(modelClass = SomeViewModel::class, keys = listOf(someKey)) { savedStateHolder ->
+    SomeViewModel(someKey, savedStateHolder)
+}
+```
+
+Then the ViewModel might look like this:
+```kotlin
+class SomeViewModel(private val someKey: Int?, savedStateHolder: SavedStateHolder) : ViewModel() {
+    val someSavedValue = MutableStateFlow(savedStateHolder.consumeRestored("someValue") as String? ?: "")
+    
+    init {
+        savedStateHolder.registerProvider("someValue") {
+            someSavedValue.value
+        }
+    }
+    
+    fun setSomeValue(value: String) {
+        someSavedValue.value = value
+    }
+}
+```

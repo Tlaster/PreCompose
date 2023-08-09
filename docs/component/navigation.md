@@ -108,13 +108,25 @@ Optional syntax is also supported for regex path variable: `/user/{id:[0-9]+}?`:
  - matches `/user`
  - matches `/user/123`
 
+### Group
+```kotlin
+group(route = "/group", initialRoute = "/nestedScreen1") {
+    scene(route = "/nestedScreen1") {
+        
+    }
+    scene(route = "/nestedScreen2") {
+        
+    }
+}
+```
+
  ## QueryString
  
  **DO NOT** define your query string in scene route, this will have no effect on both navigation route and query string.
 
  You can pass your query string as to `Navigator.navigate(route: String)`, like: `Navigator.navigate("/detail/123?my=query")`
 
-And you can retrive query string from `BackStackEntry.query(name: String)`
+And you can retrieve query string from `BackStackEntry.query(name: String)`
 
 ```kotlin
 scene(route = "/detail/{id}") { backStackEntry ->
@@ -122,7 +134,7 @@ scene(route = "/detail/{id}") { backStackEntry ->
 }
 ```
 
-If your query string is a list, you can retrive by `BackStackEntry.queryList(name: String)`
+If your query string is a list, you can retrieve by `BackStackEntry.queryList(name: String)`
 
 ## Navigation transition
 You can define a `NavTransition` for both `NavHost` and `scene`, PreCompose will use the `scene`'s `NavTransition` if the `scene` define a `NavTransition`, otherwise will fall back to `NavHost`'s `NavTransition`.
@@ -132,7 +144,7 @@ There are 4 transition type for `NavTransition`
  Transition the scene that about to appear for the first time, similar to activity onCreate
 
   - `destroyTransition`  
-Transition the scene that abou t to disappear forever, similar to activity onDestroy
+Transition the scene that about to disappear forever, similar to activity onDestroy
 
  - `pauseTransition`  
  Transition the scene that will be pushed into back stack, similar to activity onPause
