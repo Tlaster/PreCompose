@@ -87,3 +87,76 @@ class HomeViewModel : ViewModel() {
 }
 ```
 <img src="../media/greeting_app.gif" height="400">
+
+## Greetings App with ViewModel using StateFlow in 100 lines!
+
+```kotlin
+@Composable
+fun App() {
+    val navigator = rememberNavigator()
+    MaterialTheme {
+        NavHost(
+            navigator = navigator,
+            initialRoute = "/home"
+        ) {
+            scene(route = "/home") {
+                val homeViewModel = viewModel {
+                    HomeViewModel()
+                }
+                val name by homeViewModel.name.collectAsStateWithLifecycle()
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Greet Me!",
+                        style = MaterialTheme.typography.h6
+                    )
+                    Spacer(modifier = Modifier.height(30.dp))
+                    TextField(
+                        value = name,
+                        maxLines = 1,
+                        label = { Text(text = "Enter your name") },
+                        onValueChange = homeViewModel::setName
+                    )
+                    Spacer(modifier = Modifier.height(30.dp))
+                    Button(
+                        onClick = {
+                            navigator.navigate(route = "/greeting/$name")
+                        }
+                    ) {
+                        Text(text = "GO!")
+                    }
+                }
+            }
+            scene(route = "/greeting/{name}") { backStackEntry ->
+                backStackEntry.path<String>("name")?.let { name ->
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = name,
+                            style = MaterialTheme.typography.h6
+                        )
+                        Spacer(modifier = Modifier.height(30.dp))
+                        Button(onClick = navigator::goBack) {
+                            Text(text = "GO BACK!")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+class HomeViewModel : ViewModel() {
+    val name = MutableStateFlow("")
+    fun setName(value: String) {
+        name.update { value }
+    }
+}
+```
+
