@@ -14,10 +14,10 @@ import androidx.compose.runtime.saveable.SaveableStateRegistry
 @Suppress("UNCHECKED_CAST")
 class SavedStateHolder(
     private val key: String,
-    private val saveableStateRegistry: SaveableStateRegistry?
+    private val saveableStateRegistry: SaveableStateRegistry?,
 ) : SaveableStateRegistry by SaveableStateRegistry(
     saveableStateRegistry?.consumeRestored(key) as? Map<String, List<Any?>>,
-    { saveableStateRegistry?.canBeSaved(it) ?: true }
+    { saveableStateRegistry?.canBeSaved(it) ?: true },
 ),
     AutoCloseable {
     private val registryEntry = saveableStateRegistry?.registerProvider(key) {

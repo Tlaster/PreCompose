@@ -41,7 +41,7 @@ class Navigator {
             stateHolder = stateHolder,
             savedStateHolder = savedStateHolder,
             lifecycleOwner = lifecycleOwner,
-            persistNavState = persistNavState
+            persistNavState = persistNavState,
         )
         _pendingNavigation?.let {
             stackManager.push(it)

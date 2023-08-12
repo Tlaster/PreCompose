@@ -23,7 +23,7 @@ val ViewModel.viewModelScope: CoroutineScope
         }
         return setTagIfAbsent(
             JOB_KEY,
-            CloseableCoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+            CloseableCoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
         )
     }
 

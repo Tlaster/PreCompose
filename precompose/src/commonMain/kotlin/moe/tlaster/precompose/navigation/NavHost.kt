@@ -143,7 +143,6 @@ fun NavHost(
                     NavHostContent(composeStateHolder, entry)
                 }
             } else {
-
                 var prevWasSwiped by remember {
                     mutableStateOf(false)
                 }
@@ -196,8 +195,8 @@ fun NavHost(
                                 0f
                             } else {
                                 1f
-                            }
-                        )
+                            },
+                        ),
                     ) {
                         SwipeItem(
                             dismissState = dismissState,
@@ -244,16 +243,16 @@ private fun SwipeItem(
                 ?.graphicsLayer {
                     translationX =
                         swipeProperties.slideInHorizontally(size.width.toInt())
-                        .toFloat() -
+                            .toFloat() -
                         swipeProperties.slideInHorizontally(
-                            dismissState.offset.value.absoluteValue.toInt()
+                            dismissState.offset.value.absoluteValue.toInt(),
                         )
                 }?.drawWithContent {
                     drawContent()
                     drawRect(
                         swipeProperties.shadowColor,
                         alpha = (1f - dismissState.progress.fraction) *
-                            swipeProperties.shadowColor.alpha
+                            swipeProperties.shadowColor.alpha,
                     )
                 }?.pointerInput(0) {
                     // prev entry should not be interactive until fully appeared
@@ -282,7 +281,7 @@ private fun NavHostContent(
             LocalLifecycleOwner provides entry,
             content = {
                 entry.ComposeContent()
-            }
+            },
         )
     }
 }
@@ -312,15 +311,14 @@ private fun CustomSwipeToDismiss(
     spaceToSwipe: Dp = 10.dp,
     modifier: Modifier = Modifier,
     dismissThreshold: ThresholdConfig,
-    dismissContent: @Composable () -> Unit
+    dismissContent: @Composable () -> Unit,
 ) = BoxWithConstraints(modifier) {
-
     val width = constraints.maxWidth.toFloat()
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
     val anchors = mutableMapOf(
         0f to DismissValue.Default,
-        width to DismissValue.DismissedToEnd
+        width to DismissValue.DismissedToEnd,
     )
 
     val shift = with(LocalDensity.current) {
@@ -341,11 +339,11 @@ private fun CustomSwipeToDismiss(
                 resistance = ResistanceConfig(
                     basis = width,
                     factorAtMin = SwipeableDefaults.StiffResistanceFactor,
-                    factorAtMax = SwipeableDefaults.StandardResistanceFactor
-                )
+                    factorAtMax = SwipeableDefaults.StandardResistanceFactor,
+                ),
             )
             .offset { IntOffset(x = -shift, 0) }
-            .graphicsLayer { translationX = state.offset.value }
+            .graphicsLayer { translationX = state.offset.value },
 
     ) {
         dismissContent()

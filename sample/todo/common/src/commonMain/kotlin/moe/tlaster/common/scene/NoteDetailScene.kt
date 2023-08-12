@@ -45,9 +45,9 @@ fun NoteDetailScene(
                     IconButton(onClick = { onEdit.invoke() }) {
                         Icon(Icons.Default.Edit, contentDescription = null)
                     }
-                }
+                },
             )
-        }
+        },
     ) {
         Column {
             val note by viewModel.note.collectAsState()

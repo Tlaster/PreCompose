@@ -5,7 +5,7 @@ import org.jetbrains.skiko.wasm.onWasmReady
 fun main() {
     onWasmReady {
         preComposeWindow(
-            title = "Sample"
+            title = "Sample",
         ) {
             App()
         }

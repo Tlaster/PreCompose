@@ -1,4 +1,5 @@
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "EXPOSED_PARAMETER_TYPE")
+
 package moe.tlaster.precompose
 
 import androidx.compose.runtime.Composable
@@ -51,7 +52,7 @@ private fun ProvideJsCompositionLocals(
     CompositionLocalProvider(
         LocalLifecycleOwner provides holder,
         LocalStateHolder provides holder.stateHolder,
-        LocalBackDispatcherOwner provides holder
+        LocalBackDispatcherOwner provides holder,
     ) {
         content.invoke()
     }

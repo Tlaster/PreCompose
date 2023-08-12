@@ -7,7 +7,7 @@ fun main() {
         "PreComposeSample",
         onCloseRequest = {
             NSApp?.terminate(null)
-        }
+        },
     ) {
         App()
     }

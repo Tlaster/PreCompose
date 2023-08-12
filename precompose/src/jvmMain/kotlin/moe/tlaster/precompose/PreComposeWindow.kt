@@ -54,7 +54,7 @@ fun PreComposeWindow(
             }
     }
     ProvideDesktopCompositionLocals(
-        holder
+        holder,
     ) {
         Window(
             onCloseRequest = {
@@ -75,7 +75,7 @@ fun PreComposeWindow(
             onKeyEvent = onKeyEvent,
             content = {
                 content.invoke(this)
-            }
+            },
         )
     }
 }

@@ -51,7 +51,7 @@ import kotlin.coroutines.resume
  * again.
  */
 suspend fun Lifecycle.repeatOnLifecycle(
-    block: suspend CoroutineScope.() -> Unit
+    block: suspend CoroutineScope.() -> Unit,
 ) {
     if (currentState === Lifecycle.State.Destroyed) {
         return
@@ -138,5 +138,5 @@ suspend fun Lifecycle.repeatOnLifecycle(
  * @see Lifecycle.repeatOnLifecycle
  */
 suspend fun LifecycleOwner.repeatOnLifecycle(
-    block: suspend CoroutineScope.() -> Unit
+    block: suspend CoroutineScope.() -> Unit,
 ): Unit = lifecycle.repeatOnLifecycle(block)

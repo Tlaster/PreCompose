@@ -12,6 +12,6 @@ fun RouteBuilder.testRoute(
     id: String,
 ) {
     addRoute(
-        TestRoute(route = route, id = id)
+        TestRoute(route = route, id = id),
     )
 }

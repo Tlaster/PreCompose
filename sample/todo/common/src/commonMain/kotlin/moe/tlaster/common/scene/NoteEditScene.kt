@@ -40,7 +40,7 @@ fun NoteEditScene(
                         onClick = {
                             viewModel.save()
                             onDone.invoke()
-                        }
+                        },
                     ) {
                         Icon(Icons.Default.Done, contentDescription = null)
                     }
@@ -56,9 +56,9 @@ fun NoteEditScene(
                     IconButton(onClick = { onBack.invoke() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = null)
                     }
-                }
+                },
             )
-        }
+        },
     ) {
         Column {
             val title by viewModel.title.collectAsStateWithLifecycle()
@@ -72,7 +72,7 @@ fun NoteEditScene(
                     },
                     placeholder = {
                         Text("Title")
-                    }
+                    },
                 )
             }
             ListItem(
@@ -87,7 +87,7 @@ fun NoteEditScene(
                     },
                     placeholder = {
                         Text("Content")
-                    }
+                    },
                 )
             }
         }

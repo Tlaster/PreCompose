@@ -30,14 +30,14 @@ fun App() {
                 Button(
                     onClick = {
                         state.action(Action.Increment)
-                    }
+                    },
                 ) {
                     Text(text = "Increment")
                 }
                 Button(
                     onClick = {
                         state.action(Action.Decrement)
-                    }
+                    },
                 ) {
                     Text(text = "Decrement")
                 }

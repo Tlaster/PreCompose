@@ -17,7 +17,7 @@ class BackStackEntryTest {
             "foo/bar",
             emptyMap(),
             parentStateHolder,
-            TestSavedStateHolder()
+            TestSavedStateHolder(),
         )
         assertTrue(parentStateHolder.contains(entry.stateId))
         assertEquals(Lifecycle.State.Initialized, entry.lifecycle.currentState)
@@ -34,7 +34,7 @@ class BackStackEntryTest {
             "foo/bar",
             emptyMap(),
             parentStateHolder,
-            TestSavedStateHolder()
+            TestSavedStateHolder(),
         )
         entry.active()
         assertEquals(Lifecycle.State.Active, entry.lifecycle.currentState)
@@ -52,7 +52,7 @@ class BackStackEntryTest {
             "foo/bar",
             emptyMap(),
             parentStateHolder,
-            TestSavedStateHolder()
+            TestSavedStateHolder(),
         )
         entry.active()
         assertEquals(Lifecycle.State.Active, entry.lifecycle.currentState)
@@ -72,7 +72,7 @@ class BackStackEntryTest {
             "foo/bar",
             emptyMap(),
             parentStateHolder,
-            TestSavedStateHolder()
+            TestSavedStateHolder(),
         )
         entry.active()
         entry.destroy()

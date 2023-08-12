@@ -115,7 +115,7 @@ fun <T> producePresenter(
 fun <T, E> rememberPresenter(
     keys: List<Any?> = emptyList(),
     useImmediateClock: Boolean = false,
-    body: @Composable (flow: Flow<E>) -> T
+    body: @Composable (flow: Flow<E>) -> T,
 ): Pair<T, Channel<E>> {
     val (channel, action) = rememberAction<E>(keys = keys)
     val presenter = rememberPresenterState(keys = keys, useImmediateClock = useImmediateClock) { body(action) }
@@ -147,7 +147,7 @@ fun <T, E> rememberPresenter(
  */
 @Composable
 fun <T, E> rememberNestedPresenter(
-    body: @Composable (flow: Flow<E>) -> T
+    body: @Composable (flow: Flow<E>) -> T,
 ): Pair<T, Channel<E>> {
     val channel = remember { Channel<E>(Channel.UNLIMITED) }
     val flow = remember { channel.consumeAsFlow() }

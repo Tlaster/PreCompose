@@ -122,7 +122,7 @@ internal class BackStackManager : LifecycleObserver {
                 parentSavedStateHolder = _savedStateHolder,
                 requestNavigationLock = {
                     canNavigate = !it
-                }
+                },
             )
         }
 
@@ -139,12 +139,14 @@ internal class BackStackManager : LifecycleObserver {
                 PopUpTo.Prev -> backStack.lastIndex - 1
                 is PopUpTo.Route -> if (popUpTo.route.isNotEmpty()) {
                     backStack.indexOfLast { it.hasRoute(popUpTo.route, path, options.includePath) }
-                } else 0
+                } else {
+                    0
+                }
             }
             if (index != -1) {
                 val stacksToDrop = backStack.subList(
                     if (popUpTo.inclusive) index else index + 1,
-                    backStack.size
+                    backStack.size,
                 )
                 backStacks.value -= stacksToDrop
                 stacksToDrop.forEach {

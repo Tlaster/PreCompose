@@ -7,7 +7,7 @@ fun main() {
     application {
         PreComposeWindow(
             title = "PreCompose Molecule Sample",
-            onCloseRequest = ::exitApplication
+            onCloseRequest = ::exitApplication,
         ) {
             App()
         }

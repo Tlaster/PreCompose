@@ -20,7 +20,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 @Composable
 fun <T : R, R> StateFlow<T>.collectAsStateWithLifecycle(
-    context: CoroutineContext = EmptyCoroutineContext
+    context: CoroutineContext = EmptyCoroutineContext,
 ): State<R> {
     return collectAsStateWithLifecycle(initial = this.value, context = context)
 }
@@ -33,13 +33,13 @@ fun <T : R, R> StateFlow<T>.collectAsStateWithLifecycle(
 @Composable
 fun <T : R, R> Flow<T>.collectAsStateWithLifecycle(
     initial: R,
-    context: CoroutineContext = EmptyCoroutineContext
+    context: CoroutineContext = EmptyCoroutineContext,
 ): State<R> {
     val lifecycleOwner = checkNotNull(LocalLifecycleOwner.current)
     return collectAsStateWithLifecycle(
         initial = initial,
         lifecycle = lifecycleOwner.lifecycle,
-        context = context
+        context = context,
     )
 }
 
@@ -52,14 +52,16 @@ fun <T : R, R> Flow<T>.collectAsStateWithLifecycle(
 fun <T : R, R> Flow<T>.collectAsStateWithLifecycle(
     initial: R,
     lifecycle: Lifecycle,
-    context: CoroutineContext = EmptyCoroutineContext
+    context: CoroutineContext = EmptyCoroutineContext,
 ): State<R> {
     return produceState(initial, this, lifecycle, context) {
         lifecycle.repeatOnLifecycle {
             if (context == EmptyCoroutineContext) {
                 this@collectAsStateWithLifecycle.collect { this@produceState.value = it }
-            } else withContext(context) {
-                this@collectAsStateWithLifecycle.collect { this@produceState.value = it }
+            } else {
+                withContext(context) {
+                    this@collectAsStateWithLifecycle.collect { this@produceState.value = it }
+                }
             }
         }
     }

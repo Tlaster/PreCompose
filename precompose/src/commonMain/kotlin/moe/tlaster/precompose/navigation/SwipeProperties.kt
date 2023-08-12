@@ -28,5 +28,5 @@ class SwipeProperties(
     val spaceToSwipe: Dp = 10.dp,
     val swipeThreshold: ThresholdConfig = FixedThreshold(56.dp),
     val shadowColor: Color = Color.Black.copy(alpha = .25f),
-    val swipeAnimSpec: AnimationSpec<Float> = tween()
+    val swipeAnimSpec: AnimationSpec<Float> = tween(),
 )
