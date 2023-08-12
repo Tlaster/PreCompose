@@ -1,6 +1,6 @@
 [versions] # also check project root build.gradle.kts for versions
-androidx-animation = "1.5.0-beta03"
-androidx-foundation = "1.5.0-beta03"
+androidx-animation = "1.5.0"
+androidx-foundation = "1.5.0"
 androidx-appcompat = "1.6.1"
 androidx-coreKtx = "1.10.1"
 androidxActivityVer = "1.7.2"
@@ -11,11 +11,11 @@ junitJupiterApi = "5.10.0"
 kotlin = "1.9.0"
 kotlinxCoroutinesCore = "1.7.3"
 lifecycleRuntimeKtx = "2.6.1"
-material = "1.5.0-beta03"
+material = "1.5.0"
 moleculeRuntime = "1.2.0"
 savedstateKtx = "1.2.1"
 spotless = "6.20.0"
-jetbrainsComposePlugin = "1.5.0-beta01"
+jetbrainsComposePlugin = "1.5.0-beta02"
 skiko = "0.7.76"
 
 [libraries]

@@ -39,14 +39,14 @@ extra.apply {
     set("jvmTarget", "17")
 
     // Android configurations
-    set("android-compile", 33)
+    set("android-compile", 34)
     set("android-build-tools", "34.0.0")
     set("androidMinSdk", 21)
-    set("androidTargetSdk", 33)
+    set("androidTargetSdk", 34)
 
     // Js & Node
     set("webpackCliVersion", "5.1.4")
     set("nodeVersion", "16.13.0")
 
-    set("ktlintVersion", "0.42.1")
+    set("ktlintVersion", "0.50.0")
 }
