@@ -14,7 +14,7 @@ lifecycleRuntimeKtx = "2.6.1"
 material = "1.5.0-beta03"
 moleculeRuntime = "1.2.0"
 savedstateKtx = "1.2.1"
-spotless = "6.7.0"
+spotless = "6.20.0"
 jetbrainsComposePlugin = "1.5.0-beta01"
 skiko = "0.7.76"
 
