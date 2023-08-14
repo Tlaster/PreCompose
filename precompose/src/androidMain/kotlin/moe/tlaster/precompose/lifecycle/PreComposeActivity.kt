@@ -51,28 +51,32 @@ open class PreComposeActivity : FragmentActivity() {
 
 fun PreComposeActivity.setContent(
     parent: CompositionContext? = null,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val existingComposeView = window.decorView
         .findViewById<ViewGroup>(android.R.id.content)
         .getChildAt(0) as? ComposeView
 
-    if (existingComposeView != null) with(existingComposeView) {
-        setParentCompositionContext(parent)
-        setContent {
-            ContentInternal(content)
+    if (existingComposeView != null) {
+        with(existingComposeView) {
+            setParentCompositionContext(parent)
+            setContent {
+                ContentInternal(content)
+            }
         }
-    } else ComposeView(this).apply {
-        // Set content and parent **before** setContentView
-        // to have ComposeView create the composition on attach
-        setParentCompositionContext(parent)
-        setContent {
-            ContentInternal(content)
+    } else {
+        ComposeView(this).apply {
+            // Set content and parent **before** setContentView
+            // to have ComposeView create the composition on attach
+            setParentCompositionContext(parent)
+            setContent {
+                ContentInternal(content)
+            }
+            // Set the view tree owners before setting the content view so that the inflation process
+            // and attach listeners will see them already present
+            setOwners()
+            setContentView(this, DefaultActivityContentLayoutParams)
         }
-        // Set the view tree owners before setting the content view so that the inflation process
-        // and attach listeners will see them already present
-        setOwners()
-        setContentView(this, DefaultActivityContentLayoutParams)
     }
 }
 
@@ -106,7 +110,7 @@ private fun PreComposeActivity.ProvideAndroidCompositionLocals(
     val savedStateHolder = remember(saveableStateRegistry) {
         SavedStateHolder(
             "root",
-            saveableStateRegistry
+            saveableStateRegistry,
         )
     }
 
@@ -125,5 +129,5 @@ private fun PreComposeActivity.ProvideAndroidCompositionLocals(
 
 private val DefaultActivityContentLayoutParams = ViewGroup.LayoutParams(
     ViewGroup.LayoutParams.WRAP_CONTENT,
-    ViewGroup.LayoutParams.WRAP_CONTENT
+    ViewGroup.LayoutParams.WRAP_CONTENT,
 )

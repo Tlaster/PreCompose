@@ -41,7 +41,11 @@ fun <T : ViewModel> viewModel(
         "Require LocalSavedStateHolder not null"
     }
     return remember(
-        modelClass, keys, creator, stateHolder, savedStateHolder
+        modelClass,
+        keys,
+        creator,
+        stateHolder,
+        savedStateHolder,
     ) {
         stateHolder.getViewModel(keys, modelClass = modelClass) {
             creator(savedStateHolder)

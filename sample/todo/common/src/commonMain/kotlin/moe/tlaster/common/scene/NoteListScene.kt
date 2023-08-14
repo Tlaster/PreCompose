@@ -40,14 +40,14 @@ fun NoteListScene(
             TopAppBar(
                 title = {
                     Text("Note")
-                }
+                },
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { onAddClicked.invoke() }) {
                 Icon(Icons.Default.Add, contentDescription = null)
             }
-        }
+        },
     ) {
         LazyColumn {
             items(items, key = { it.hashCode() }) {
@@ -64,19 +64,19 @@ fun NoteListScene(
                             TextButton(
                                 onClick = {
                                     onEditClicked.invoke(it)
-                                }
+                                },
                             ) {
                                 Text("Edit")
                             }
                             TextButton(
                                 onClick = {
                                     viewModel.delete(it)
-                                }
+                                },
                             ) {
                                 Text("Delete", color = Color.Red)
                             }
                         }
-                    }
+                    },
                 )
             }
         }

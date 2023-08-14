@@ -29,7 +29,7 @@ fun PreComposeWindow(
                 PreComposeWindowHolder()
             }
             ProvideDesktopCompositionLocals(
-                holder
+                holder,
             ) {
                 content.invoke()
             }

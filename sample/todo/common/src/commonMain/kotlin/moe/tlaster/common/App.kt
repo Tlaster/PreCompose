@@ -23,7 +23,7 @@ fun App() {
     MaterialTheme {
         NavHost(
             navigator = navigator,
-            initialRoute = "/home"
+            initialRoute = "/home",
         ) {
             scene("/home") {
                 NoteListScene(
@@ -35,7 +35,7 @@ fun App() {
                     },
                     onEditClicked = {
                         navigator.navigate("/edit/${it.id}")
-                    }
+                    },
                 )
             }
             scene("/detail/{id:[0-9]+}") { backStackEntry ->
@@ -59,7 +59,7 @@ fun App() {
                     pauseTransition = scaleOut(targetScale = 0.9f),
                     resumeTransition = scaleIn(initialScale = 0.9f),
                     exitTargetContentZIndex = 1f,
-                )
+                ),
             ) { backStackEntry ->
                 val id = backStackEntry.path<Int>("id")
                 NoteEditScene(
@@ -69,7 +69,7 @@ fun App() {
                     },
                     onBack = {
                         navigator.goBack()
-                    }
+                    },
                 )
             }
         }

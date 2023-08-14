@@ -1,4 +1,5 @@
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "EXPOSED_PARAMETER_TYPE", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
+
 package moe.tlaster.precompose
 
 import androidx.compose.runtime.Composable
@@ -52,7 +53,7 @@ internal class ComposeWindow(
     private val density by lazy {
         Density(
             density = nsWindow.backingScaleFactor.toFloat(),
-            fontScale = 1f
+            fontScale = 1f,
         )
     }
     private val macosTextInputService = MacosTextInputService()
@@ -90,7 +91,7 @@ internal class ComposeWindow(
                 onCopyRequested: (() -> Unit)?,
                 onPasteRequested: (() -> Unit)?,
                 onCutRequested: (() -> Unit)?,
-                onSelectAllRequested: (() -> Unit)?
+                onSelectAllRequested: (() -> Unit)?,
             ) = Unit
         }
 
@@ -100,7 +101,7 @@ internal class ComposeWindow(
     val layer = ComposeLayer(
         layer = createSkiaLayer(),
         platform = platform,
-        input = macosTextInputService.input
+        input = macosTextInputService.input,
     )
     val title: String
         get() = nsWindow.title()
@@ -199,11 +200,11 @@ internal class ComposeWindow(
      * @param content Composable content of the ComposeWindow.
      */
     fun setContent(
-        content: @Composable () -> Unit
+        content: @Composable () -> Unit,
     ) {
         layer.setDensity(density)
         layer.setContent(
-            content = content
+            content = content,
         )
     }
 

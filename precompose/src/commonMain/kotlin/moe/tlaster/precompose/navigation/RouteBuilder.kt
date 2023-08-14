@@ -33,7 +33,7 @@ class RouteBuilder(
                 deepLinks = deepLinks,
                 swipeProperties = swipeProperties,
                 content = content,
-            )
+            ),
         )
     }
 
@@ -55,7 +55,7 @@ class RouteBuilder(
             GroupRoute(
                 route = route,
                 initialRoute = actualInitialRoute,
-            )
+            ),
         )
     }
 
@@ -70,7 +70,7 @@ class RouteBuilder(
     ) {
         floating(
             route,
-            content
+            content,
         )
     }
 
@@ -87,7 +87,7 @@ class RouteBuilder(
             FloatingRoute(
                 route = route,
                 content = content,
-            )
+            ),
         )
     }
 

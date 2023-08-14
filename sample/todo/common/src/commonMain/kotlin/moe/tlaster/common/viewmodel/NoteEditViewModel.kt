@@ -7,7 +7,7 @@ import moe.tlaster.precompose.viewmodel.ViewModel
 
 class NoteEditViewModel(
     private val id: Int?,
-    savedStateHolder: SavedStateHolder
+    savedStateHolder: SavedStateHolder,
 ) : ViewModel() {
 
     private val note by lazy {

@@ -58,7 +58,7 @@ class SkikoAppDelegate : UIResponder, UIApplicationDelegateProtocol {
                         modifier = Modifier
                             .height(36.dp)
                             .fillMaxWidth()
-                            .background(MaterialTheme.colors.primaryVariant)
+                            .background(MaterialTheme.colors.primaryVariant),
                     )
                     App()
                 }

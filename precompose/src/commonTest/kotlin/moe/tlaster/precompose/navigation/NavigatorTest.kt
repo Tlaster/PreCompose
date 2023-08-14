@@ -16,12 +16,12 @@ class NavigatorTest {
                     TestRoute("foo/bar", "foo/bar"),
                     TestRoute("foo/bar/{id}", "foo/bar/{id}"),
                     TestRoute("foo/bar/{id}/baz", "foo/bar/{id}/baz"),
-                )
+                ),
             ),
             StateHolder(),
             TestSavedStateHolder(),
             TestLifecycleOwner(),
-            false
+            false,
         )
         navigator.navigate("foo/bar/1")
         navigator.navigate("foo/bar/1/baz")
@@ -42,12 +42,12 @@ class NavigatorTest {
                     TestRoute("foo/bar", "foo/bar"),
                     TestRoute("foo/bar/{id}", "foo/bar/{id}"),
                     TestRoute("foo/bar/{id}/baz", "foo/bar/{id}/baz"),
-                )
+                ),
             ),
             StateHolder(),
             TestSavedStateHolder(),
             TestLifecycleOwner(),
-            false
+            false,
         )
         assertEquals(2, navigator.stackManager.backStacks.value.size)
         assertEquals("foo/bar/{id}", navigator.stackManager.backStacks.value.last().route.route)

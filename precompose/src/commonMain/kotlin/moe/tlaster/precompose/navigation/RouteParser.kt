@@ -379,7 +379,9 @@ internal class RouteParser {
             }
             return if (ns[idx].label != label) {
                 null
-            } else ns[idx]
+            } else {
+                ns[idx]
+            }
         }
 
         val isLeaf: Boolean
@@ -425,8 +427,11 @@ internal class RouteParser {
             val ws = pattern.indexOf('*')
             if (ps < 0 && ws < 0) {
                 return Segment(
-                    ntStatic, "", ZERO_CHAR, 0,
-                    pattern.length
+                    ntStatic,
+                    "",
+                    ZERO_CHAR,
+                    0,
+                    pattern.length,
                 ) // we return the entire thing
             }
 
@@ -510,7 +515,9 @@ internal class RouteParser {
         val i = pattern.indexOf(BASE_CATCH_ALL)
         return if (i > 0) {
             pattern.substring(0, i)
-        } else ""
+        } else {
+            ""
+        }
     }
 
     fun insert(route: Route) {

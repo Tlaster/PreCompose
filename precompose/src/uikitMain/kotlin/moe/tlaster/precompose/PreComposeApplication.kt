@@ -18,14 +18,14 @@ import platform.UIKit.UIViewController
 @Suppress("FunctionName")
 fun PreComposeApplication(
     configure: ComposeUIViewControllerConfiguration.() -> Unit = {},
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ): UIViewController {
     return ComposeUIViewController(configure) {
         val holder = remember {
             PreComposeWindowHolder()
         }
         ProvideDesktopCompositionLocals(
-            holder
+            holder,
         ) {
             content.invoke()
         }
