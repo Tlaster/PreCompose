@@ -146,10 +146,6 @@ extra.apply {
     }
 }
 
-val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-}
-
 publishing {
     if (rootProject.file("publish.properties").exists()) {
         signing {
@@ -173,7 +169,6 @@ publishing {
     }
 
     publications.withType<MavenPublication> {
-        artifact(javadocJar)
         pom {
             name.set("PreCompose-Molecule")
             description.set("PreCompose molecule intergration")

@@ -164,58 +164,53 @@ extra.apply {
     }
 }
 
-val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-}
-
-afterEvaluate {
-    publishing {
-        if (rootProject.file("publish.properties").exists()) {
-            signing {
-                sign(publishing.publications)
-            }
-            repositories {
-                maven {
-                    val releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-                    val snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-                    url = if (version.toString().endsWith("SNAPSHOT")) {
-                        uri(snapshotsRepoUrl)
-                    } else {
-                        uri(releasesRepoUrl)
-                    }
-                    credentials {
-                        username = project.ext.get("ossrhUsername").toString()
-                        password = project.ext.get("ossrhPassword").toString()
-                    }
+publishing {
+    if (rootProject.file("publish.properties").exists()) {
+        signing {
+            sign(publishing.publications)
+        }
+        repositories {
+            maven {
+                val releasesRepoUrl =
+                    "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                val snapshotsRepoUrl =
+                    "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                url = if (version.toString().endsWith("SNAPSHOT")) {
+                    uri(snapshotsRepoUrl)
+                } else {
+                    uri(releasesRepoUrl)
+                }
+                credentials {
+                    username = project.ext.get("ossrhUsername").toString()
+                    password = project.ext.get("ossrhPassword").toString()
                 }
             }
         }
+    }
 
-        publications.withType<MavenPublication> {
-            artifact(javadocJar)
-            pom {
-                name.set("PreCompose")
-                description.set("A third-party Jetbrains Compose library with ViewModel, LiveData and Navigation support.")
+    publications.withType<MavenPublication> {
+        pom {
+            name.set("PreCompose")
+            description.set("A third-party Jetbrains Compose library with ViewModel, LiveData and Navigation support.")
+            url.set("https://github.com/Tlaster/PreCompose")
+
+            licenses {
+                license {
+                    name.set("MIT")
+                    url.set("https://opensource.org/licenses/MIT")
+                }
+            }
+            developers {
+                developer {
+                    id.set("Tlaster")
+                    name.set("James Tlaster")
+                    email.set("tlaster@outlook.com")
+                }
+            }
+            scm {
                 url.set("https://github.com/Tlaster/PreCompose")
-
-                licenses {
-                    license {
-                        name.set("MIT")
-                        url.set("https://opensource.org/licenses/MIT")
-                    }
-                }
-                developers {
-                    developer {
-                        id.set("Tlaster")
-                        name.set("James Tlaster")
-                        email.set("tlaster@outlook.com")
-                    }
-                }
-                scm {
-                    url.set("https://github.com/Tlaster/PreCompose")
-                    connection.set("scm:git:git://github.com/Tlaster/PreCompose.git")
-                    developerConnection.set("scm:git:git://github.com/Tlaster/PreCompose.git")
-                }
+                connection.set("scm:git:git://github.com/Tlaster/PreCompose.git")
+                developerConnection.set("scm:git:git://github.com/Tlaster/PreCompose.git")
             }
         }
     }
