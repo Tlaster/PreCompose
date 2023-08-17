@@ -164,6 +164,14 @@ extra.apply {
     }
 }
 
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+}
+// https://github.com/gradle/gradle/issues/26091
+val signingTasks = tasks.withType<Sign>()
+tasks.withType<AbstractPublishToMaven>().configureEach {
+    dependsOn(signingTasks)
+}
 publishing {
     if (rootProject.file("publish.properties").exists()) {
         signing {
@@ -189,6 +197,7 @@ publishing {
     }
 
     publications.withType<MavenPublication> {
+        artifact(javadocJar)
         pom {
             name.set("PreCompose")
             description.set("A third-party Jetbrains Compose library with ViewModel, LiveData and Navigation support.")
