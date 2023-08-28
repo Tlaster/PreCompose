@@ -23,6 +23,7 @@ rootProject.name = "precompose"
 include(":precompose")
 include(":precompose-viewmodel")
 include(":precompose-molecule")
+include(":precompose-koin")
 include(":sample:todo:android")
 include(":sample:todo:desktop")
 include(":sample:todo:common")

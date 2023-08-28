@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import moe.tlaster.common.model.Note
 import moe.tlaster.common.viewmodel.NoteListViewModel
-import moe.tlaster.precompose.viewmodel.viewModel
+import moe.tlaster.precompose.koin.koinViewModel
 
 @ExperimentalMaterialApi
 @Composable
@@ -30,9 +30,8 @@ fun NoteListScene(
     onEditClicked: (note: Note) -> Unit,
     onAddClicked: () -> Unit,
 ) {
-    val viewModel = viewModel(NoteListViewModel::class) {
-        NoteListViewModel()
-    }
+    val viewModel = koinViewModel<NoteListViewModel>()
+
     val items by viewModel.items.collectAsState()
 
     Scaffold(

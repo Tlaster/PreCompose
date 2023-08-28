@@ -1,6 +1,5 @@
 package moe.tlaster.common
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
@@ -8,15 +7,46 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import moe.tlaster.common.repository.FakeRepository
 import moe.tlaster.common.scene.NoteDetailScene
 import moe.tlaster.common.scene.NoteEditScene
 import moe.tlaster.common.scene.NoteListScene
+import moe.tlaster.common.viewmodel.NoteDetailViewModel
+import moe.tlaster.common.viewmodel.NoteEditViewModel
+import moe.tlaster.common.viewmodel.NoteListViewModel
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
+import moe.tlaster.precompose.stateholder.SavedStateHolder
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
+fun setupKoin() {
+    startKoin {
+        modules(
+            module {
+                single { FakeRepository() }
+                factory { (id: Int) ->
+                    NoteDetailViewModel(
+                        id = id,
+                        fakeRepository = get(),
+                    )
+                }
+                factory { (id: Int?, savedStateHolder: SavedStateHolder) ->
+                    NoteEditViewModel(
+                        id = id,
+                        savedStateHolder = savedStateHolder,
+                        fakeRepository = get(),
+                    )
+                }
+                factory { NoteListViewModel(fakeRepository = get()) }
+            },
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun App() {
     val navigator = rememberNavigator()

@@ -19,7 +19,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import moe.tlaster.common.viewmodel.NoteEditViewModel
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
+import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.stateholder.LocalSavedStateHolder
 import moe.tlaster.precompose.viewmodel.viewModel
+import org.koin.core.parameter.parametersOf
 
 @ExperimentalMaterialApi
 @Composable
@@ -28,9 +31,8 @@ fun NoteEditScene(
     onDone: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
-    val viewModel = viewModel(NoteEditViewModel::class, listOf(id)) { savedSateHolder ->
-        NoteEditViewModel(id, savedSateHolder)
-    }
+    val stateHolder = LocalSavedStateHolder.current
+    val viewModel = koinViewModel<NoteEditViewModel> { parametersOf(id, stateHolder) }
 
     Scaffold(
         topBar = {

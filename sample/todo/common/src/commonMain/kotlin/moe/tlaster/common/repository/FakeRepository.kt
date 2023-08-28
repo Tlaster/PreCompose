@@ -11,7 +11,7 @@ private val fakeInitialNotes = mutableListOf(
     Note(4, title = "Finally, you can click one to view", content = "Thanks!"),
 )
 
-object FakeRepository {
+class FakeRepository {
     private val watchers = hashMapOf<Int, MutableStateFlow<Note>>()
     val items = MutableStateFlow(fakeInitialNotes)
 

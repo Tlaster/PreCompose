@@ -5,8 +5,9 @@ import moe.tlaster.precompose.viewmodel.ViewModel
 
 class NoteDetailViewModel(
     private val id: Int,
+    private val fakeRepository: FakeRepository,
 ) : ViewModel() {
     val note by lazy {
-        FakeRepository.getLiveData(id)
+        fakeRepository.getLiveData(id)
     }
 }
