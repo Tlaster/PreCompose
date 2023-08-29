@@ -28,7 +28,7 @@ fun PreComposeWindow(
             val holder = remember {
                 PreComposeWindowHolder()
             }
-            ProvideDesktopCompositionLocals(
+            ProvidePreComposeCompositionLocals(
                 holder,
             ) {
                 content.invoke()
@@ -38,7 +38,7 @@ fun PreComposeWindow(
 }
 
 @Composable
-private fun ProvideDesktopCompositionLocals(
+fun ProvidePreComposeCompositionLocals(
     holder: PreComposeWindowHolder = remember {
         PreComposeWindowHolder()
     },
@@ -53,7 +53,7 @@ private fun ProvideDesktopCompositionLocals(
     }
 }
 
-private class PreComposeWindowHolder : LifecycleOwner, BackDispatcherOwner {
+class PreComposeWindowHolder : LifecycleOwner, BackDispatcherOwner {
     override val lifecycle by lazy {
         LifecycleRegistry()
     }
