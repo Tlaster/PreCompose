@@ -11,19 +11,6 @@ import org.koin.core.scope.Scope
 import kotlin.reflect.KClass
 
 @Composable
-inline fun <reified T : ViewModel> getViewModel(
-    qualifier: Qualifier? = null,
-    stateHolder: StateHolder = checkNotNull(LocalStateHolder.current) {
-        "No StateHolder was provided via LocalStateHolder"
-    },
-    key: String? = null,
-    scope: Scope = LocalKoinScope.current,
-    noinline parameters: ParametersDefinition? = null,
-): T {
-    return koinViewModel(qualifier, stateHolder, key, scope, parameters)
-}
-
-@Composable
 inline fun <reified T : ViewModel> koinViewModel(
     qualifier: Qualifier? = null,
     stateHolder: StateHolder = checkNotNull(LocalStateHolder.current) {
@@ -33,8 +20,29 @@ inline fun <reified T : ViewModel> koinViewModel(
     scope: Scope = LocalKoinScope.current,
     noinline parameters: ParametersDefinition? = null,
 ): T {
-    return resolveViewModel(
+    return koinViewModel(
         T::class,
+        qualifier,
+        stateHolder,
+        key,
+        scope,
+        parameters,
+    )
+}
+
+@Composable
+fun <T : ViewModel> koinViewModel(
+    vmClass: KClass<T>,
+    qualifier: Qualifier? = null,
+    stateHolder: StateHolder = checkNotNull(LocalStateHolder.current) {
+        "No StateHolder was provided via LocalStateHolder"
+    },
+    key: String? = null,
+    scope: Scope = LocalKoinScope.current,
+    parameters: ParametersDefinition? = null,
+): T {
+    return resolveViewModel(
+        vmClass,
         stateHolder,
         key,
         qualifier,
@@ -43,7 +51,7 @@ inline fun <reified T : ViewModel> koinViewModel(
     )
 }
 
-fun <T : ViewModel> resolveViewModel(
+private fun <T : ViewModel> resolveViewModel(
     vmClass: KClass<T>,
     stateHolder: StateHolder,
     key: String? = null,
@@ -51,7 +59,7 @@ fun <T : ViewModel> resolveViewModel(
     scope: Scope,
     parameters: ParametersDefinition? = null,
 ): T {
-    return stateHolder.getOrPut(qualifier?.value ?: key ?: vmClass.qualifiedName ?: "") {
+    return stateHolder.getOrPut(qualifier?.value ?: key ?: vmClass.simpleName ?: "") {
         scope.get(vmClass, qualifier, parameters)
     }
 }
