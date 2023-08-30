@@ -13,6 +13,7 @@ import kotlinx.cinterop.cstr
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.toCValues
 import moe.tlaster.common.App
+import moe.tlaster.common.setupKoin
 import moe.tlaster.precompose.PreComposeApplication
 import platform.Foundation.NSStringFromClass
 import platform.UIKit.UIApplication
@@ -51,6 +52,7 @@ class SkikoAppDelegate : UIResponder, UIApplicationDelegateProtocol {
 
     @OptIn(ExperimentalForeignApi::class)
     override fun application(application: UIApplication, didFinishLaunchingWithOptions: Map<Any?, *>?): Boolean {
+        setupKoin()
         window = UIWindow(frame = UIScreen.mainScreen.bounds).apply {
             rootViewController = PreComposeApplication {
                 Column {

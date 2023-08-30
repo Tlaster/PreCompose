@@ -19,8 +19,11 @@ kotlin {
                 api(compose.runtime)
                 api(compose.foundation)
                 api(compose.material)
+                api(libs.koin)
+                api(libs.koin.compose)
                 api(project(":precompose"))
                 api(project(":precompose-viewmodel"))
+                api(project(":precompose-koin"))
             }
         }
         val commonTest by getting

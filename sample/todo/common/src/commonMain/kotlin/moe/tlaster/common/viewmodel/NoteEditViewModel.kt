@@ -8,11 +8,12 @@ import moe.tlaster.precompose.viewmodel.ViewModel
 class NoteEditViewModel(
     private val id: Int?,
     savedStateHolder: SavedStateHolder,
+    private val fakeRepository: FakeRepository,
 ) : ViewModel() {
 
     private val note by lazy {
         if (id != null) {
-            FakeRepository.get(id)
+            fakeRepository.get(id)
         } else {
             null
         }
@@ -40,9 +41,9 @@ class NoteEditViewModel(
 
     fun save() {
         note?.let {
-            FakeRepository.update(it.copy(title = title.value, content = content.value))
+            fakeRepository.update(it.copy(title = title.value, content = content.value))
         } ?: run {
-            FakeRepository.add(title = title.value, content = content.value)
+            fakeRepository.add(title = title.value, content = content.value)
         }
     }
 }

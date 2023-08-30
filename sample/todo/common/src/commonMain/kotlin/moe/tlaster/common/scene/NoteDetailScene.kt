@@ -17,7 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import moe.tlaster.common.viewmodel.NoteDetailViewModel
-import moe.tlaster.precompose.viewmodel.viewModel
+import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @ExperimentalMaterialApi
 @Composable
@@ -26,9 +27,7 @@ fun NoteDetailScene(
     onBack: () -> Unit,
     onEdit: () -> Unit,
 ) {
-    val viewModel = viewModel(NoteDetailViewModel::class, listOf(id)) {
-        NoteDetailViewModel(id)
-    }
+    val viewModel = koinViewModel<NoteDetailViewModel> { parametersOf(id) }
 
     Scaffold(
         topBar = {

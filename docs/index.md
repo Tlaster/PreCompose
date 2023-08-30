@@ -26,6 +26,7 @@ Compose Multiplatform Navigation && ViewModel, inspired by Jetpack Lifecycle, Vi
 - [Navigation](/component/navigation.md)
 - [ViewModel](/component/view_model.md)
 - [Molecule Integration](/component/molecule.md)
+- [Koin Integration](/component/koin.md)
 
 # Sample
 - [Note App](/sample.md#note-app)

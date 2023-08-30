@@ -4,11 +4,13 @@ import moe.tlaster.common.model.Note
 import moe.tlaster.common.repository.FakeRepository
 import moe.tlaster.precompose.viewmodel.ViewModel
 
-class NoteListViewModel : ViewModel() {
+class NoteListViewModel(
+    private val fakeRepository: FakeRepository,
+) : ViewModel() {
     val items by lazy {
-        FakeRepository.items
+        fakeRepository.items
     }
     fun delete(note: Note) {
-        FakeRepository.remove(note = note)
+        fakeRepository.remove(note = note)
     }
 }
