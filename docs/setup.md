@@ -14,6 +14,8 @@ api("moe.tlaster:precompose:$precompose_version")
 // api("moe.tlaster:precompose-molecule:$precompose_version") // For Molecule intergration 
 
 // api("moe.tlaster:precompose-viewmodel:$precompose_version") // For ViewModel intergration
+
+// api("moe.tlaster:precompose-koin:$precompose_version") // For Koin intergration
 ```
 ## Android
 Change the Activity's parent class to `moe.tlaster.precompose.lifecycle.PreComposeActivity` and use `moe.tlaster.precompose.lifecycle.setContent` for setting compose content
