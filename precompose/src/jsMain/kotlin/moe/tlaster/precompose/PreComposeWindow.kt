@@ -1,11 +1,11 @@
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "EXPOSED_PARAMETER_TYPE")
-
 package moe.tlaster.precompose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
-import androidx.compose.ui.window.ComposeWindow
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.window.CanvasBasedWindow
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
 import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
@@ -16,30 +16,30 @@ import moe.tlaster.precompose.ui.BackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 
 /**
- * Creates a new [ComposeWindow] with the given [title] and [content].
- *
- * This is a temporary workaround until ComposeJS is more mature.
- * Eventually this can just be a Window(title, content) call.
+ * Creates a new [CanvasBasedWindow] with the given [title] and [content].
  */
+@OptIn(ExperimentalComposeUiApi::class)
 fun preComposeWindow(
-    @Suppress("UNUSED_PARAMETER")
     title: String = "Untitled",
-    // We need to pass the ComposeWindow up to the caller for now,
-    // since ComposeJS can't handle window resizes itself yet.
-    content: @Composable ComposeWindow.() -> Unit,
+    canvasElementId: String = "ComposeTarget",
+    requestResize: (suspend () -> IntSize)? = null,
+    applyDefaultStyles: Boolean = true,
+    content: @Composable () -> Unit,
 ) {
-    // Ugly workaround until ComposeJS is more mature.
-    // Eventually this can just be a Window(title, content) call.
-    ComposeWindow().apply {
-        setContent {
+    CanvasBasedWindow(
+        title = title,
+        canvasElementId = canvasElementId,
+        requestResize = requestResize,
+        applyDefaultStyles = applyDefaultStyles,
+        content = {
             val holder = remember {
                 PreComposeWindowHolder()
             }
             ProvidePreComposeCompositionLocals(holder) {
-                content.invoke(this)
+                content()
             }
-        }
-    }
+        },
+    )
 }
 
 @Composable
