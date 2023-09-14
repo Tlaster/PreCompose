@@ -17,7 +17,7 @@ savedstateKtx = "1.2.1"
 spotless = "6.20.0"
 jetbrainsComposePlugin = "1.5.1"
 skiko = "0.7.77"
-koin = "3.4.3"
+koin = "3.5.0"
 koin-compose = "1.0.4"
 
 [libraries]
