@@ -18,7 +18,7 @@ spotless = "6.20.0"
 jetbrainsComposePlugin = "1.5.1"
 skiko = "0.7.77"
 koin = "3.5.0"
-koin-compose = "1.0.4"
+koin-compose = "1.1.0"
 
 [libraries]
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidxActivityVer" }
