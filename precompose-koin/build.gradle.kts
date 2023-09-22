@@ -36,8 +36,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 compileOnly(compose.foundation)
-                compileOnly(libs.koin)
-                compileOnly(libs.koin.compose)
+                implementation(libs.koin)
+                implementation(libs.koin.compose)
                 compileOnly(project(":precompose"))
                 compileOnly(project(":precompose-viewmodel"))
             }
