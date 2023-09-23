@@ -27,7 +27,7 @@ fun NoteDetailScene(
     onBack: () -> Unit,
     onEdit: () -> Unit,
 ) {
-    val viewModel = koinViewModel<NoteDetailViewModel> { parametersOf(id) }
+    val viewModel = koinViewModel(NoteDetailViewModel::class) { parametersOf(id) }
 
     Scaffold(
         topBar = {

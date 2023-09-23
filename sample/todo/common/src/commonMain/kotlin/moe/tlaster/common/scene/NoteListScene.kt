@@ -30,7 +30,7 @@ fun NoteListScene(
     onEditClicked: (note: Note) -> Unit,
     onAddClicked: () -> Unit,
 ) {
-    val viewModel = koinViewModel<NoteListViewModel>()
+    val viewModel = koinViewModel(NoteListViewModel::class)
 
     val items by viewModel.items.collectAsState()
 

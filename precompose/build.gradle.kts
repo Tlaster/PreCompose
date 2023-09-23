@@ -12,12 +12,12 @@ group = "moe.tlaster"
 version = rootProject.extra.get("precomposeVersion") as String
 
 kotlin {
+    targetHierarchy.default()
     macosArm64()
     macosX64()
-    // ios("uikit")
-    iosX64("uikitX64")
-    iosArm64("uikitArm64")
-    iosSimulatorArm64("uikitSimulatorArm64")
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
     androidTarget {
         publishLibraryVariants("release", "debug")
     }
@@ -69,19 +69,12 @@ kotlin {
                 implementation(libs.junit)
             }
         }
-        val macosMain by creating {
-            dependsOn(commonMain)
+        val macosMain by getting {
             dependencies {
                 implementation(compose.foundation)
                 implementation(compose.animation)
                 implementation(compose.material)
             }
-        }
-        val macosX64Main by getting {
-            dependsOn(macosMain)
-        }
-        val macosArm64Main by getting {
-            dependsOn(macosMain)
         }
         val jvmMain by getting {
             dependencies {
@@ -99,7 +92,6 @@ kotlin {
             }
         }
         val jsMain by getting {
-            dependsOn(commonMain)
             dependencies {
                 implementation(compose.foundation)
                 implementation(compose.animation)
@@ -111,22 +103,12 @@ kotlin {
                 implementation(kotlin("test-js"))
             }
         }
-        val uikitMain by creating {
-            dependsOn(commonMain)
+        val iosMain by getting {
             dependencies {
                 implementation(compose.foundation)
                 implementation(compose.animation)
                 implementation(compose.material)
             }
-        }
-        val uikitX64Main by getting {
-            dependsOn(uikitMain)
-        }
-        val uikitArm64Main by getting {
-            dependsOn(uikitMain)
-        }
-        val uikitSimulatorArm64Main by getting {
-            dependsOn(uikitMain)
         }
     }
 }
