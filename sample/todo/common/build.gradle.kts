@@ -5,6 +5,7 @@ plugins {
 }
 
 kotlin {
+    targetHierarchy.default()
     macosX64()
     macosArm64()
     ios()

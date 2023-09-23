@@ -21,7 +21,6 @@ import moe.tlaster.common.viewmodel.NoteEditViewModel
 import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.stateholder.LocalSavedStateHolder
-import moe.tlaster.precompose.viewmodel.viewModel
 import org.koin.core.parameter.parametersOf
 
 @ExperimentalMaterialApi
@@ -32,7 +31,7 @@ fun NoteEditScene(
     onBack: () -> Unit = {},
 ) {
     val stateHolder = LocalSavedStateHolder.current
-    val viewModel = koinViewModel<NoteEditViewModel> { parametersOf(id, stateHolder) }
+    val viewModel = koinViewModel(NoteEditViewModel::class) { parametersOf(id, stateHolder) }
 
     Scaffold(
         topBar = {
