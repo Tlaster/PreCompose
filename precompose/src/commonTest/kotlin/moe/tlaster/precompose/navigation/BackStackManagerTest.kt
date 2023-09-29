@@ -558,4 +558,41 @@ class BackStackManagerTest {
             )
         }
     }
+
+    /**
+     * #146
+     */
+    @Test
+    fun testNavigateWithPopupToWithDuplicateScene() {
+        val manager = BackStackManager()
+        val lifecycleOwner = TestLifecycleOwner()
+        val saveableStateHolder = TestSavedStateHolder()
+
+        manager.init(
+            routeGraph = RouteGraph(
+                "screen1",
+                listOf(
+                    TestRoute("screen1", "screen1"),
+                    TestRoute("screen2", "screen2"),
+                ),
+            ),
+            stateHolder = StateHolder(),
+            savedStateHolder = saveableStateHolder,
+            lifecycleOwner = lifecycleOwner,
+            persistNavState = false,
+        )
+        manager.push("screen2")
+        manager.push("screen1", NavOptions(popUpTo = PopUpTo("screen1")))
+        manager.push("screen1")
+
+        assertEquals(
+            listOf("screen1", "screen1", "screen1"),
+            manager.backStacks.value.map { it.path },
+        )
+
+        assertEquals(
+            listOf("1-screen1", "3-screen1", "4-screen1"),
+            manager.backStacks.value.map { it.stateId },
+        )
+    }
 }

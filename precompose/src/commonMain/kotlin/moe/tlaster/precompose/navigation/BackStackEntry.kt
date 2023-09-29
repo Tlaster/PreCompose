@@ -57,13 +57,17 @@ class BackStackEntry internal constructor(
             _destroyAfterTransition = true
             requestNavigationLock.invoke(true)
         } else {
-            lifecycleRegistry.currentState = Lifecycle.State.Destroyed
-            stateHolder.close()
-            parentStateHolder.remove(stateId)
-            savedStateHolder.close()
-            uiClosable?.close(stateId)
-            requestNavigationLock.invoke(false)
+            destroyDirectly()
         }
+    }
+
+    internal fun destroyDirectly() {
+        lifecycleRegistry.currentState = Lifecycle.State.Destroyed
+        stateHolder.close()
+        parentStateHolder.remove(stateId)
+        savedStateHolder.close()
+        uiClosable?.close(stateId)
+        requestNavigationLock.invoke(false)
     }
 
     fun hasRoute(route: String): Boolean {
