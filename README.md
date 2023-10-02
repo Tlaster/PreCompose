@@ -34,7 +34,7 @@ Compose Multiplatform Navigation && ViewModel, inspired by Jetpack Lifecycle, Vi
 
 # Credits
 
-Thanks Jetbrains for [supporting open source software](https://www.jetbrains.com/community/opensource/#support)
+Thanks JetBrains for [supporting open source software](https://www.jetbrains.com/community/opensource/#support)
 
 <a href="https://www.jetbrains.com/community/opensource/#support">
   <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" alt="JetBrains Logo (Main) logo." width="200" />
