@@ -40,6 +40,11 @@ sealed interface PopUpTo {
     }
 }
 
+/**
+ * The `popUpTo` destination, if it's an empty string will clear all backstack
+ * @param route the route to pop up to
+ * @param inclusive whether the `popUpTo` destination should be popped from the back stack.
+ */
 @Suppress("FunctionName")
 fun PopUpTo(route: String, inclusive: Boolean = false) = PopUpTo.Route(
     route = route,

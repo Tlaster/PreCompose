@@ -110,8 +110,8 @@ internal class BackStackManager : LifecycleObserver {
                 backStacks.value = backStacks.value.filter { it.id != entry.id } + entry
             }
         } else {
-            backStacks.value = backStacks.value + BackStackEntry(
-                id = backStacks.value.size.toLong(),
+            backStacks.value += BackStackEntry(
+                id = (backStacks.value.lastOrNull()?.id ?: 0L) + 1,
                 route = matchResult.route,
                 pathMap = matchResult.pathMap,
                 queryString = query.takeIf { it.isNotEmpty() }?.let {
@@ -150,7 +150,7 @@ internal class BackStackManager : LifecycleObserver {
                 )
                 backStacks.value -= stacksToDrop
                 stacksToDrop.forEach {
-                    it.destroy()
+                    it.destroyDirectly()
                 }
             }
         }
