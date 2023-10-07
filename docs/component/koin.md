@@ -29,7 +29,7 @@ And you can use your ViewModel in Compose like this:
 val viewModel = koinViewModel<CounterViewModel> { parametersOf(initialCount) }
 ```
 
-NOTE: If you're using Kotlin/Native target, please use viewModel with modelClass parameter instead.
+NOTE: If you're using Kotlin/Native target, please use viewModel with vmClass parameter instead.
 ```kotlin
-val viewModel = koinViewModel(modelClass = CounterViewModel::class) { parametersOf(initialCount) }
+val viewModel = koinViewModel(vmClass = CounterViewModel::class) { parametersOf(initialCount) }
 ```
