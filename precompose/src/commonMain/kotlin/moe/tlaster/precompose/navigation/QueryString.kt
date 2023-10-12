@@ -5,20 +5,12 @@ data class QueryString(
 ) {
     val map by lazy {
         rawInput
-            .split("?")
-            .lastOrNull()
-            .let {
-                it ?: ""
-            }
-            .split("&")
-            .asSequence()
+            .substringAfter("?")
+            .splitToSequence("&")
             .map { it.split("=") }
-            .filter { !it.firstOrNull().isNullOrEmpty() }
-            .filter { it.size in 1..2 }
-            .map { it[0] to it.elementAtOrNull(1) }
-            .groupBy { it.first }
-            .map { it.key to it.value.mapNotNull { it.second.takeIf { !it.isNullOrEmpty() } } }
-            .toList()
+            .filter { it.size in 1..2 && it[0].isNotEmpty() }
+            .groupBy({ it[0] }, { it.getOrNull(1) })
+            .map { it -> it.key to it.value.mapNotNull { it?.takeIf { it.isNotEmpty() } } }
             .toMap()
     }
 }
