@@ -7,7 +7,6 @@ import kotlin.test.assertTrue
 class QueryStringTest {
     @Test
     fun simpleQueryString() {
-
         QueryString("&foo=bar").let {
             assertTrue(it.map.size == 1)
             assertTrue(it.map.containsKey("foo"))
