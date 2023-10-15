@@ -1,18 +1,20 @@
 package moe.tlaster.precompose.lifecycle
 
-import android.os.Bundle
 import android.view.ViewGroup
+import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
 import androidx.compose.ui.platform.ComposeView
-import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
@@ -24,38 +26,12 @@ import moe.tlaster.precompose.stateholder.LocalStateHolder
 import moe.tlaster.precompose.stateholder.SavedStateHolder
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 
-open class PreComposeActivity : FragmentActivity() {
-    internal val viewModel by viewModels<PreComposeViewModel>()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        onBackPressedDispatcher.addCallback(this, viewModel.backPressedCallback)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.lifecycleRegistry.currentState = Lifecycle.State.Active
-    }
-
-    override fun onPause() {
-        super.onPause()
-        viewModel.lifecycleRegistry.currentState = Lifecycle.State.InActive
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (!isChangingConfigurations) {
-            viewModel.lifecycleRegistry.currentState = Lifecycle.State.Destroyed
-        }
-    }
-}
-
-fun PreComposeActivity.setContent(
+fun ComponentActivity.setContent(
     parent: CompositionContext? = null,
     content: @Composable () -> Unit,
 ) {
-    val existingComposeView = window.decorView
-        .findViewById<ViewGroup>(android.R.id.content)
-        .getChildAt(0) as? ComposeView
+    val existingComposeView =
+        window.decorView.findViewById<ViewGroup>(android.R.id.content).getChildAt(0) as? ComposeView
 
     if (existingComposeView != null) {
         with(existingComposeView) {
@@ -80,7 +56,7 @@ fun PreComposeActivity.setContent(
     }
 }
 
-private fun PreComposeActivity.setOwners() {
+private fun ComponentActivity.setOwners() {
     val decorView = window.decorView
     if (decorView.findViewTreeLifecycleOwner() == null) {
         decorView.setViewTreeLifecycleOwner(this)
@@ -94,16 +70,48 @@ private fun PreComposeActivity.setOwners() {
 }
 
 @Composable
-private fun PreComposeActivity.ContentInternal(content: @Composable () -> Unit) {
+private fun ComponentActivity.ContentInternal(content: @Composable () -> Unit) {
     ProvideAndroidCompositionLocals {
         content.invoke()
     }
 }
 
 @Composable
-private fun PreComposeActivity.ProvideAndroidCompositionLocals(
+private fun ComponentActivity.ProvideAndroidCompositionLocals(
     content: @Composable () -> Unit,
 ) {
+    val viewModel by viewModels<PreComposeViewModel>()
+
+    DisposableEffect(lifecycle) {
+        val observer = object : DefaultLifecycleObserver {
+            override fun onCreate(owner: LifecycleOwner) {
+                super.onCreate(owner)
+                onBackPressedDispatcher.addCallback(owner, viewModel.backPressedCallback)
+            }
+
+            override fun onResume(owner: LifecycleOwner) {
+                super.onResume(owner)
+                viewModel.lifecycleRegistry.currentState = Lifecycle.State.Active
+            }
+
+            override fun onPause(owner: LifecycleOwner) {
+                super.onPause(owner)
+                viewModel.lifecycleRegistry.currentState = Lifecycle.State.InActive
+            }
+
+            override fun onDestroy(owner: LifecycleOwner) {
+                super.onDestroy(owner)
+                if (!isChangingConfigurations) {
+                    viewModel.lifecycleRegistry.currentState = Lifecycle.State.Destroyed
+                }
+            }
+        }
+        lifecycle.addObserver(observer)
+        onDispose {
+            lifecycle.removeObserver(observer)
+        }
+    }
+
     val state by viewModel.backDispatcher.canHandleBackPress.collectAsState(false)
 
     val saveableStateRegistry = LocalSaveableStateRegistry.current
@@ -118,9 +126,9 @@ private fun PreComposeActivity.ProvideAndroidCompositionLocals(
         viewModel.backPressedCallback.isEnabled = state
     }
     CompositionLocalProvider(
-        LocalLifecycleOwner provides this.viewModel,
-        LocalStateHolder provides this.viewModel.stateHolder,
-        LocalBackDispatcherOwner provides this.viewModel,
+        LocalLifecycleOwner provides viewModel,
+        LocalStateHolder provides viewModel.stateHolder,
+        LocalBackDispatcherOwner provides viewModel,
         LocalSavedStateHolder provides savedStateHolder,
     ) {
         content.invoke()
