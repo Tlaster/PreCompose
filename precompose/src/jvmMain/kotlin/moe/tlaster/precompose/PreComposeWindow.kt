@@ -23,8 +23,12 @@ import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 
 @Deprecated(
-    message = "Use PreComposeApp instead",
-    replaceWith = ReplaceWith("PreComposeApp(content)"),
+    message = """
+        Use Window directly instead. And make sure wrap your content with PreComposeApp.
+        PreComposeWindow will be removed in the future release.
+        For migration guide, please refer to https://github.com/Tlaster/PreCompose/releases/tag/1.5.5
+    """,
+    replaceWith = ReplaceWith("PreComposeWindow"),
 )
 @Composable
 fun PreComposeWindow(

@@ -1,79 +1,36 @@
 package moe.tlaster.precompose.lifecycle
 
-import android.view.ViewGroup
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionContext
-import androidx.compose.ui.platform.ComposeView
-import androidx.lifecycle.findViewTreeLifecycleOwner
-import androidx.lifecycle.findViewTreeViewModelStoreOwner
-import androidx.lifecycle.setViewTreeLifecycleOwner
-import androidx.lifecycle.setViewTreeViewModelStoreOwner
-import androidx.savedstate.findViewTreeSavedStateRegistryOwner
-import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import moe.tlaster.precompose.PreComposeApp
 
 @Deprecated(
-    message = "Use PreComposeApp instead",
-    replaceWith = ReplaceWith("PreComposeApp(content)"),
+    message = """
+        Use ComponentActivity directly instead. And make sure wrap your content with PreComposeApp.
+        PreComposeActivity will be removed in the future release.
+        For migration guide, please refer to https://github.com/Tlaster/PreCompose/releases/tag/1.5.5
+    """,
+    replaceWith = ReplaceWith("ComponentActivity"),
 )
 typealias PreComposeActivity = ComponentActivity
 
 @Deprecated(
-    message = "Use PreComposeApp instead",
-    replaceWith = ReplaceWith("PreComposeApp(content)"),
+    message = """
+        Use androidx.activity.compose.setContent directly instead. And make sure wrap your content with PreComposeApp.
+        PreComposeActivity.setContent will be removed in the future release.
+        For migration guide, please refer to https://github.com/Tlaster/PreCompose/releases/tag/1.5.5
+    """,
+    replaceWith = ReplaceWith("androidx.activity.compose.setContent"),
 )
-fun ComponentActivity.setContent(
+fun PreComposeActivity.setContent(
     parent: CompositionContext? = null,
     content: @Composable () -> Unit,
 ) {
-    val existingComposeView =
-        window.decorView.findViewById<ViewGroup>(android.R.id.content).getChildAt(0) as? ComposeView
-
-    if (existingComposeView != null) {
-        with(existingComposeView) {
-            setParentCompositionContext(parent)
-            setContent {
-                ContentInternal(content)
-            }
-        }
-    } else {
-        ComposeView(this).apply {
-            // Set content and parent **before** setContentView
-            // to have ComposeView create the composition on attach
-            setParentCompositionContext(parent)
-            setContent {
-                ContentInternal(content)
-            }
-            // Set the view tree owners before setting the content view so that the inflation process
-            // and attach listeners will see them already present
-            setOwners()
-            setContentView(this, DefaultActivityContentLayoutParams)
+    setContent(parent) {
+        PreComposeApp {
+            content.invoke()
         }
     }
 }
-
-private fun ComponentActivity.setOwners() {
-    val decorView = window.decorView
-    if (decorView.findViewTreeLifecycleOwner() == null) {
-        decorView.setViewTreeLifecycleOwner(this)
-    }
-    if (decorView.findViewTreeViewModelStoreOwner() == null) {
-        decorView.setViewTreeViewModelStoreOwner(this)
-    }
-    if (decorView.findViewTreeSavedStateRegistryOwner() == null) {
-        decorView.setViewTreeSavedStateRegistryOwner(this)
-    }
-}
-
-@Composable
-private fun ComponentActivity.ContentInternal(content: @Composable () -> Unit) {
-    PreComposeApp {
-        content.invoke()
-    }
-}
-
-private val DefaultActivityContentLayoutParams = ViewGroup.LayoutParams(
-    ViewGroup.LayoutParams.WRAP_CONTENT,
-    ViewGroup.LayoutParams.WRAP_CONTENT,
-)
