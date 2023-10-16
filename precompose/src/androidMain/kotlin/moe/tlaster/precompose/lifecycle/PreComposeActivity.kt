@@ -2,29 +2,16 @@ package moe.tlaster.precompose.lifecycle
 
 import android.view.ViewGroup
 import androidx.activity.ComponentActivity
-import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionContext
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
 import androidx.compose.ui.platform.ComposeView
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
-import moe.tlaster.precompose.stateholder.LocalSavedStateHolder
-import moe.tlaster.precompose.stateholder.LocalStateHolder
-import moe.tlaster.precompose.stateholder.SavedStateHolder
-import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
+import moe.tlaster.precompose.PreComposeApp
 
 fun ComponentActivity.setContent(
     parent: CompositionContext? = null,
@@ -71,66 +58,7 @@ private fun ComponentActivity.setOwners() {
 
 @Composable
 private fun ComponentActivity.ContentInternal(content: @Composable () -> Unit) {
-    ProvideAndroidCompositionLocals {
-        content.invoke()
-    }
-}
-
-@Composable
-private fun ComponentActivity.ProvideAndroidCompositionLocals(
-    content: @Composable () -> Unit,
-) {
-    val viewModel by viewModels<PreComposeViewModel>()
-
-    DisposableEffect(lifecycle) {
-        val observer = object : DefaultLifecycleObserver {
-            override fun onCreate(owner: LifecycleOwner) {
-                super.onCreate(owner)
-                onBackPressedDispatcher.addCallback(owner, viewModel.backPressedCallback)
-            }
-
-            override fun onResume(owner: LifecycleOwner) {
-                super.onResume(owner)
-                viewModel.lifecycleRegistry.currentState = Lifecycle.State.Active
-            }
-
-            override fun onPause(owner: LifecycleOwner) {
-                super.onPause(owner)
-                viewModel.lifecycleRegistry.currentState = Lifecycle.State.InActive
-            }
-
-            override fun onDestroy(owner: LifecycleOwner) {
-                super.onDestroy(owner)
-                if (!isChangingConfigurations) {
-                    viewModel.lifecycleRegistry.currentState = Lifecycle.State.Destroyed
-                }
-            }
-        }
-        lifecycle.addObserver(observer)
-        onDispose {
-            lifecycle.removeObserver(observer)
-        }
-    }
-
-    val state by viewModel.backDispatcher.canHandleBackPress.collectAsState(false)
-
-    val saveableStateRegistry = LocalSaveableStateRegistry.current
-    val savedStateHolder = remember(saveableStateRegistry) {
-        SavedStateHolder(
-            "root",
-            saveableStateRegistry,
-        )
-    }
-
-    LaunchedEffect(state) {
-        viewModel.backPressedCallback.isEnabled = state
-    }
-    CompositionLocalProvider(
-        LocalLifecycleOwner provides viewModel,
-        LocalStateHolder provides viewModel.stateHolder,
-        LocalBackDispatcherOwner provides viewModel,
-        LocalSavedStateHolder provides savedStateHolder,
-    ) {
+    PreComposeApp {
         content.invoke()
     }
 }

@@ -12,7 +12,19 @@ group = "moe.tlaster"
 version = rootProject.extra.get("precomposeVersion") as String
 
 kotlin {
-    targetHierarchy.default()
+    targetHierarchy.default {
+        common {
+            group("nonAndroid") {
+                withMacosArm64()
+                withMacosX64()
+                withIosX64()
+                withIosArm64()
+                withIosSimulatorArm64()
+                withJvm()
+                withJs()
+            }
+        }
+    }
     macosArm64()
     macosX64()
     iosX64()
@@ -61,6 +73,8 @@ kotlin {
                 api(libs.androidx.appcompat)
                 implementation(libs.androidx.lifecycle.runtime.ktx)
                 api(libs.androidx.savedstate.ktx)
+                implementation(libs.androidx.lifecycle.viewmodel.compose)
+                implementation(libs.androidx.activity.compose)
             }
         }
         val androidUnitTest by getting {
