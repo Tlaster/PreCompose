@@ -18,7 +18,7 @@ api("moe.tlaster:precompose:$precompose_version")
 // api("moe.tlaster:precompose-koin:$precompose_version") // For Koin intergration
 ```
 ## Android
-Change the Activity's parent class to `moe.tlaster.precompose.lifecycle.PreComposeActivity` and use `moe.tlaster.precompose.lifecycle.setContent` for setting compose content
+Change the `androidx.activity.compose.setContent` to `moe.tlaster.precompose.lifecycle.setContent`
 
 ## Desktop (JVM)
 Change the `Window` to `moe.tlaster.precompose.PreComposeWindow`
