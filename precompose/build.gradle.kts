@@ -14,13 +14,12 @@ version = rootProject.extra.get("precomposeVersion") as String
 kotlin {
     targetHierarchy.default {
         common {
-            group("nonAndroid") {
+            group("nonAndroidJvm") {
                 withMacosArm64()
                 withMacosX64()
                 withIosX64()
                 withIosArm64()
                 withIosSimulatorArm64()
-                withJvm()
                 withJs()
             }
         }

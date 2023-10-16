@@ -18,9 +18,18 @@ actual fun PreComposeApp(
     modifier: Modifier,
     content: @Composable () -> Unit,
 ) {
-    val holder = remember {
-        PreComposeWindowHolder()
+    ProvidePreComposeCompositionLocals {
+        content.invoke()
     }
+}
+
+@Composable
+fun ProvidePreComposeCompositionLocals(
+    holder: PreComposeWindowHolder = remember {
+        PreComposeWindowHolder()
+    },
+    content: @Composable () -> Unit,
+) {
     CompositionLocalProvider(
         LocalLifecycleOwner provides holder,
         LocalStateHolder provides holder.stateHolder,
