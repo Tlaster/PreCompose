@@ -24,6 +24,7 @@ typealias PreComposeActivity = ComponentActivity
     """,
     replaceWith = ReplaceWith("androidx.activity.compose.setContent"),
 )
+@Suppress("DEPRECATION")
 fun PreComposeActivity.setContent(
     parent: CompositionContext? = null,
     content: @Composable () -> Unit,
