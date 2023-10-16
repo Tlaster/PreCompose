@@ -1,12 +1,12 @@
 package moe.tlaster.precompose.molecule.sample
 
+import androidx.compose.ui.window.ComposeUIViewController
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.autoreleasepool
 import kotlinx.cinterop.cstr
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.toCValues
-import moe.tlaster.precompose.PreComposeApplication
 import platform.Foundation.NSStringFromClass
 import platform.UIKit.UIApplication
 import platform.UIKit.UIApplicationDelegateProtocol
@@ -39,7 +39,7 @@ class SkikoAppDelegate : UIResponder, UIApplicationDelegateProtocol {
     @OptIn(ExperimentalForeignApi::class)
     override fun application(application: UIApplication, didFinishLaunchingWithOptions: Map<Any?, *>?): Boolean {
         window = UIWindow(frame = UIScreen.mainScreen.bounds).apply {
-            rootViewController = PreComposeApplication {
+            rootViewController = ComposeUIViewController {
                 App()
             }
             makeKeyAndVisible()

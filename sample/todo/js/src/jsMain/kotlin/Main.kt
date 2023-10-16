@@ -1,11 +1,13 @@
 
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.window.CanvasBasedWindow
 import moe.tlaster.common.App
-import moe.tlaster.precompose.preComposeWindow
 import org.jetbrains.skiko.wasm.onWasmReady
 
+@OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     onWasmReady {
-        preComposeWindow(
+        CanvasBasedWindow(
             title = "Sample",
         ) {
             App()

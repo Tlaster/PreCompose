@@ -8,7 +8,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.DefaultLifecycleObserver
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
@@ -20,7 +19,6 @@ import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 
 @Composable
 actual fun PreComposeApp(
-    modifier: Modifier,
     content: @Composable () -> Unit,
 ) {
     val viewModel = androidx.lifecycle.viewmodel.compose.viewModel<PreComposeViewModel>()

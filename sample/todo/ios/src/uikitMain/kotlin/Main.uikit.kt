@@ -1,3 +1,4 @@
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -6,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.ComposeUIViewController
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.autoreleasepool
@@ -13,7 +15,6 @@ import kotlinx.cinterop.cstr
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.toCValues
 import moe.tlaster.common.App
-import moe.tlaster.precompose.PreComposeApplication
 import platform.Foundation.NSStringFromClass
 import platform.UIKit.UIApplication
 import platform.UIKit.UIApplicationDelegateProtocol
@@ -52,7 +53,7 @@ class SkikoAppDelegate : UIResponder, UIApplicationDelegateProtocol {
     @OptIn(ExperimentalForeignApi::class)
     override fun application(application: UIApplication, didFinishLaunchingWithOptions: Map<Any?, *>?): Boolean {
         window = UIWindow(frame = UIScreen.mainScreen.bounds).apply {
-            rootViewController = PreComposeApplication {
+            rootViewController = ComposeUIViewController {
                 Column {
                     Spacer(
                         modifier = Modifier

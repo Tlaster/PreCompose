@@ -13,6 +13,16 @@ import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import moe.tlaster.precompose.PreComposeApp
 
+@Deprecated(
+    message = "Use PreComposeApp instead",
+    replaceWith = ReplaceWith("PreComposeApp(content)"),
+)
+typealias PreComposeActivity = ComponentActivity
+
+@Deprecated(
+    message = "Use PreComposeApp instead",
+    replaceWith = ReplaceWith("PreComposeApp(content)"),
+)
 fun ComponentActivity.setContent(
     parent: CompositionContext? = null,
     content: @Composable () -> Unit,

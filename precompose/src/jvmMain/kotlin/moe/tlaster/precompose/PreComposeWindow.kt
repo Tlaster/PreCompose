@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.window.FrameWindowScope
@@ -23,6 +22,10 @@ import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 
+@Deprecated(
+    message = "Use PreComposeApp instead",
+    replaceWith = ReplaceWith("PreComposeApp(content)"),
+)
 @Composable
 fun PreComposeWindow(
     onCloseRequest: () -> Unit,
@@ -65,7 +68,6 @@ fun PreComposeWindow(
 @Suppress("INVISIBLE_MEMBER")
 @Composable
 actual fun PreComposeApp(
-    modifier: Modifier,
     content: @Composable () -> Unit,
 ) {
     val holder = remember {

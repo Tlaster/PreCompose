@@ -12,18 +12,7 @@ group = "moe.tlaster"
 version = rootProject.extra.get("precomposeVersion") as String
 
 kotlin {
-    targetHierarchy.default {
-        common {
-            group("nonAndroidJvm") {
-                withMacosArm64()
-                withMacosX64()
-                withIosX64()
-                withIosArm64()
-                withIosSimulatorArm64()
-                withJs()
-            }
-        }
-    }
+    targetHierarchy.default()
     macosArm64()
     macosX64()
     iosX64()

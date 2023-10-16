@@ -64,11 +64,11 @@ kotlin {
                 implementation(compose.desktop.currentOs)
             }
         }
-        // val androidMain by getting {
-        //     dependencies {
-        //         implementation("androidx.activity:activity-ktx:${Versions.AndroidX.activity}")
-        //     }
-        // }
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.androidx.activity.compose)
+            }
+        }
         val darwinMain by creating {
             dependsOn(commonMain)
             dependencies {
