@@ -581,9 +581,17 @@ class BackStackManagerTest {
             lifecycleOwner = lifecycleOwner,
             persistNavState = false,
         )
-        manager.push("screen2")
-        manager.push("screen1", NavOptions(popUpTo = PopUpTo("screen1")))
-        manager.push("screen1")
+
+        fun navigate(path: String, navOptions: NavOptions) {
+            val previousEntry = manager.backStacks.value.lastOrNull()
+            manager.push(path, navOptions)
+            // Mark the previous entry as inactive to simulate the lifecycle change by the NavHost
+            previousEntry?.inActive()
+        }
+
+        navigate("screen2", NavOptions())
+        navigate("screen1", NavOptions(popUpTo = PopUpTo("screen1")))
+        navigate("screen1", NavOptions())
 
         assertEquals(
             listOf("screen1", "screen1", "screen1"),
