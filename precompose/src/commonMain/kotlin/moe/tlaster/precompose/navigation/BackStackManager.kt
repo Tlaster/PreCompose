@@ -150,7 +150,7 @@ internal class BackStackManager : LifecycleObserver {
                 )
                 backStacks.value -= stacksToDrop
                 stacksToDrop.forEach {
-                    it.destroyDirectly()
+                    it.destroy()
                 }
             }
         }
