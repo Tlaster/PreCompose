@@ -12,7 +12,7 @@ group = "moe.tlaster"
 version = rootProject.extra.get("precomposeVersion") as String
 
 kotlin {
-    targetHierarchy.default()
+    applyDefaultHierarchyTemplate()
     macosArm64()
     macosX64()
     iosX64()

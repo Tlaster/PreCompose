@@ -136,19 +136,19 @@ compose {
             }
         }
     }
-    experimental {
-        uikit {
-            application {
-                bundleIdPrefix = "moe.tlaster.precompose.sample.molecule"
-                projectName = "PreComposeMoleculeSample"
-                deployConfigurations {
-                    simulator("Simulator") {
-                        device = org.jetbrains.compose.experimental.dsl.IOSDevices.IPHONE_13_MINI
-                    }
-                }
-            }
-        }
-    }
+    // experimental {
+    //     uikit {
+    //         application {
+    //             bundleIdPrefix = "moe.tlaster.precompose.sample.molecule"
+    //             projectName = "PreComposeMoleculeSample"
+    //             deployConfigurations {
+    //                 simulator("Simulator") {
+    //                     device = org.jetbrains.compose.experimental.dsl.IOSDevices.IPHONE_13_MINI
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 }
 
 android {
