@@ -31,7 +31,7 @@ jobs:
       run: ./gradlew assemble --stacktrace
 
     - name: Testing
-      run: ./gradlew check --stacktrace
+      run: ./gradlew test --stacktrace
 
     - name: Upload Precompose Test Reports
       uses: actions/upload-artifact@v3
