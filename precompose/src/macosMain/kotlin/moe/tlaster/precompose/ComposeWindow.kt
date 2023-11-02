@@ -3,8 +3,12 @@
 package moe.tlaster.precompose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.createSkiaLayer
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.native.ComposeLayer
 import androidx.compose.ui.node.LayoutNode
@@ -65,6 +69,8 @@ internal class ComposeWindow(
             // (hidden textfield cursor, gray titlebar, etc)
             isWindowFocused = true
         }
+
+        override var dialogScrimBlendMode by mutableStateOf(BlendMode.SrcOver)
 
         override val inputModeManager = DefaultInputModeManager()
         override val focusManager = EmptyFocusManager

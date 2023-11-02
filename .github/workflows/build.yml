@@ -28,10 +28,10 @@ jobs:
       run: ./.github/apply_signing.sh
 
     - name: Assemble
-      run: ./gradlew assembleRelease --stacktrace
+      run: ./gradlew build --stacktrace
 
     - name: Testing
-      run: ./gradlew testRelease --stacktrace
+      run: ./gradlew check --stacktrace
 
     - name: Upload Precompose Test Reports
       uses: actions/upload-artifact@v3
