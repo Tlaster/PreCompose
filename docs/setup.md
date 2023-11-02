@@ -24,7 +24,7 @@ Wrap your App with `PreComposApp` like this:
 ```Kotlin
 fun App() {
     PreComposeApp {
-        // your apps content gose here
+        // your app's content goes here
     }
 }
 ```
