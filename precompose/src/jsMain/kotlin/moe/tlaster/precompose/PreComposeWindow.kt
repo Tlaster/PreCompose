@@ -32,14 +32,20 @@ fun preComposeWindow(
         requestResize = requestResize,
         applyDefaultStyles = applyDefaultStyles,
         content = {
-            val holder = remember {
-                PreComposeWindowHolder()
-            }
-            ProvidePreComposeCompositionLocals(holder) {
-                content()
+            PreComposeApp {
+                content.invoke()
             }
         },
     )
+}
+
+@Composable
+actual fun PreComposeApp(
+    content: @Composable () -> Unit,
+) {
+    ProvidePreComposeCompositionLocals {
+        content.invoke()
+    }
 }
 
 @Composable

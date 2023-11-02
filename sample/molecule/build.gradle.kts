@@ -64,11 +64,11 @@ kotlin {
                 implementation(compose.desktop.currentOs)
             }
         }
-        // val androidMain by getting {
-        //     dependencies {
-        //         implementation("androidx.activity:activity-ktx:${Versions.AndroidX.activity}")
-        //     }
-        // }
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.androidx.activity.compose)
+            }
+        }
         val darwinMain by creating {
             dependsOn(commonMain)
             dependencies {
@@ -136,19 +136,19 @@ compose {
             }
         }
     }
-    experimental {
-        uikit {
-            application {
-                bundleIdPrefix = "moe.tlaster.precompose.sample.molecule"
-                projectName = "PreComposeMoleculeSample"
-                deployConfigurations {
-                    simulator("Simulator") {
-                        device = org.jetbrains.compose.experimental.dsl.IOSDevices.IPHONE_13_MINI
-                    }
-                }
-            }
-        }
-    }
+    // experimental {
+    //     uikit {
+    //         application {
+    //             bundleIdPrefix = "moe.tlaster.precompose.sample.molecule"
+    //             projectName = "PreComposeMoleculeSample"
+    //             deployConfigurations {
+    //                 simulator("Simulator") {
+    //                     device = org.jetbrains.compose.experimental.dsl.IOSDevices.IPHONE_13_MINI
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 }
 
 android {

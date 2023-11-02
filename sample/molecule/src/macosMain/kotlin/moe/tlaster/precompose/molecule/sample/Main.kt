@@ -1,10 +1,10 @@
 package moe.tlaster.precompose.molecule.sample
 
-import moe.tlaster.precompose.PreComposeWindow
+import androidx.compose.ui.window.Window
 import platform.AppKit.NSApp
 
 fun main() {
-    PreComposeWindow(
+    Window(
         "PreCompose Molecule Sample",
     ) {
         App()

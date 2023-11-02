@@ -48,12 +48,13 @@ internal class ComposeWindow(
     hideTitleBar: Boolean = false,
     initialTitle: String,
     private val onCloseRequest: () -> Unit = {},
+    private val onMinimizeRequest: () -> Unit = {},
+    private val onDeminiaturizeRequest: () -> Unit = {},
 ) : NSObject(), NSWindowDelegateProtocol {
 
     private val density by lazy {
         Density(
             density = nsWindow.backingScaleFactor.toFloat(),
-            fontScale = 1f,
         )
     }
     private val macosTextInputService = MacosTextInputService()
@@ -182,6 +183,18 @@ internal class ComposeWindow(
     @ObjCAction
     override fun windowWillClose(notification: NSNotification) {
         onCloseRequest.invoke()
+    }
+
+    @OptIn(BetaInteropApi::class)
+    @ObjCAction
+    override fun windowWillMiniaturize(notification: NSNotification) {
+        onMinimizeRequest.invoke()
+    }
+
+    @OptIn(BetaInteropApi::class)
+    @ObjCAction
+    override fun windowDidDeminiaturize(notification: NSNotification) {
+        onDeminiaturizeRequest.invoke()
     }
 
     private fun updateLayerSize() {

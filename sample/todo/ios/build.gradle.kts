@@ -1,4 +1,4 @@
-import org.jetbrains.compose.compose
+
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -38,17 +38,17 @@ kotlin {
     }
 }
 
-compose.experimental {
-    uikit.application {
-        bundleIdPrefix = "moe.tlaster"
-        projectName = "PreComposeSample"
-        deployConfigurations {
-            simulator("Simulator") {
-                device = org.jetbrains.compose.experimental.dsl.IOSDevices.IPHONE_13_MINI
-            }
-        }
-    }
-}
+// compose.experimental {
+//     uikit.application {
+//         bundleIdPrefix = "moe.tlaster"
+//         projectName = "PreComposeSample"
+//         deployConfigurations {
+//             simulator("Simulator") {
+//                 device = org.jetbrains.compose.experimental.dsl.IOSDevices.IPHONE_13_MINI
+//             }
+//         }
+//     }
+// }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = rootProject.extra.get("jvmTarget") as String

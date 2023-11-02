@@ -2,16 +2,14 @@ package moe.tlaster.precompose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberWindowState
-import kotlinx.coroutines.flow.distinctUntilChanged
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
@@ -21,7 +19,17 @@ import moe.tlaster.precompose.stateholder.StateHolder
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 
+@Deprecated(
+    message = """
+        Use Window directly instead. And make sure wrap your content with PreComposeApp.
+        PreComposeWindow will be removed in the future release.
+        For migration guide, please refer to https://github.com/Tlaster/PreCompose/releases/tag/1.5.5
+    """,
+    replaceWith = ReplaceWith("PreComposeWindow"),
+)
 @Composable
 fun PreComposeWindow(
     onCloseRequest: () -> Unit,
@@ -39,54 +47,64 @@ fun PreComposeWindow(
     onKeyEvent: (KeyEvent) -> Boolean = { false },
     content: @Composable FrameWindowScope.() -> Unit,
 ) {
+    Window(
+        onCloseRequest = onCloseRequest,
+        state = state,
+        visible = visible,
+        title = title,
+        icon = icon,
+        undecorated = undecorated,
+        transparent = transparent,
+        resizable = resizable,
+        enabled = enabled,
+        focusable = focusable,
+        alwaysOnTop = alwaysOnTop,
+        onPreviewKeyEvent = onPreviewKeyEvent,
+        onKeyEvent = onKeyEvent,
+        content = {
+            PreComposeApp {
+                content.invoke(this)
+            }
+        },
+    )
+}
+
+@Suppress("INVISIBLE_MEMBER")
+@Composable
+actual fun PreComposeApp(
+    content: @Composable () -> Unit,
+) {
     val holder = remember {
         PreComposeWindowHolder()
     }
-    LaunchedEffect(Unit) {
-        snapshotFlow { state.isMinimized }
-            .distinctUntilChanged()
-            .collect {
-                holder.lifecycle.currentState = if (it) {
-                    Lifecycle.State.InActive
-                } else {
-                    Lifecycle.State.Active
+    val window = androidx.compose.ui.window.LocalWindow.current
+    if (window != null) {
+        val listener = remember {
+            object : WindowAdapter() {
+                override fun windowClosing(e: WindowEvent?) {
+                    holder.lifecycle.currentState = Lifecycle.State.Destroyed
+                }
+                override fun windowStateChanged(e: WindowEvent?) {
+                    when (e?.newState) {
+                        java.awt.Frame.ICONIFIED -> {
+                            holder.lifecycle.currentState = Lifecycle.State.InActive
+                        }
+                        else -> {
+                            holder.lifecycle.currentState = Lifecycle.State.Active
+                        }
+                    }
                 }
             }
+        }
+        DisposableEffect(window) {
+            window.addWindowListener(listener)
+            window.addWindowStateListener(listener)
+            onDispose {
+                window.removeWindowListener(listener)
+                window.removeWindowStateListener(listener)
+            }
+        }
     }
-    ProvidePreComposeCompositionLocals(
-        holder,
-    ) {
-        Window(
-            onCloseRequest = {
-                holder.lifecycle.currentState = Lifecycle.State.Destroyed
-                onCloseRequest.invoke()
-            },
-            state = state,
-            visible = visible,
-            title = title,
-            icon = icon,
-            undecorated = undecorated,
-            transparent = transparent,
-            resizable = resizable,
-            enabled = enabled,
-            focusable = focusable,
-            alwaysOnTop = alwaysOnTop,
-            onPreviewKeyEvent = onPreviewKeyEvent,
-            onKeyEvent = onKeyEvent,
-            content = {
-                content.invoke(this)
-            },
-        )
-    }
-}
-
-@Composable
-fun ProvidePreComposeCompositionLocals(
-    holder: PreComposeWindowHolder = remember {
-        PreComposeWindowHolder()
-    },
-    content: @Composable () -> Unit,
-) {
     CompositionLocalProvider(
         LocalLifecycleOwner provides holder,
         LocalStateHolder provides holder.stateHolder,

@@ -33,7 +33,7 @@ private class PresenterHolder<T>(
         RecompositionMode.ContextClock
     }
     private val scope = CoroutineScope(dispatcher)
-    val state = scope.launchMolecule(clock, body)
+    val state = scope.launchMolecule(mode = clock, body = body)
 
     override fun close() {
         scope.cancel()
