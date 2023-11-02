@@ -28,7 +28,7 @@ jobs:
       run: ./.github/apply_signing.sh
 
     - name: Assemble
-      run: ./gradlew build --stacktrace
+      run: ./gradlew assemble --stacktrace
 
     - name: Testing
       run: ./gradlew check --stacktrace
