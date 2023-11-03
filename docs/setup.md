@@ -22,6 +22,7 @@ api("moe.tlaster:precompose:$precompose_version")
 
 Wrap your App with `PreComposApp` like this:
 ```Kotlin
+@Composable
 fun App() {
     PreComposeApp {
         // your app's content goes here
