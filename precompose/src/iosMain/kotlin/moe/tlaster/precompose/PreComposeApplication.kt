@@ -115,7 +115,6 @@ private class AppStateHolder(
     }
 }
 
-
 class PreComposeWindowHolder : LifecycleOwner, BackDispatcherOwner {
     override val lifecycle by lazy {
         LifecycleRegistry()
