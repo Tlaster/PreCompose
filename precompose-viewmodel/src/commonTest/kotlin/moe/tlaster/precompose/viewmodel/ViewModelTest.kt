@@ -40,4 +40,14 @@ class ViewModelTest {
         assertEquals("first", vm.setTagIfAbsent("key", "first"))
         assertEquals("first", vm.setTagIfAbsent("key", "second"))
     }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    @Test
+    fun testClosable() {
+        val vm = ViewModel()
+        val impl = DisposableImpl()
+        vm.addCloseable(impl)
+        vm.clear()
+        assertTrue(impl.wasDisposable)
+    }
 }

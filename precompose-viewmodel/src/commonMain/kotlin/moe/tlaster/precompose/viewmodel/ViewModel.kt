@@ -4,6 +4,16 @@ package moe.tlaster.precompose.viewmodel
 abstract class ViewModel : AutoCloseable {
     private var disposed = false
     private val bagOfTags = hashMapOf<String, Any>()
+    private val closeables = linkedSetOf<AutoCloseable>()
+
+    constructor()
+    constructor(vararg closeables: AutoCloseable) {
+        this.closeables.addAll(closeables)
+    }
+
+    fun addCloseable(closeable: AutoCloseable) {
+        closeables.add(closeable)
+    }
 
     protected open fun onCleared() {}
 
@@ -14,6 +24,13 @@ abstract class ViewModel : AutoCloseable {
                 disposeWithRuntimeException(value)
             }
         }
+        bagOfTags.clear()
+        closeables.let {
+            for (value in it) {
+                disposeWithRuntimeException(value)
+            }
+        }
+        closeables.clear()
         onCleared()
     }
 
