@@ -24,6 +24,7 @@ import platform.UIKit.UIApplicationDidEnterBackgroundNotification
 import platform.UIKit.UIApplicationWillEnterForegroundNotification
 import platform.UIKit.UIApplicationWillTerminateNotification
 import platform.UIKit.UIViewController
+import platform.darwin.NSObject
 
 @Suppress("FunctionName")
 @Deprecated(
@@ -71,16 +72,9 @@ fun ProvidePreComposeCompositionLocals(
 }
 
 @OptIn(ExperimentalForeignApi::class)
-class PreComposeWindowHolder : LifecycleOwner, BackDispatcherOwner {
-    override val lifecycle by lazy {
-        LifecycleRegistry()
-    }
-    val stateHolder by lazy {
-        StateHolder()
-    }
-    override val backDispatcher by lazy {
-        BackDispatcher()
-    }
+private class AppStateHolder(
+    private val lifecycle: LifecycleRegistry,
+) : NSObject() {
     init {
         NSNotificationCenter.defaultCenter().addObserver(
             this,
@@ -119,4 +113,17 @@ class PreComposeWindowHolder : LifecycleOwner, BackDispatcherOwner {
     fun appWillTerminate(notification: NSNotification) {
         lifecycle.currentState = Lifecycle.State.Destroyed
     }
+}
+
+class PreComposeWindowHolder : LifecycleOwner, BackDispatcherOwner {
+    override val lifecycle by lazy {
+        LifecycleRegistry()
+    }
+    val stateHolder by lazy {
+        StateHolder()
+    }
+    override val backDispatcher by lazy {
+        BackDispatcher()
+    }
+    private val holder = AppStateHolder(lifecycle)
 }
