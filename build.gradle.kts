@@ -34,7 +34,7 @@ allprojects {
 }
 
 extra.apply {
-    set("precomposeVersion", "1.5.6")
+    set("precomposeVersion", "1.5.7")
 
     set("jvmTarget", "11")
 
