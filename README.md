@@ -11,16 +11,27 @@
 
 Compose Multiplatform Navigation && ViewModel, inspired by Jetpack Navigation, ViewModel and Lifecycle, PreCompose provides similar (or even the same) components for you but in Kotlin, and it's Kotlin Multiplatform project.
 
-# Why PreCompose
- - Write your business logic and UI code once in one `commonMain`, and your application can be anywhere, powered by Kotlin and Compose!
- - If you familiar with Jetpack Lifecycle, ViewModel and Navigation, there will be nothing to learn.
- - Super easy to set up.
- - No need to write platform-specific code and UI.
- - Lifecycle is handled by PreCompose, you don't need to worry about it.
- - With Molecule integration, you can easily write your business logic in Kotlin Multiplatform project.
-
 # Setup
-[Setup guide for PreCompose](/docs/setup.md)
+Add the dependency **in your common module's commonMain sourceSet**
+```
+api("moe.tlaster:precompose:$precompose_version")
+// api("moe.tlaster:precompose-viewmodel:$precompose_version") // For ViewModel intergration
+// api("moe.tlaster:precompose-molecule:$precompose_version") // For Molecule intergration 
+// api("moe.tlaster:precompose-koin:$precompose_version") // For Koin intergration
+```
+
+## Wrap the `App()`
+
+Wrap your App with `PreComposApp` like this:
+```Kotlin
+@Composable
+fun App() {
+    PreComposeApp {
+        // your app's content goes here
+    }
+}
+```
+That's it! Enjoying the PreCompose! Now you can write all your business logic and ui code in `commonMain`
 
 # Components
  - [Navigation](/docs/component/navigation.md)

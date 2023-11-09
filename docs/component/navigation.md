@@ -13,6 +13,10 @@ NavHost(
     navigator = navigator,
     // Navigation transition for the scenes in this NavHost, this is optional
     navTransition = NavTransition(),
+    // Swipe gesture properties for this NavHost, this is optional
+    swipeProperties = null,
+    // true if you want to persist navigation state to the Saved State Registry
+    persistNavState = false,
     // The start destination
     initialRoute = "/home",
 ) {
@@ -38,7 +42,7 @@ Navigate to a route in the current RouteGraph with optional NavOptions
  - `Navigator.goBack()`  
 Attempts to navigate up in the navigation hierarchy
 
- - `Navigator.canGoBack: Boolean`  
+ - `Navigator.canGoBack: Flow<Boolean>`  
 Check if navigator can navigate up
 
 ### NavOptions
@@ -108,7 +112,7 @@ Optional syntax is also supported for regex path variable: `/user/{id:[0-9]+}?`:
  - matches `/user`
  - matches `/user/123`
 
-### Group
+## Group
 ```kotlin
 group(route = "/group", initialRoute = "/nestedScreen1") {
     scene(route = "/nestedScreen1") {
@@ -117,6 +121,13 @@ group(route = "/group", initialRoute = "/nestedScreen1") {
     scene(route = "/nestedScreen2") {
         
     }
+}
+```
+
+## Dialog
+```kotlin
+dialog(route = "/dialog") {
+    
 }
 ```
 
