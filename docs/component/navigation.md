@@ -162,3 +162,12 @@ Transition the scene that about to disappear forever, similar to activity onDest
 
   - `resumeTransition`  
   Transition the scene that about to show from the back stack, similar to activity onResume
+
+## Handling the system back button
+This is just the same as Jetpack's `BackHandler`, you can use it like this:
+```kotlin
+var backHandlingEnabled by remember { mutableStateOf(true) }
+BackHandler(backHandlingEnabled) {
+    // Handle back press
+}
+```
