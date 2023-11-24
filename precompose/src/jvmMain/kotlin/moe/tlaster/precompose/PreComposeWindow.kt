@@ -84,7 +84,7 @@ actual fun PreComposeApp(
                 override fun windowOpened(e: WindowEvent?) {
                     holder.lifecycle.currentState = Lifecycle.State.Active
                 }
-                override fun windowClosing(e: WindowEvent?) {
+                override fun windowClosed(e: WindowEvent?) {
                     holder.lifecycle.currentState = Lifecycle.State.Destroyed
                 }
                 override fun windowStateChanged(e: WindowEvent?) {
