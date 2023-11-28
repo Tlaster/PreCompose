@@ -14,32 +14,35 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import moe.tlaster.precompose.PreComposeApp
 import moe.tlaster.precompose.molecule.producePresenter
 
 @Composable
 fun App() {
-    val state by producePresenter { Presenter() }
-    MaterialTheme {
-        Scaffold {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Text(text = state.count)
-                Button(
-                    onClick = {
-                        state.action(Action.Increment)
-                    },
+    PreComposeApp {
+        val state by producePresenter { Presenter() }
+        MaterialTheme {
+            Scaffold {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
                 ) {
-                    Text(text = "Increment")
-                }
-                Button(
-                    onClick = {
-                        state.action(Action.Decrement)
-                    },
-                ) {
-                    Text(text = "Decrement")
+                    Text(text = state.count)
+                    Button(
+                        onClick = {
+                            state.action(Action.Increment)
+                        },
+                    ) {
+                        Text(text = "Increment")
+                    }
+                    Button(
+                        onClick = {
+                            state.action(Action.Decrement)
+                        },
+                    ) {
+                        Text(text = "Decrement")
+                    }
                 }
             }
         }
