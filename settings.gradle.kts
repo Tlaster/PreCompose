@@ -18,7 +18,7 @@ dependencyResolutionManagement {
         maven("https://jitpack.io")
     }
 }
-rootProject.name = "PreCompose"
+rootProject.name = "precompose"
 
 include(":precompose")
 include(":precompose-viewmodel")
