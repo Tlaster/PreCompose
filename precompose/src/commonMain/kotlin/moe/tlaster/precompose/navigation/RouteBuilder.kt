@@ -67,6 +67,8 @@ class RouteBuilder(
         initialRoute: String,
         content: RouteBuilder.() -> Unit,
     ) {
+        require(!route.contains("{")) { "GroupRoute does not support path matching" }
+        require(!initialRoute.contains("{")) { "GroupRoute does not support path matching" }
         content.invoke(this)
         val actualInitialRoute = this.route.firstOrNull { it.route == initialRoute }
             ?: throw IllegalArgumentException("Initial route $initialRoute not found")
