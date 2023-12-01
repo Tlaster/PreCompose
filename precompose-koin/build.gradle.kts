@@ -47,8 +47,8 @@ kotlin {
                 compileOnly(compose.foundation)
                 implementation(libs.koin)
                 implementation(libs.koin.compose)
-                compileOnly(project(":precompose"))
-                compileOnly(project(":precompose-viewmodel"))
+                implementation(project(":precompose"))
+                implementation(project(":precompose-viewmodel"))
             }
         }
         val commonTest by getting {

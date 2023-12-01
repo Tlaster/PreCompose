@@ -44,7 +44,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 compileOnly(compose.foundation)
-                compileOnly(project(":precompose"))
+                implementation(project(":precompose"))
             }
         }
         val commonTest by getting {
