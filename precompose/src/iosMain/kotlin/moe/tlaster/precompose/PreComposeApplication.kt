@@ -94,6 +94,7 @@ private class AppStateHolder(
             name = UIApplicationWillTerminateNotification,
             `object` = null,
         )
+        lifecycle.currentState = Lifecycle.State.Active
     }
 
     @OptIn(BetaInteropApi::class)
