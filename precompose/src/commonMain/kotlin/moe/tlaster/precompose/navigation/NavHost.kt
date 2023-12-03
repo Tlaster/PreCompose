@@ -69,7 +69,7 @@ import kotlin.math.roundToInt
  * @param persistNavState whether to persist navigation state to the Saved State Registry, defaults to false
  * @param builder the builder used to construct the graph
  */
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun NavHost(
     modifier: Modifier = Modifier,
