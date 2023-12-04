@@ -109,6 +109,7 @@ Optional syntax is also supported for regex path variable: `/user/{id:[0-9]+}?`:
  - matches `/user/123`
 
 ### Group
+Note: group's `route` and `initialRoute` does not support path variable and regex, only static route is supported. 
 ```kotlin
 group(route = "/group", initialRoute = "/nestedScreen1") {
     scene(route = "/nestedScreen1") {
