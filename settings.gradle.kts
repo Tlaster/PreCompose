@@ -16,6 +16,8 @@ dependencyResolutionManagement {
         maven("https://maven.mozilla.org/maven2/")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://jitpack.io")
+        // TODO: delete when we have all libs in mavenCentral
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental")
     }
 }
 rootProject.name = "precompose"
