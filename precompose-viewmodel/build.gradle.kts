@@ -40,6 +40,10 @@ kotlin {
     js(IR) {
         browser()
     }
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {

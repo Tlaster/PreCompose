@@ -32,6 +32,10 @@ kotlin {
     js(IR) {
         browser()
     }
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -106,6 +110,13 @@ kotlin {
             }
         }
         val iosMain by getting {
+            dependencies {
+                implementation(compose.foundation)
+                implementation(compose.animation)
+                implementation(compose.material)
+            }
+        }
+        val wasmJsMain by getting {
             dependencies {
                 implementation(compose.foundation)
                 implementation(compose.animation)
