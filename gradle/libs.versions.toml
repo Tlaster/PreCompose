@@ -16,7 +16,7 @@ moleculeRuntime = "1.3.1"
 savedstateKtx = "1.2.1"
 spotless = "6.23.3"
 jetbrainsComposePlugin = "1.5.11"
-skiko = "0.7.85.4"
+skiko = "0.7.89.1"
 koin = "3.5.0"
 koin-compose = "1.1.0"
 
