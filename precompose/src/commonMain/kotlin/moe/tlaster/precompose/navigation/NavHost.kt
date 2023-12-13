@@ -72,9 +72,9 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun NavHost(
-    modifier: Modifier = Modifier,
     navigator: Navigator,
     initialRoute: String,
+    modifier: Modifier = Modifier,
     navTransition: NavTransition = remember { NavTransition() },
     swipeProperties: SwipeProperties? = null,
     persistNavState: Boolean = false,
@@ -101,13 +101,15 @@ fun NavHost(
             if (navigator.stackManager.contains(initialState)) targetState else initialState
         }.navTransition ?: navTransition
         if (!navigator.stackManager.contains(initialState)) {
-            actualTransaction.resumeTransition.togetherWith(actualTransaction.destroyTransition).apply {
-                targetContentZIndex = actualTransaction.enterTargetContentZIndex
-            }
+            actualTransaction.resumeTransition.togetherWith(actualTransaction.destroyTransition)
+                .apply {
+                    targetContentZIndex = actualTransaction.enterTargetContentZIndex
+                }
         } else {
-            actualTransaction.createTransition.togetherWith(actualTransaction.pauseTransition).apply {
-                targetContentZIndex = actualTransaction.exitTargetContentZIndex
-            }
+            actualTransaction.createTransition.togetherWith(actualTransaction.pauseTransition)
+                .apply {
+                    targetContentZIndex = actualTransaction.exitTargetContentZIndex
+                }
         }
     }
 
@@ -140,6 +142,9 @@ fun NavHost(
             val actualSwipeProperties = sceneEntry.swipeProperties ?: swipeProperties
             if (actualSwipeProperties == null) {
                 AnimatedContent(sceneEntry, transitionSpec = transitionSpec) { entry ->
+                    LaunchedEffect(transition.isRunning) {
+                        navigator.stackManager.canNavigate = !transition.isRunning
+                    }
                     NavHostContent(composeStateHolder, entry)
                 }
             } else {
@@ -155,8 +160,12 @@ fun NavHost(
                     rememberDismissState()
                 }
 
-                LaunchedEffect(dismissState.isDismissed(DismissDirection.StartToEnd)) {
-                    if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+                LaunchedEffect(
+                    dismissState.isDismissed(DismissDirection.StartToEnd),
+                    dismissState.isAnimationRunning,
+                ) {
+                    navigator.stackManager.canNavigate = !dismissState.isAnimationRunning
+                    if (dismissState.isDismissed(DismissDirection.StartToEnd) && !dismissState.isAnimationRunning) {
                         prevWasSwiped = true
                         navigator.goBack()
                     }
@@ -198,6 +207,9 @@ fun NavHost(
                             },
                         ),
                     ) {
+                        LaunchedEffect(transition.isRunning) {
+                            navigator.stackManager.canNavigate = !transition.isRunning
+                        }
                         SwipeItem(
                             dismissState = dismissState,
                             swipeProperties = actualSwipeProperties,
@@ -210,8 +222,8 @@ fun NavHost(
                 }
             }
         }
-
-        val currentFloatingEntry by navigator.stackManager.currentFloatingBackStackEntry.collectAsState(null)
+        val currentFloatingEntry by navigator.stackManager
+            .currentFloatingBackStackEntry.collectAsState(null)
         currentFloatingEntry?.let {
             AnimatedContent(it, transitionSpec = transitionSpec) { entry ->
                 NavHostContent(composeStateHolder, entry)

@@ -6,9 +6,7 @@ import moe.tlaster.precompose.navigation.route.GroupRoute
 import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertIs
-import kotlin.test.assertTrue
 
 class BackStackManagerTest {
     @Test
@@ -343,36 +341,36 @@ class BackStackManagerTest {
         assertEquals(Lifecycle.State.Destroyed, entry.lifecycle.currentState)
     }
 
-    @Test
-    fun testRequestNavigationLock() {
-        val manager = BackStackManager()
-        val lifecycleOwner = TestLifecycleOwner()
-        manager.init(
-            routeGraph = RouteGraph(
-                "foo/bar",
-                listOf(
-                    TestRoute("foo/bar", "foo/bar"),
-                    TestRoute("foo/bar/{id}", "foo/bar/{id}"),
-                    TestRoute("foo/bar/{id}/baz", "foo/bar/{id}/baz"),
-                ),
-            ),
-            stateHolder = StateHolder(),
-            savedStateHolder = TestSavedStateHolder(),
-            lifecycleOwner = lifecycleOwner,
-            persistNavState = false,
-        )
-        assertTrue(manager.canNavigate)
-        var currentEntry = manager.backStacks.value.last()
-        currentEntry.active()
-        manager.push("foo/bar/1")
-        assertTrue(manager.canNavigate)
-        currentEntry = manager.backStacks.value.last()
-        currentEntry.active()
-        manager.pop()
-        assertFalse(manager.canNavigate)
-        currentEntry.inActive()
-        assertTrue(manager.canNavigate)
-    }
+    // @Test
+    // fun testRequestNavigationLock() {
+    //     val manager = BackStackManager()
+    //     val lifecycleOwner = TestLifecycleOwner()
+    //     manager.init(
+    //         routeGraph = RouteGraph(
+    //             "foo/bar",
+    //             listOf(
+    //                 TestRoute("foo/bar", "foo/bar"),
+    //                 TestRoute("foo/bar/{id}", "foo/bar/{id}"),
+    //                 TestRoute("foo/bar/{id}/baz", "foo/bar/{id}/baz"),
+    //             ),
+    //         ),
+    //         stateHolder = StateHolder(),
+    //         savedStateHolder = TestSavedStateHolder(),
+    //         lifecycleOwner = lifecycleOwner,
+    //         persistNavState = false,
+    //     )
+    //     assertTrue(manager.canNavigate)
+    //     var currentEntry = manager.backStacks.value.last()
+    //     currentEntry.active()
+    //     manager.push("foo/bar/1")
+    //     assertTrue(manager.canNavigate)
+    //     currentEntry = manager.backStacks.value.last()
+    //     currentEntry.active()
+    //     manager.pop()
+    //     assertFalse(manager.canNavigate)
+    //     currentEntry.inActive()
+    //     assertTrue(manager.canNavigate)
+    // }
 
     @Test
     fun testGroupNavigation() {
@@ -601,6 +599,43 @@ class BackStackManagerTest {
         assertEquals(
             listOf("1-screen1", "3-screen1", "4-screen1"),
             manager.backStacks.value.map { it.stateId },
+        )
+    }
+
+    @Test
+    fun testGoBackTwiceImmediately() {
+        val manager = BackStackManager()
+        val lifecycleOwner = TestLifecycleOwner()
+        val saveableStateHolder = TestSavedStateHolder()
+
+        manager.init(
+            routeGraph = RouteGraph(
+                "screen1",
+                listOf(
+                    TestRoute("screen1", "screen1"),
+                    TestRoute("screen2", "screen2"),
+                ),
+            ),
+            stateHolder = StateHolder(),
+            savedStateHolder = saveableStateHolder,
+            lifecycleOwner = lifecycleOwner,
+            persistNavState = false,
+        )
+        assertEquals(
+            listOf("screen1"),
+            manager.backStacks.value.map { it.path },
+        )
+
+        manager.push("screen1")
+        manager.push("screen2")
+        manager.push("screen1")
+
+        manager.pop()
+        manager.pop()
+
+        assertEquals(
+            listOf("screen1", "screen1"),
+            manager.backStacks.value.map { it.path },
         )
     }
 }
