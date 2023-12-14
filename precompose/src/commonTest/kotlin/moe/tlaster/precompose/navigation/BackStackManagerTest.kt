@@ -341,37 +341,6 @@ class BackStackManagerTest {
         assertEquals(Lifecycle.State.Destroyed, entry.lifecycle.currentState)
     }
 
-    // @Test
-    // fun testRequestNavigationLock() {
-    //     val manager = BackStackManager()
-    //     val lifecycleOwner = TestLifecycleOwner()
-    //     manager.init(
-    //         routeGraph = RouteGraph(
-    //             "foo/bar",
-    //             listOf(
-    //                 TestRoute("foo/bar", "foo/bar"),
-    //                 TestRoute("foo/bar/{id}", "foo/bar/{id}"),
-    //                 TestRoute("foo/bar/{id}/baz", "foo/bar/{id}/baz"),
-    //             ),
-    //         ),
-    //         stateHolder = StateHolder(),
-    //         savedStateHolder = TestSavedStateHolder(),
-    //         lifecycleOwner = lifecycleOwner,
-    //         persistNavState = false,
-    //     )
-    //     assertTrue(manager.canNavigate)
-    //     var currentEntry = manager.backStacks.value.last()
-    //     currentEntry.active()
-    //     manager.push("foo/bar/1")
-    //     assertTrue(manager.canNavigate)
-    //     currentEntry = manager.backStacks.value.last()
-    //     currentEntry.active()
-    //     manager.pop()
-    //     assertFalse(manager.canNavigate)
-    //     currentEntry.inActive()
-    //     assertTrue(manager.canNavigate)
-    // }
-
     @Test
     fun testGroupNavigation() {
         val manager = BackStackManager()
