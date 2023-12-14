@@ -1,6 +1,9 @@
 package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -47,8 +50,7 @@ internal class BackStackManager : LifecycleObserver {
     val currentFloatingBackStackEntry: Flow<BackStackEntry?>
         get() = backStacks.asSharedFlow().map { it.lastOrNull { it.route.isFloatingRoute() } }
 
-    // internal for testing
-    internal var canNavigate = true
+    var canNavigate by mutableStateOf(true)
 
     fun init(
         routeGraph: RouteGraph,
@@ -120,9 +122,6 @@ internal class BackStackManager : LifecycleObserver {
                 path = path,
                 parentStateHolder = _stateHolder,
                 parentSavedStateHolder = _savedStateHolder,
-                requestNavigationLock = {
-                    canNavigate = !it
-                },
             )
         }
 

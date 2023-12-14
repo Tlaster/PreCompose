@@ -18,8 +18,6 @@ class BackStackEntry internal constructor(
     private val parentStateHolder: StateHolder,
     parentSavedStateHolder: SavedStateHolder,
     val queryString: QueryString? = null,
-    // TODO: dirty callback for disabling push back -> immediate navigate
-    private val requestNavigationLock: (locked: Boolean) -> Unit = {},
 ) : LifecycleOwner {
     internal var uiClosable: UiClosable? = null
     private var _destroyAfterTransition = false
@@ -55,7 +53,6 @@ class BackStackEntry internal constructor(
     fun destroy() {
         if (lifecycleRegistry.currentState != Lifecycle.State.InActive) {
             _destroyAfterTransition = true
-            requestNavigationLock.invoke(true)
         } else {
             destroyDirectly()
         }
@@ -67,7 +64,6 @@ class BackStackEntry internal constructor(
         parentStateHolder.remove(stateId)
         savedStateHolder.close()
         uiClosable?.close(stateId)
-        requestNavigationLock.invoke(false)
     }
 
     fun hasRoute(route: String): Boolean {
