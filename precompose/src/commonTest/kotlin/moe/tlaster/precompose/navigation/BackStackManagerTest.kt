@@ -607,4 +607,76 @@ class BackStackManagerTest {
             manager.backStacks.value.map { it.path },
         )
     }
+
+    @Test
+    fun testGoBackWithPopupTo() {
+        val manager = BackStackManager()
+        val lifecycleOwner = TestLifecycleOwner()
+        val saveableStateHolder = TestSavedStateHolder()
+
+        manager.init(
+            routeGraph = RouteGraph(
+                "screen1",
+                listOf(
+                    TestRoute("screen1", "screen1"),
+                    TestRoute("screen2", "screen2"),
+                    TestRoute("screen3", "screen3"),
+                ),
+            ),
+            stateHolder = StateHolder(),
+            savedStateHolder = saveableStateHolder,
+            lifecycleOwner = lifecycleOwner,
+            persistNavState = false,
+        )
+        assertEquals(
+            listOf("screen1"),
+            manager.backStacks.value.map { it.path },
+        )
+
+        manager.push("screen2")
+        manager.push("screen3")
+
+        manager.popWithOptions(PopUpTo("screen1"), inclusive = false)
+
+        assertEquals(
+            listOf("screen1"),
+            manager.backStacks.value.map { it.path },
+        )
+    }
+
+    @Test
+    fun testGoBackWithPopupToInclusive() {
+        val manager = BackStackManager()
+        val lifecycleOwner = TestLifecycleOwner()
+        val saveableStateHolder = TestSavedStateHolder()
+
+        manager.init(
+            routeGraph = RouteGraph(
+                "screen1",
+                listOf(
+                    TestRoute("screen1", "screen1"),
+                    TestRoute("screen2", "screen2"),
+                    TestRoute("screen3", "screen3"),
+                ),
+            ),
+            stateHolder = StateHolder(),
+            savedStateHolder = saveableStateHolder,
+            lifecycleOwner = lifecycleOwner,
+            persistNavState = false,
+        )
+        assertEquals(
+            listOf("screen1"),
+            manager.backStacks.value.map { it.path },
+        )
+
+        manager.push("screen2")
+        manager.push("screen3")
+
+        manager.popWithOptions(PopUpTo("screen2"), inclusive = true)
+
+        assertEquals(
+            listOf("screen1"),
+            manager.backStacks.value.map { it.path },
+        )
+    }
 }

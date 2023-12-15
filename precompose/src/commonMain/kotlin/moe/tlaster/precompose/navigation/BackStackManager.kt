@@ -19,6 +19,7 @@ import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.math.max
 
 internal const val STACK_SAVED_STATE_KEY = "BackStackManager"
 
@@ -108,9 +109,10 @@ internal class BackStackManager : LifecycleObserver {
             options.launchSingleTop &&
             currentBackStacks.any { it.hasRoute(matchResult.route.route, path, options.includePath) }
         ) {
-            currentBackStacks.firstOrNull { it.hasRoute(matchResult.route.route, path, options.includePath) }?.let { entry ->
-                backStacks.value = backStacks.value.filter { it.id != entry.id } + entry
-            }
+            currentBackStacks.firstOrNull { it.hasRoute(matchResult.route.route, path, options.includePath) }
+                ?.let { entry ->
+                    backStacks.value = backStacks.value.filter { it.id != entry.id } + entry
+                }
         } else {
             backStacks.value += BackStackEntry(
                 id = (backStacks.value.lastOrNull()?.id ?: 0L) + 1,
@@ -168,6 +170,43 @@ internal class BackStackManager : LifecycleObserver {
         }
     }
 
+    fun popWithOptions(
+        popUpTo: PopUpTo,
+        inclusive: Boolean,
+    ) {
+        if (!canNavigate) {
+            return
+        }
+        val currentBackStacks = backStacks.value
+        if (currentBackStacks.size <= 1) {
+            return
+        }
+        val index = when (popUpTo) {
+            PopUpTo.None -> -1
+            PopUpTo.Prev -> currentBackStacks.lastIndex - 1
+            is PopUpTo.Route -> if (popUpTo.route.isNotEmpty()) {
+                currentBackStacks.indexOfLast { it.hasRoute(popUpTo.route, "", false) }
+            } else {
+                0
+            }
+        }.let {
+            if (inclusive) it else it + 1
+        }.let {
+            max(it, 0)
+        }
+        if (index != -1) {
+            val stacksToDrop = currentBackStacks.subList(
+                index,
+                currentBackStacks.size,
+            )
+            backStacks.value -= stacksToDrop
+            stacksToDrop.forEach {
+                _suspendResult.remove(it)?.resume(null)
+                it.destroy()
+            }
+        }
+    }
+
     suspend fun pushForResult(path: String, options: NavOptions? = null): Any? {
         return suspendCoroutine { continuation ->
             push(path, options)
@@ -182,10 +221,12 @@ internal class BackStackManager : LifecycleObserver {
                 val currentEntry = backStacks.value.lastOrNull()
                 currentEntry?.active()
             }
+
             Lifecycle.State.InActive -> {
                 val currentEntry = backStacks.value.lastOrNull()
                 currentEntry?.inActive()
             }
+
             Lifecycle.State.Destroyed -> {
                 backStacks.value.forEach {
                     it.destroy()
