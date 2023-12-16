@@ -215,6 +215,7 @@ fun NavHost(
                             swipeProperties = actualSwipeProperties,
                             isPrev = isPrev,
                             isLast = !canGoBack,
+                            enabled = !transition.isRunning,
                         ) {
                             NavHostContent(composeStateHolder, it)
                         }
@@ -239,39 +240,44 @@ private fun SwipeItem(
     swipeProperties: SwipeProperties,
     isPrev: Boolean,
     isLast: Boolean,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    CustomSwipeToDismiss(
-        state = if (isPrev) rememberDismissState() else dismissState,
-        spaceToSwipe = swipeProperties.spaceToSwipe,
-        enabled = !isLast,
-        dismissThreshold = swipeProperties.swipeThreshold,
-        modifier = modifier,
-    ) {
-        Box(
-            modifier = Modifier
-                .takeIf { isPrev }
-                ?.graphicsLayer {
-                    translationX =
-                        swipeProperties.slideInHorizontally(size.width.toInt())
-                            .toFloat() -
-                        swipeProperties.slideInHorizontally(
-                            dismissState.offset.value.absoluteValue.toInt(),
-                        )
-                }?.drawWithContent {
-                    drawContent()
-                    drawRect(
-                        swipeProperties.shadowColor,
-                        alpha = (1f - dismissState.progress.fraction) *
-                            swipeProperties.shadowColor.alpha,
-                    )
-                }?.pointerInput(0) {
-                    // prev entry should not be interactive until fully appeared
-                } ?: Modifier,
+    if (enabled) {
+        CustomSwipeToDismiss(
+            state = if (isPrev) rememberDismissState() else dismissState,
+            spaceToSwipe = swipeProperties.spaceToSwipe,
+            enabled = !isLast,
+            dismissThreshold = swipeProperties.swipeThreshold,
+            modifier = modifier,
         ) {
-            content.invoke()
+            Box(
+                modifier = Modifier
+                    .takeIf { isPrev }
+                    ?.graphicsLayer {
+                        translationX =
+                            swipeProperties.slideInHorizontally(size.width.toInt())
+                                .toFloat() -
+                            swipeProperties.slideInHorizontally(
+                                dismissState.offset.value.absoluteValue.toInt(),
+                            )
+                    }?.drawWithContent {
+                        drawContent()
+                        drawRect(
+                            swipeProperties.shadowColor,
+                            alpha = (1f - dismissState.progress.fraction) *
+                                swipeProperties.shadowColor.alpha,
+                        )
+                    }?.pointerInput(0) {
+                        // prev entry should not be interactive until fully appeared
+                    } ?: Modifier,
+            ) {
+                content.invoke()
+            }
         }
+    } else {
+        content.invoke()
     }
 }
 
