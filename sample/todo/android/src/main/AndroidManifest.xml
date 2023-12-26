@@ -5,6 +5,7 @@
         android:label="PreCompose Sample"
         android:allowBackup="false"
         android:supportsRtl="true"
+        android:name=".TodoApplication"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity android:name=".MainActivity"
                   android:windowSoftInputMode="adjustResize"

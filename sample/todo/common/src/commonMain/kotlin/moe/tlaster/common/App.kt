@@ -7,7 +7,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import moe.tlaster.common.di.AppModule
 import moe.tlaster.common.scene.NoteDetailScene
 import moe.tlaster.common.scene.NoteEditScene
 import moe.tlaster.common.scene.NoteListScene
@@ -17,17 +16,11 @@ import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import org.koin.compose.KoinContext
-import org.koin.core.context.startKoin
-import org.koin.core.context.stopKoin
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun App() {
     PreComposeApp {
-        stopKoin()
-        startKoin {
-            modules(AppModule.appModule)
-        }
         KoinContext {
             val navigator = rememberNavigator()
             MaterialTheme {
