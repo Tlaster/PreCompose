@@ -15,6 +15,8 @@ import kotlinx.cinterop.cstr
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.toCValues
 import moe.tlaster.common.App
+import moe.tlaster.common.di.AppModule
+import org.koin.core.context.startKoin
 import platform.Foundation.NSStringFromClass
 import platform.UIKit.UIApplication
 import platform.UIKit.UIApplicationDelegateProtocol
@@ -52,6 +54,10 @@ class SkikoAppDelegate : UIResponder, UIApplicationDelegateProtocol {
 
     @OptIn(ExperimentalForeignApi::class)
     override fun application(application: UIApplication, didFinishLaunchingWithOptions: Map<Any?, *>?): Boolean {
+        startKoin {
+            modules(AppModule.appModule)
+            allowOverride(false)
+        }
         window = UIWindow(frame = UIScreen.mainScreen.bounds).apply {
             rootViewController = ComposeUIViewController {
                 Column {

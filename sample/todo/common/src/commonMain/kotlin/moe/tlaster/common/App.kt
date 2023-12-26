@@ -7,49 +7,21 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import moe.tlaster.common.repository.FakeRepository
 import moe.tlaster.common.scene.NoteDetailScene
 import moe.tlaster.common.scene.NoteEditScene
 import moe.tlaster.common.scene.NoteListScene
-import moe.tlaster.common.viewmodel.NoteDetailViewModel
-import moe.tlaster.common.viewmodel.NoteEditViewModel
-import moe.tlaster.common.viewmodel.NoteListViewModel
 import moe.tlaster.precompose.PreComposeApp
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
-import moe.tlaster.precompose.stateholder.SavedStateHolder
-import org.koin.compose.KoinApplication
-import org.koin.dsl.module
+import org.koin.compose.KoinContext
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun App() {
     PreComposeApp {
-        KoinApplication(
-            application = {
-                modules(
-                    module {
-                        single { FakeRepository() }
-                        factory { (id: Int) ->
-                            NoteDetailViewModel(
-                                id = id,
-                                fakeRepository = get(),
-                            )
-                        }
-                        factory { (id: Int?, savedStateHolder: SavedStateHolder) ->
-                            NoteEditViewModel(
-                                id = id,
-                                savedStateHolder = savedStateHolder,
-                                fakeRepository = get(),
-                            )
-                        }
-                        factory { NoteListViewModel(fakeRepository = get()) }
-                    },
-                )
-            },
-        ) {
+        KoinContext {
             val navigator = rememberNavigator()
             MaterialTheme {
                 NavHost(
