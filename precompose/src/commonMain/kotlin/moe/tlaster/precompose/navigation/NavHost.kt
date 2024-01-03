@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -142,7 +143,7 @@ fun NavHost(
             val actualSwipeProperties = sceneEntry.swipeProperties ?: swipeProperties
             if (actualSwipeProperties == null) {
                 AnimatedContent(sceneEntry, transitionSpec = transitionSpec) { entry ->
-                    LaunchedEffect(transition.isRunning) {
+                    SideEffect {
                         navigator.stackManager.canNavigate = !transition.isRunning
                     }
                     NavHostContent(composeStateHolder, entry)
@@ -207,7 +208,7 @@ fun NavHost(
                             },
                         ),
                     ) {
-                        LaunchedEffect(transition.isRunning) {
+                        SideEffect {
                             navigator.stackManager.canNavigate = !transition.isRunning
                         }
                         SwipeItem(
