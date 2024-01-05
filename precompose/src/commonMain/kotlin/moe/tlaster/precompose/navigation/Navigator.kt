@@ -8,13 +8,14 @@ import moe.tlaster.precompose.stateholder.SavedStateHolder
 import moe.tlaster.precompose.stateholder.StateHolder
 
 /**
- * Creates a [Navigator] that controls the [NavHost].
+ * Creates or returns an existing [Navigator] that controls the [NavHost].
+ * @param name: Identify the navigator so you can have as many navigator instances as you need.
  * @return Returns an instance of Navigator.
  */
 @Composable
-fun rememberNavigator(): Navigator {
+fun rememberNavigator(name: String = ""): Navigator {
     val stateHolder = LocalStateHolder.current
-    return stateHolder.getOrPut("Navigator") {
+    return stateHolder.getOrPut("${name}Navigator") {
         Navigator()
     }
 }
