@@ -19,7 +19,7 @@ For those able & willing to help fix issues and/or implement features ...
 ### Development environment
 
 Make sure you have
- - JDK 17  
+ - JDK 11  
  - A Mac if you're developing Compose for iOS/macOS
 
 ### Code guidelines
