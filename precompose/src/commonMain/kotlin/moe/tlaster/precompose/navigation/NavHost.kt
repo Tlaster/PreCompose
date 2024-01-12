@@ -287,12 +287,6 @@ private fun NavHostContent(
     stateHolder: SaveableStateHolder,
     entry: BackStackEntry,
 ) {
-    DisposableEffect(entry) {
-        entry.active()
-        onDispose {
-            entry.inActive()
-        }
-    }
     stateHolder.SaveableStateProvider(entry.stateId) {
         CompositionLocalProvider(
             LocalStateHolder provides entry.stateHolder,
@@ -302,6 +296,12 @@ private fun NavHostContent(
                 entry.ComposeContent()
             },
         )
+    }
+    DisposableEffect(entry) {
+        entry.active()
+        onDispose {
+            entry.inActive()
+        }
     }
 }
 
