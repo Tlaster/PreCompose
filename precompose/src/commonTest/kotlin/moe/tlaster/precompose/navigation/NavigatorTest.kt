@@ -4,12 +4,16 @@ import moe.tlaster.precompose.lifecycle.TestLifecycleOwner
 import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.test.Test
 import kotlin.test.assertEquals
-
 class NavigatorTest {
     @Test
     fun testNavigate() {
         val navigator = Navigator()
         navigator.init(
+            StateHolder(),
+            TestSavedStateHolder(),
+            TestLifecycleOwner(),
+        )
+        navigator.setRouteGraph(
             RouteGraph(
                 "foo/bar",
                 listOf(
@@ -18,10 +22,6 @@ class NavigatorTest {
                     TestRoute("foo/bar/{id}/baz", "foo/bar/{id}/baz"),
                 ),
             ),
-            StateHolder(),
-            TestSavedStateHolder(),
-            TestLifecycleOwner(),
-            false,
         )
         navigator.navigate("foo/bar/1")
         navigator.navigate("foo/bar/1/baz")
@@ -36,6 +36,11 @@ class NavigatorTest {
         navigator.navigate("foo/bar/1")
         assertEquals(0, navigator.stackManager.backStacks.value.size)
         navigator.init(
+            StateHolder(),
+            TestSavedStateHolder(),
+            TestLifecycleOwner(),
+        )
+        navigator.setRouteGraph(
             RouteGraph(
                 "foo/bar",
                 listOf(
@@ -44,10 +49,6 @@ class NavigatorTest {
                     TestRoute("foo/bar/{id}/baz", "foo/bar/{id}/baz"),
                 ),
             ),
-            StateHolder(),
-            TestSavedStateHolder(),
-            TestLifecycleOwner(),
-            false,
         )
         assertEquals(2, navigator.stackManager.backStacks.value.size)
         assertEquals("foo/bar/{id}", navigator.stackManager.backStacks.value.last().route.route)

@@ -21,8 +21,6 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.math.max
 
-internal const val STACK_SAVED_STATE_KEY = "BackStackManager"
-
 @Stable
 internal class BackStackManager : LifecycleObserver {
     private lateinit var _stateHolder: StateHolder
@@ -30,8 +28,31 @@ internal class BackStackManager : LifecycleObserver {
 
     // internal for testing
     internal val backStacks = MutableStateFlow(listOf<BackStackEntry>())
-    private val _routeParser = RouteParser()
+    private var _routeParser = RouteParser()
     private val _suspendResult = linkedMapOf<BackStackEntry, Continuation<Any?>>()
+    private var _routeGraph: RouteGraph? = null
+        set(value) {
+            field = value
+            if (value != null) {
+                _routeParser = RouteParser()
+                value.routes
+                    .map { route ->
+                        RouteParser.expandOptionalVariables(route.route).let {
+                            if (route is SceneRoute) {
+                                it + route.deepLinks.flatMap {
+                                    RouteParser.expandOptionalVariables(it)
+                                }
+                            } else {
+                                it
+                            }
+                        } to route
+                    }
+                    .flatMap { it.first.map { route -> route to it.second } }
+                    .forEach {
+                        _routeParser.insert(it.first, it.second)
+                    }
+            }
+        }
     val currentBackStackEntry: Flow<BackStackEntry?>
         get() = backStacks.asSharedFlow().map { it.lastOrNull() }
 
@@ -54,44 +75,36 @@ internal class BackStackManager : LifecycleObserver {
     var canNavigate by mutableStateOf(true)
 
     fun init(
-        routeGraph: RouteGraph,
         stateHolder: StateHolder,
         savedStateHolder: SavedStateHolder,
         lifecycleOwner: LifecycleOwner,
-        persistNavState: Boolean,
     ) {
         _stateHolder = stateHolder
         _savedStateHolder = savedStateHolder
         lifecycleOwner.lifecycle.addObserver(this)
+    }
 
-        if (persistNavState) {
-            _savedStateHolder.registerProvider(STACK_SAVED_STATE_KEY) {
-                backStacks.value.map { backStackEntry -> backStackEntry.path }
+    fun setRouteGraph(
+        routeGraph: RouteGraph,
+    ) {
+        if (_routeGraph != routeGraph) {
+            _routeGraph?.let {
+                // clear all backstacks
+                backStacks.value.forEach {
+                    it.destroy()
+                }
+                backStacks.value = emptyList()
+            }
+            _routeGraph = routeGraph
+            // push to initial route
+            push(routeGraph.initialRoute)
+        } else {
+            _routeGraph = routeGraph
+            // update routes
+            backStacks.value.forEach { entry ->
+                entry.routeInternal = _routeParser.find(entry.path)?.route ?: entry.routeInternal
             }
         }
-        routeGraph.routes
-            .map { route ->
-                RouteParser.expandOptionalVariables(route.route).let {
-                    if (route is SceneRoute) {
-                        it + route.deepLinks.flatMap {
-                            RouteParser.expandOptionalVariables(it)
-                        }
-                    } else {
-                        it
-                    }
-                } to route
-            }
-            .flatMap { it.first.map { route -> route to it.second } }
-            .forEach {
-                _routeParser.insert(it.first, it.second)
-            }
-
-        @Suppress("UNCHECKED_CAST")
-        (_savedStateHolder.consumeRestored(STACK_SAVED_STATE_KEY) as? List<String>)?.let { restoredStacks ->
-            restoredStacks.forEach {
-                push(it)
-            }
-        } ?: push(routeGraph.initialRoute)
     }
 
     fun push(path: String, options: NavOptions? = null) {
@@ -116,7 +129,7 @@ internal class BackStackManager : LifecycleObserver {
         } else {
             backStacks.value += BackStackEntry(
                 id = (backStacks.value.lastOrNull()?.id ?: 0L) + 1,
-                route = matchResult.route,
+                routeInternal = matchResult.route,
                 pathMap = matchResult.pathMap,
                 queryString = query.takeIf { it.isNotEmpty() }?.let {
                     QueryString(it)

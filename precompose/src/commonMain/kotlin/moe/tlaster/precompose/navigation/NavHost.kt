@@ -67,7 +67,6 @@ import kotlin.math.roundToInt
  * @param initialRoute the route for the start destination
  * @param navTransition navigation transition for the scenes in this [NavHost]
  * @param swipeProperties properties of swipe back navigation
- * @param persistNavState whether to persist navigation state to the Saved State Registry, defaults to false
  * @param builder the builder used to construct the graph
  */
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
@@ -78,7 +77,6 @@ fun NavHost(
     modifier: Modifier = Modifier,
     navTransition: NavTransition = remember { NavTransition() },
     swipeProperties: SwipeProperties? = null,
-    persistNavState: Boolean = false,
     builder: RouteBuilder.() -> Unit,
 ) {
     val lifecycleOwner = requireNotNull(LocalLifecycleOwner.current)
@@ -89,11 +87,15 @@ fun NavHost(
     // true for assuming that lifecycleOwner, stateHolder and composeStateHolder are not changing during the lifetime of the NavHost
     LaunchedEffect(true) {
         navigator.init(
-            routeGraph = RouteBuilder(initialRoute).apply(builder).build(),
             stateHolder = stateHolder,
             savedStateHolder = savedStateHolder,
             lifecycleOwner = lifecycleOwner,
-            persistNavState = persistNavState,
+        )
+    }
+
+    LaunchedEffect(builder, initialRoute) {
+        navigator.setRouteGraph(
+            RouteBuilder(initialRoute).apply(builder).build(),
         )
     }
 
@@ -316,7 +318,7 @@ private fun GroupRoute.composeRoute(): ComposeRoute? {
 @Composable
 private fun BackStackEntry.ComposeContent() {
     if (route is GroupRoute) {
-        route.composeRoute()
+        (route as GroupRoute).composeRoute()
     } else {
         route as? ComposeRoute
     }?.content?.invoke(this)

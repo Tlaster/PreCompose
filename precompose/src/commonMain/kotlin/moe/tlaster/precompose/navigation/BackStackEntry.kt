@@ -12,13 +12,15 @@ import moe.tlaster.precompose.stateholder.StateHolder
 
 class BackStackEntry internal constructor(
     val id: Long,
-    val route: Route,
+    internal var routeInternal: Route,
     val path: String,
     val pathMap: Map<String, String>,
     private val parentStateHolder: StateHolder,
     parentSavedStateHolder: SavedStateHolder,
     val queryString: QueryString? = null,
 ) : LifecycleOwner {
+    val route: Route
+        get() = routeInternal
     internal var uiClosable: UiClosable? = null
     private var _destroyAfterTransition = false
     internal val stateId = "$id-${route.route}"
@@ -67,7 +69,7 @@ class BackStackEntry internal constructor(
     }
 
     fun hasRoute(route: String): Boolean {
-        return this.route.route == route || this.route is GroupRoute && this.route.hasRoute(route)
+        return this.route.route == route || (this.route as? GroupRoute)?.hasRoute(route) == true
     }
 }
 
