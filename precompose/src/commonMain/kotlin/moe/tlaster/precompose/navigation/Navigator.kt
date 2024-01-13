@@ -28,30 +28,32 @@ class Navigator {
 
     /**
      * Initializes the navigator with a set parameters.
-     * @param routeGraph: destination's navigation graph
      * @param stateHolder: stateHolder object
      * @param savedStateHolder: savedStateHolder object
      * @param lifecycleOwner: lifecycleOwner object
-     * @param persistNavState: if true, navigation state will persist across configuration changes
      */
     internal fun init(
-        routeGraph: RouteGraph,
         stateHolder: StateHolder,
         savedStateHolder: SavedStateHolder,
         lifecycleOwner: LifecycleOwner,
-        persistNavState: Boolean,
     ) {
         if (_initialized) {
             return
         }
         _initialized = true
         stackManager.init(
-            routeGraph = routeGraph,
             stateHolder = stateHolder,
             savedStateHolder = savedStateHolder,
             lifecycleOwner = lifecycleOwner,
-            persistNavState = persistNavState,
         )
+    }
+
+    /**
+     * Set the RouteGraph for the navigator.
+     * @param routeGraph: destination's navigation graph
+     */
+    internal fun setRouteGraph(routeGraph: RouteGraph) {
+        stackManager.setRouteGraph(routeGraph)
         _pendingNavigation?.let {
             stackManager.push(it)
             _pendingNavigation = null

@@ -22,6 +22,9 @@ class LifecycleRegistry : Lifecycle {
     }
 
     override fun addObserver(observer: LifecycleObserver) {
+        if (observers.contains(observer)) {
+            return
+        }
         observers.add(observer)
         observer.onStateChanged(currentState)
     }
