@@ -5,10 +5,12 @@ plugins {
 }
 
 kotlin {
-    targetHierarchy.default()
+    applyDefaultHierarchyTemplate()
     macosX64()
     macosArm64()
-    ios()
+    iosArm64()
+    iosX64()
+    iosSimulatorArm64()
     androidTarget()
     jvm("desktop")
     js(IR) {
