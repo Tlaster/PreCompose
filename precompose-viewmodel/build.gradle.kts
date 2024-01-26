@@ -103,6 +103,11 @@ kotlin {
                 implementation(compose.foundation)
             }
         }
+        val wasmJsMain by getting {
+            dependencies {
+                implementation(compose.foundation)
+            }
+        }
     }
 }
 
