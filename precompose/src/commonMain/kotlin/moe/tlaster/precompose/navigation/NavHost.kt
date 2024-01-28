@@ -6,22 +6,19 @@ import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.animation.core.SeekableTransitionState
 import androidx.compose.animation.core.rememberTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.AnchoredDraggableState
+import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.gestures.snapTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.DismissState
-import androidx.compose.material.DismissValue
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ResistanceConfig
-import androidx.compose.material.SwipeableDefaults
-import androidx.compose.material.ThresholdConfig
-import androidx.compose.material.rememberDismissState
-import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -35,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
@@ -67,8 +65,8 @@ import kotlin.math.roundToInt
  * @param builder the builder used to construct the graph
  */
 @OptIn(
-    ExperimentalMaterialApi::class,
     ExperimentalTransitionApi::class,
+    ExperimentalFoundationApi::class,
 )
 @Composable
 fun NavHost(
@@ -99,23 +97,6 @@ fun NavHost(
         )
     }
 
-    val transitionSpec: AnimatedContentTransitionScope<BackStackEntry>.() -> ContentTransform = {
-        val actualTransaction = run {
-            if (navigator.stackManager.contains(initialState)) targetState else initialState
-        }.navTransition ?: navTransition
-        if (!navigator.stackManager.contains(initialState)) {
-            actualTransaction.resumeTransition.togetherWith(actualTransaction.destroyTransition)
-                .apply {
-                    targetContentZIndex = actualTransaction.enterTargetContentZIndex
-                }
-        } else {
-            actualTransaction.createTransition.togetherWith(actualTransaction.pauseTransition)
-                .apply {
-                    targetContentZIndex = actualTransaction.exitTargetContentZIndex
-                }
-        }
-    }
-
     val canGoBack by navigator.stackManager.canGoBack.collectAsState(false)
 
     val currentEntry by navigator.stackManager.currentBackStackEntry.collectAsState(null)
@@ -131,7 +112,7 @@ fun NavHost(
         }
     }
 
-    Box(modifier) {
+    BoxWithConstraints(modifier) {
         val currentSceneEntry by navigator.stackManager
             .currentSceneBackStackEntry.collectAsState(null)
         val prevSceneEntry by navigator.stackManager
@@ -141,28 +122,51 @@ fun NavHost(
         }
         currentSceneEntry?.let { sceneEntry ->
             val actualSwipeProperties = sceneEntry.swipeProperties ?: swipeProperties
-            val dismissState = rememberDismissState()
-            LaunchedEffect(
-                dismissState.isDismissed(DismissDirection.StartToEnd),
-                dismissState.isAnimationRunning,
-            ) {
-                navigator.stackManager.canNavigate = !dismissState.isAnimationRunning
-                if (dismissState.isDismissed(DismissDirection.StartToEnd) && !dismissState.isAnimationRunning) {
-                    navigator.goBack()
-                    dismissState.snapTo(DismissValue.Default)
+            val state = if (actualSwipeProperties != null) {
+                val density = LocalDensity.current
+                val width = constraints.maxWidth.toFloat()
+                val state = remember {
+                    AnchoredDraggableState(
+                        initialValue = DragAnchors.Start,
+                        anchors = DraggableAnchors {
+                            DragAnchors.Start at 0f
+                            DragAnchors.End at width
+                        },
+                        positionalThreshold = actualSwipeProperties.positionalThreshold,
+                        velocityThreshold = { actualSwipeProperties.velocityThreshold.invoke(density) },
+                        animationSpec = tween(),
+                    )
                 }
+
+                LaunchedEffect(
+                    state.currentValue,
+                    state.isAnimationRunning,
+                ) {
+                    navigator.stackManager.canNavigate = !state.isAnimationRunning
+                    if (state.currentValue == DragAnchors.End && !state.isAnimationRunning) {
+                        navigator.goBack()
+                        state.snapTo(DragAnchors.Start)
+                    }
+                }
+                state
+            } else {
+                null
             }
-            val showPrev by remember(dismissState) {
+            val showPrev by remember(state) {
                 derivedStateOf {
-                    dismissState.offset.value > 0f
+                    if (state == null) {
+                        false
+                    } else {
+                        state.offset > 0f
+                    }
                 }
             }
-            val transition = if (showPrev && prevSceneEntry != null) {
+            val transition = if (showPrev && prevSceneEntry != null && state != null) {
                 val transitionState by remember(sceneEntry) {
                     mutableStateOf(SeekableTransitionState(sceneEntry, prevSceneEntry!!))
                 }
-                LaunchedEffect(dismissState.progress.fraction) {
-                    transitionState.snapToFraction(dismissState.progress.fraction)
+                LaunchedEffect(state.progress) {
+                    transitionState.snapToFraction(state.progress)
                 }
                 rememberTransition(transitionState, label = "entry")
             } else {
@@ -171,16 +175,31 @@ fun NavHost(
             SideEffect {
                 navigator.stackManager.canNavigate = !transition.isRunning
             }
+            val transitionSpec: AnimatedContentTransitionScope<BackStackEntry>.() -> ContentTransform = {
+                val actualTransaction = run {
+                    if (navigator.stackManager.contains(initialState) && !showPrev) targetState else initialState
+                }.navTransition ?: navTransition
+                if (!navigator.stackManager.contains(initialState) || showPrev) {
+                    actualTransaction.resumeTransition.togetherWith(actualTransaction.destroyTransition)
+                        .apply {
+                            targetContentZIndex = actualTransaction.enterTargetContentZIndex
+                        }
+                } else {
+                    actualTransaction.createTransition.togetherWith(actualTransaction.pauseTransition)
+                        .apply {
+                            targetContentZIndex = actualTransaction.exitTargetContentZIndex
+                        }
+                }
+            }
             transition.AnimatedContent(
                 transitionSpec = transitionSpec,
                 contentKey = { it.stateId },
             ) {
                 NavHostContent(composeStateHolder, it)
             }
-            if (actualSwipeProperties != null) {
-                SwipeItem(
-                    dismissState = dismissState,
-                    swipeProperties = actualSwipeProperties,
+            if (state != null) {
+                DragSlider(
+                    state = state,
                     enabled = prevSceneEntry != null,
                 )
             }
@@ -188,7 +207,7 @@ fun NavHost(
         val currentFloatingEntry by navigator.stackManager
             .currentFloatingBackStackEntry.collectAsState(null)
         currentFloatingEntry?.let {
-            AnimatedContent(it, transitionSpec = transitionSpec) { entry ->
+            AnimatedContent(it) { entry ->
                 SideEffect {
                     navigator.stackManager.canNavigate = !transition.isRunning
                 }
@@ -196,23 +215,6 @@ fun NavHost(
             }
         }
     }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-private fun SwipeItem(
-    dismissState: DismissState,
-    swipeProperties: SwipeProperties,
-    enabled: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    CustomSwipeToDismiss(
-        state = dismissState,
-        spaceToSwipe = swipeProperties.spaceToSwipe,
-        enabled = enabled,
-        dismissThreshold = swipeProperties.swipeThreshold,
-        modifier = modifier,
-    )
 }
 
 @Composable
@@ -255,40 +257,29 @@ private fun BackStackEntry.ComposeContent() {
     }?.content?.invoke(this)
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-@ExperimentalMaterialApi
-// idk why rememberDismissState is not being deprecated
-@Suppress("DEPRECATION")
-private fun CustomSwipeToDismiss(
-    state: DismissState,
+private fun DragSlider(
+    state: AnchoredDraggableState<DragAnchors>,
     enabled: Boolean = true,
     spaceToSwipe: Dp = 10.dp,
     modifier: Modifier = Modifier,
-    dismissThreshold: ThresholdConfig,
-) = BoxWithConstraints(modifier) {
-    val width = constraints.maxWidth.toFloat()
+) {
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    val anchors = mutableMapOf(
-        0f to DismissValue.Default,
-        width to DismissValue.DismissedToEnd,
-    )
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxHeight()
             .width(spaceToSwipe)
-            .swipeable(
+            .anchoredDraggable(
                 state = state,
-                anchors = anchors,
-                thresholds = { _, _ -> dismissThreshold },
                 orientation = Orientation.Horizontal,
                 enabled = enabled,
                 reverseDirection = isRtl,
-                resistance = ResistanceConfig(
-                    basis = width,
-                    factorAtMin = SwipeableDefaults.StiffResistanceFactor,
-                    factorAtMax = SwipeableDefaults.StandardResistanceFactor,
-                ),
             ),
-
     )
+}
+
+private enum class DragAnchors {
+    Start,
+    End,
 }
