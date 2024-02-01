@@ -346,7 +346,7 @@ class BackStackManagerTest {
             ),
         )
         val entry = manager.backStacks.value[0]
-        lifecycleOwner.lifecycle.updateState( Lifecycle.State.Active)
+        lifecycleOwner.lifecycle.updateState(Lifecycle.State.Active)
         assertEquals(Lifecycle.State.Active, entry.lifecycle.currentState)
         lifecycleOwner.lifecycle.updateState(Lifecycle.State.InActive)
         assertEquals(Lifecycle.State.InActive, entry.lifecycle.currentState)
