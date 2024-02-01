@@ -17,7 +17,7 @@ savedstateKtx = "1.2.1"
 spotless = "6.25.0"
 jetbrainsComposePlugin = "1.6.0-beta01"
 skiko = "0.7.90"
-koin = "3.6.0-wasm-alpha1"
+koin = "3.6.0-wasm-alpha2"
 
 [libraries]
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidxActivityVer" }
