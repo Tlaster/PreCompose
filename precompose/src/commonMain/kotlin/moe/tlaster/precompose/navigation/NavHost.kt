@@ -46,8 +46,6 @@ import moe.tlaster.precompose.stateholder.LocalSavedStateHolder
 import moe.tlaster.precompose.stateholder.LocalStateHolder
 import moe.tlaster.precompose.stateholder.currentLocalSavedStateHolder
 import moe.tlaster.precompose.stateholder.currentLocalStateHolder
-import kotlin.math.absoluteValue
-import kotlin.math.roundToInt
 
 /**
  * Provides in place in the Compose hierarchy for self-contained navigation to occur.
