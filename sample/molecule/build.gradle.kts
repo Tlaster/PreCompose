@@ -13,18 +13,7 @@ kotlin {
         iosSimulatorArm64(),
         iosArm64(),
         iosX64(),
-    ).forEach {
-        it.binaries {
-            executable {
-                entryPoint = "moe.tlaster.precompose.molecule.sample.main"
-                freeCompilerArgs += listOf(
-                    "-linker-option", "-framework", "-linker-option", "Metal",
-                    "-linker-option", "-framework", "-linker-option", "CoreText",
-                    "-linker-option", "-framework", "-linker-option", "CoreGraphics",
-                )
-            }
-        }
-    }
+    )
     androidTarget()
     macosX64 {
         binaries {
