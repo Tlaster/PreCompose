@@ -110,7 +110,10 @@ kotlin {
         }
     }
 }
-
+// adding it here to make sure skiko is unpacked and available in web tests
+compose.experimental {
+    web.application {}
+}
 android {
     compileSdk = rootProject.extra.get("android-compile") as Int
     buildToolsVersion = rootProject.extra.get("android-build-tools") as String
