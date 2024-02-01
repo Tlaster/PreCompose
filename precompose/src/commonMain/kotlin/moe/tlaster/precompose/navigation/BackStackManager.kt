@@ -56,6 +56,9 @@ internal class BackStackManager : LifecycleObserver {
     val currentBackStackEntry: Flow<BackStackEntry?>
         get() = backStacks.asSharedFlow().map { it.lastOrNull() }
 
+    val prevBackStackEntry: Flow<BackStackEntry?>
+        get() = backStacks.asSharedFlow().map { it.dropLast(1).lastOrNull() }
+
     val canGoBack: Flow<Boolean>
         get() = backStacks.asSharedFlow().map { it.size > 1 }
 

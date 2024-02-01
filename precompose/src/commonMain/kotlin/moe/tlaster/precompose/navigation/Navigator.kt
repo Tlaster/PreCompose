@@ -147,6 +147,12 @@ class Navigator {
     val currentEntry = stackManager.currentBackStackEntry
 
     /**
+     * Previous route
+     * @ return Returns the previous navigation back stack entry.
+     */
+    val previousEntry = stackManager.prevBackStackEntry
+
+    /**
      * Check if navigator can navigate, it will be false when performing navigation animation.
      * @return Returns true if navigator can perform navigation, false otherwise.
      */
