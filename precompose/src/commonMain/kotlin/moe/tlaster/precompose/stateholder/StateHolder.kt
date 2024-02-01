@@ -47,6 +47,10 @@ val LocalStateHolder = compositionLocalOf<StateHolder> {
     error("No StateHolder provided")
 }
 
+/**
+ * Returns the current [StateHolder] from composition or throws an [IllegalStateException]
+ * if there is no [StateHolder] in provided.
+ */
 val currentLocalStateHolder: StateHolder
     @Composable
     @ReadOnlyComposable
