@@ -46,11 +46,14 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
+import moe.tlaster.precompose.lifecycle.currentLocalLifecycleOwner
 import moe.tlaster.precompose.navigation.route.ComposeRoute
 import moe.tlaster.precompose.navigation.route.GroupRoute
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import moe.tlaster.precompose.stateholder.LocalSavedStateHolder
 import moe.tlaster.precompose.stateholder.LocalStateHolder
+import moe.tlaster.precompose.stateholder.currentLocalSavedStateHolder
+import moe.tlaster.precompose.stateholder.currentLocalStateHolder
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -79,9 +82,9 @@ fun NavHost(
     swipeProperties: SwipeProperties? = null,
     builder: RouteBuilder.() -> Unit,
 ) {
-    val lifecycleOwner = requireNotNull(LocalLifecycleOwner.current)
-    val stateHolder = requireNotNull(LocalStateHolder.current)
-    val savedStateHolder = requireNotNull(LocalSavedStateHolder.current)
+    val lifecycleOwner = currentLocalLifecycleOwner
+    val stateHolder = currentLocalStateHolder
+    val savedStateHolder = currentLocalSavedStateHolder
     val composeStateHolder = rememberSaveableStateHolder()
 
     // true for assuming that lifecycleOwner, stateHolder and composeStateHolder are not changing during the lifetime of the NavHost

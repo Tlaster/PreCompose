@@ -1,5 +1,7 @@
 package moe.tlaster.precompose.stateholder
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.saveable.SaveableStateRegistry
 
@@ -37,3 +39,13 @@ val LocalSavedStateHolder = compositionLocalOf {
     // A default implementation for platforms that don't offer a [SaveableStateRegistry]
     SavedStateHolder("root", null)
 }
+
+/**
+ * Returns the current [SavedStateHolder] from composition or throws an [IllegalStateException]
+ * if there is no [SavedStateHolder] in provided.
+ */
+
+val currentLocalSavedStateHolder: SavedStateHolder
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalSavedStateHolder.current
