@@ -82,18 +82,18 @@ actual fun PreComposeApp(
         val listener = remember {
             object : WindowAdapter() {
                 override fun windowOpened(e: WindowEvent?) {
-                    holder.lifecycle.currentState = Lifecycle.State.Active
+                    holder.lifecycle.updateState(Lifecycle.State.Active)
                 }
                 override fun windowClosed(e: WindowEvent?) {
-                    holder.lifecycle.currentState = Lifecycle.State.Destroyed
+                    holder.lifecycle.updateState(Lifecycle.State.Destroyed)
                 }
                 override fun windowStateChanged(e: WindowEvent?) {
                     when (e?.newState) {
                         java.awt.Frame.ICONIFIED -> {
-                            holder.lifecycle.currentState = Lifecycle.State.InActive
+                            holder.lifecycle.updateState(Lifecycle.State.InActive)
                         }
                         else -> {
-                            holder.lifecycle.currentState = Lifecycle.State.Active
+                            holder.lifecycle.updateState(Lifecycle.State.Active)
                         }
                     }
                 }

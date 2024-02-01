@@ -94,25 +94,25 @@ private class AppStateHolder(
             name = UIApplicationWillTerminateNotification,
             `object` = null,
         )
-        lifecycle.currentState = Lifecycle.State.Active
+        lifecycle.updateState(Lifecycle.State.Active)
     }
 
     @OptIn(BetaInteropApi::class)
     @ObjCAction
     fun appMovedToForeground(notification: NSNotification) {
-        lifecycle.currentState = Lifecycle.State.Active
+        lifecycle.updateState(Lifecycle.State.Active)
     }
 
     @OptIn(BetaInteropApi::class)
     @ObjCAction
     fun appMovedToBackground(notification: NSNotification) {
-        lifecycle.currentState = Lifecycle.State.InActive
+        lifecycle.updateState(Lifecycle.State.InActive)
     }
 
     @OptIn(BetaInteropApi::class)
     @ObjCAction
     fun appWillTerminate(notification: NSNotification) {
-        lifecycle.currentState = Lifecycle.State.Destroyed
+        lifecycle.updateState(Lifecycle.State.Destroyed)
     }
 }
 

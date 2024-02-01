@@ -37,12 +37,12 @@ actual fun PreComposeApp(
 
             override fun onResume(owner: androidx.lifecycle.LifecycleOwner) {
                 super.onResume(owner)
-                viewModel.lifecycleRegistry.currentState = Lifecycle.State.Active
+                viewModel.lifecycleRegistry.updateState(Lifecycle.State.Active)
             }
 
             override fun onPause(owner: androidx.lifecycle.LifecycleOwner) {
                 super.onPause(owner)
-                viewModel.lifecycleRegistry.currentState = Lifecycle.State.InActive
+                viewModel.lifecycleRegistry.updateState(Lifecycle.State.InActive)
             }
 
             // override fun onDestroy(owner: androidx.lifecycle.LifecycleOwner) {

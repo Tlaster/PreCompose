@@ -1,5 +1,7 @@
 package moe.tlaster.precompose.stateholder
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 
 @OptIn(ExperimentalStdlibApi::class)
@@ -44,3 +46,8 @@ class StateHolder : AutoCloseable {
 val LocalStateHolder = compositionLocalOf<StateHolder> {
     error("No StateHolder provided")
 }
+
+val currentLocalStateHolder: StateHolder
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalStateHolder.current

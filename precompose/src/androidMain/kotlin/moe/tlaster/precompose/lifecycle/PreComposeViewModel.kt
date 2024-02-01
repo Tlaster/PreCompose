@@ -29,6 +29,6 @@ internal class PreComposeViewModel :
     }
 
     override fun onCleared() {
-        lifecycleRegistry.currentState = Lifecycle.State.Destroyed
+        lifecycleRegistry.updateState(Lifecycle.State.Destroyed)
     }
 }

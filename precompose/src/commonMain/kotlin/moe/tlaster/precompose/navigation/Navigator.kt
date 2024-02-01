@@ -3,9 +3,9 @@ package moe.tlaster.precompose.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshotFlow
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
-import moe.tlaster.precompose.stateholder.LocalStateHolder
 import moe.tlaster.precompose.stateholder.SavedStateHolder
 import moe.tlaster.precompose.stateholder.StateHolder
+import moe.tlaster.precompose.stateholder.currentLocalStateHolder
 
 /**
  * Creates or returns an existing [Navigator] that controls the [NavHost].
@@ -14,7 +14,7 @@ import moe.tlaster.precompose.stateholder.StateHolder
  */
 @Composable
 fun rememberNavigator(name: String = ""): Navigator {
-    val stateHolder = LocalStateHolder.current
+    val stateHolder = currentLocalStateHolder
     return stateHolder.getOrPut("${name}Navigator") {
         Navigator()
     }

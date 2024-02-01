@@ -6,7 +6,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
+import moe.tlaster.precompose.lifecycle.currentLocalLifecycleOwner
 import moe.tlaster.precompose.ui.DefaultBackHandler
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 
@@ -26,7 +26,7 @@ fun BackHandler(enabled: Boolean = true, onBack: () -> Unit) {
         }
         backCallback.isEnabled = enabled
     }
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleOwner = currentLocalLifecycleOwner
     DisposableEffect(lifecycleOwner, backDispatcher) {
         // Add callback to the backDispatcher
         backDispatcher.register(backCallback)

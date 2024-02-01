@@ -42,11 +42,11 @@ class BackStackEntry internal constructor(
         get() = lifecycleRegistry
 
     fun active() {
-        lifecycleRegistry.currentState = Lifecycle.State.Active
+        lifecycleRegistry.updateState(Lifecycle.State.Active)
     }
 
     fun inActive() {
-        lifecycleRegistry.currentState = Lifecycle.State.InActive
+        lifecycleRegistry.updateState(Lifecycle.State.InActive)
         if (_destroyAfterTransition) {
             destroy()
         }
@@ -61,7 +61,7 @@ class BackStackEntry internal constructor(
     }
 
     internal fun destroyDirectly() {
-        lifecycleRegistry.currentState = Lifecycle.State.Destroyed
+        lifecycleRegistry.updateState(Lifecycle.State.Destroyed)
         stateHolder.close()
         parentStateHolder.remove(stateId)
         savedStateHolder.close()
