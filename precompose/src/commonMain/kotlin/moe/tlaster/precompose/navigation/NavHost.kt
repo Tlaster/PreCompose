@@ -164,7 +164,12 @@ fun NavHost(
                     mutableStateOf(SeekableTransitionState(sceneEntry, prevSceneEntry!!))
                 }
                 LaunchedEffect(state.progress) {
-                    transitionState.snapToFraction(state.progress)
+                    if (state.progress == 1f && state.currentValue != DragAnchors.End) {
+                        // reset the state to the initial value
+                        transitionState.animateToCurrentState()
+                    } else {
+                        transitionState.snapToFraction(state.progress)
+                    }
                 }
                 rememberTransition(transitionState, label = "entry")
             } else {
@@ -192,8 +197,8 @@ fun NavHost(
             transition.AnimatedContent(
                 transitionSpec = transitionSpec,
                 contentKey = { it.stateId },
-            ) {
-                NavHostContent(composeStateHolder, it)
+            ) { entry ->
+                NavHostContent(composeStateHolder, entry)
             }
             if (state != null) {
                 DragSlider(
