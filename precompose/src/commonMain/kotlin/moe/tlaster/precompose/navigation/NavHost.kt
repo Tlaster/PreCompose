@@ -8,7 +8,6 @@ import androidx.compose.animation.core.SeekableTransitionState
 import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -183,15 +182,23 @@ fun NavHost(
                     if (navigator.stackManager.contains(initialState) && !showPrev) targetState else initialState
                 }.navTransition ?: navTransition
                 if (!navigator.stackManager.contains(initialState) || showPrev) {
-                    actualTransaction.resumeTransition.togetherWith(actualTransaction.destroyTransition)
-                        .apply {
-                            targetContentZIndex = actualTransaction.enterTargetContentZIndex
-                        }
+                    ContentTransform(
+                        targetContentEnter = actualTransaction.resumeTransition,
+                        initialContentExit = actualTransaction.destroyTransition,
+                        targetContentZIndex = actualTransaction.enterTargetContentZIndex,
+                        // sizeTransform will cause the content to be resized
+                        // when the transition is running with swipe back
+                        // I have no idea why
+                        // And it cost me weeks to figure it out :(
+                        sizeTransform = null,
+                    )
                 } else {
-                    actualTransaction.createTransition.togetherWith(actualTransaction.pauseTransition)
-                        .apply {
-                            targetContentZIndex = actualTransaction.exitTargetContentZIndex
-                        }
+                    ContentTransform(
+                        targetContentEnter = actualTransaction.createTransition,
+                        initialContentExit = actualTransaction.pauseTransition,
+                        targetContentZIndex = actualTransaction.exitTargetContentZIndex,
+                        sizeTransform = null,
+                    )
                 }
             }
             transition.AnimatedContent(
