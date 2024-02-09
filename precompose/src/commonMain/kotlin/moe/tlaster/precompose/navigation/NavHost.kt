@@ -26,16 +26,19 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CancellationException
 import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
 import moe.tlaster.precompose.lifecycle.currentLocalLifecycleOwner
 import moe.tlaster.precompose.navigation.route.ComposeRoute
@@ -114,12 +117,28 @@ fun NavHost(
             .currentSceneBackStackEntry.collectAsState(null)
         val prevSceneEntry by navigator.stackManager
             .prevSceneBackStackEntry.collectAsState(null)
-        BackHandler(canGoBack) {
-            navigator.goBack()
+        var progress by remember { mutableFloatStateOf(0f) }
+        var inPredictiveBack by remember { mutableStateOf(false) }
+        PredictiveBackHandler(canGoBack) { backEvent ->
+            inPredictiveBack = true
+            progress = 0f
+            try {
+                backEvent.collect {
+                    progress = it
+                }
+                if (progress != 1f) {
+                    // play the animation to the end
+                    progress = 1f
+                }
+                // inPredictiveBack = false
+                // navigator.goBack()
+            } catch (e: CancellationException) {
+                inPredictiveBack = false
+            }
         }
         currentSceneEntry?.let { sceneEntry ->
             val actualSwipeProperties = sceneEntry.swipeProperties ?: swipeProperties
-            val state = if (actualSwipeProperties != null) {
+            val state = if (actualSwipeProperties != null && !inPredictiveBack) {
                 val density = LocalDensity.current
                 val width = constraints.maxWidth.toFloat()
                 val state = remember {
@@ -149,16 +168,32 @@ fun NavHost(
             } else {
                 null
             }
-            val showPrev by remember(state) {
+            val showPrev by remember(state, inPredictiveBack, progress, prevSceneEntry) {
                 derivedStateOf {
-                    if (state == null) {
+                    if (state == null && !inPredictiveBack && prevSceneEntry == null) {
                         false
                     } else {
-                        state.offset > 0f
+                        (state != null && state.offset > 0f) || progress > 0f
                     }
                 }
             }
-            val transition = if (showPrev && prevSceneEntry != null && state != null) {
+            val transition = if (showPrev && inPredictiveBack) {
+                val transitionState by remember(sceneEntry) {
+                    mutableStateOf(SeekableTransitionState(sceneEntry, prevSceneEntry!!))
+                }
+                LaunchedEffect(progress) {
+                    if (progress == 1f && inPredictiveBack) {
+                        // play the animation to the end
+                        transitionState.animateToTargetState()
+                        inPredictiveBack = false
+                        navigator.goBack()
+                        progress = 0f
+                    } else {
+                        transitionState.snapToFraction(progress)
+                    }
+                }
+                rememberTransition(transitionState, label = "entry")
+            } else if (showPrev && state != null) {
                 val transitionState by remember(sceneEntry) {
                     mutableStateOf(SeekableTransitionState(sceneEntry, prevSceneEntry!!))
                 }

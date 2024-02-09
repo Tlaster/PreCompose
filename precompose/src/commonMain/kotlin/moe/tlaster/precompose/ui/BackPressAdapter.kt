@@ -21,6 +21,24 @@ class BackDispatcher {
         }?.handleBackPress()
     }
 
+    fun onBackProgressed(progress: Float) {
+        handlers.lastOrNull {
+            it.isEnabled
+        }?.handleBackProgressed(progress)
+    }
+
+    fun onBackCancelled() {
+        handlers.lastOrNull {
+            it.isEnabled
+        }?.handleBackCancelled()
+    }
+
+    fun onBackStarted() {
+        handlers.lastOrNull {
+            it.isEnabled
+        }?.handleBackStarted()
+    }
+
     private val canHandleBackPressFlow = MutableStateFlow(0)
     val canHandleBackPress: Flow<Boolean> = canHandleBackPressFlow.map {
         handlers.any { it.isEnabled }
@@ -44,6 +62,9 @@ class BackDispatcher {
 interface BackHandler {
     val isEnabled: Boolean
     fun handleBackPress()
+    fun handleBackProgressed(progress: Float)
+    fun handleBackCancelled()
+    fun handleBackStarted()
 }
 
 internal class DefaultBackHandler(
@@ -52,5 +73,14 @@ internal class DefaultBackHandler(
 ) : BackHandler {
     override fun handleBackPress() {
         onBackPress()
+    }
+
+    override fun handleBackCancelled() {
+    }
+
+    override fun handleBackStarted() {
+    }
+
+    override fun handleBackProgressed(progress: Float) {
     }
 }

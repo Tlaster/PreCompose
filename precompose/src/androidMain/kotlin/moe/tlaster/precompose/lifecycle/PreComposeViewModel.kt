@@ -1,5 +1,6 @@
 package moe.tlaster.precompose.lifecycle
 
+import androidx.activity.BackEventCompat
 import androidx.activity.OnBackPressedCallback
 import moe.tlaster.precompose.stateholder.StateHolder
 import moe.tlaster.precompose.ui.BackDispatcher
@@ -25,6 +26,18 @@ internal class PreComposeViewModel :
     val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             backDispatcher.onBackPress()
+        }
+
+        override fun handleOnBackStarted(backEvent: BackEventCompat) {
+            backDispatcher.onBackStarted()
+        }
+
+        override fun handleOnBackProgressed(backEvent: BackEventCompat) {
+            backDispatcher.onBackProgressed(backEvent.progress)
+        }
+
+        override fun handleOnBackCancelled() {
+            backDispatcher.onBackCancelled()
         }
     }
 
