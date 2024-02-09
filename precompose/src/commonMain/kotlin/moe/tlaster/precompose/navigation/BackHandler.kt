@@ -126,7 +126,6 @@ fun PredictiveBackHandler(
             override fun handleBackCancelled() {
                 // cancel will purge the channel of any sent events that are yet to be received
                 onBackInstance?.cancel()
-                println("cancelled")
             }
         }
     }
