@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -158,7 +157,6 @@ fun NavHost(
                     state.currentValue,
                     state.isAnimationRunning,
                 ) {
-                    navigator.stackManager.canNavigate = !state.isAnimationRunning
                     if (state.currentValue == DragAnchors.End && !state.isAnimationRunning) {
                         navigator.goBack()
                         state.snapTo(DragAnchors.Start)
@@ -209,8 +207,10 @@ fun NavHost(
             } else {
                 updateTransition(sceneEntry, label = "entry")
             }
-            SideEffect {
+            // seems like #226 still can be fixed by this
+            DisposableEffect(transition.isRunning) {
                 navigator.stackManager.canNavigate = !transition.isRunning
+                onDispose { }
             }
             val transitionSpec: AnimatedContentTransitionScope<BackStackEntry>.() -> ContentTransform = {
                 val actualTransaction = run {
