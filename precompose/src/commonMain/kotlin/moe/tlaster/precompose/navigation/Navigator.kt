@@ -112,16 +112,14 @@ class Navigator {
     /**
      * Go back to a specific destination.
      * @param popUpTo: the destination to pop back to.
-     * @param inclusive: includes the destination to pop back to in the back stack.
      */
     fun goBack(
         popUpTo: PopUpTo,
-        inclusive: Boolean,
     ) {
         if (!_initialized) {
             return
         }
-        stackManager.popWithOptions(popUpTo, inclusive)
+        stackManager.popWithOptions(popUpTo)
     }
 
     /**
