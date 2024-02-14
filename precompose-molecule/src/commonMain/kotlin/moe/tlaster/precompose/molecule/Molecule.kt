@@ -55,7 +55,7 @@ private fun <E> rememberAction(
 ): Pair<Channel<E>, Flow<E>> {
     val stateHolder = LocalStateHolder.current
     val key = remember(keys) {
-        (keys.map { it.hashCode().toString() } + ActionViewHolder::class.simpleName).joinToString()
+        (keys.map { it.hashCode().toString() } + ActionViewHolder::class.qualifiedName).joinToString()
     }
     return stateHolder.getOrPut(key) {
         ActionViewHolder<E>()
@@ -77,7 +77,7 @@ private fun <T> rememberPresenterState(
 ): StateFlow<T> {
     val stateHolder = LocalStateHolder.current
     val key = remember(keys) {
-        (keys.map { it.hashCode().toString() } + PresenterHolder::class.simpleName).joinToString()
+        (keys.map { it.hashCode().toString() } + PresenterHolder::class.qualifiedName).joinToString()
     }
     return stateHolder.getOrPut(key) {
         PresenterHolder(useImmediateClock, body)

@@ -39,7 +39,7 @@ private fun <T : ViewModel> resolveViewModel(
     scope: Scope,
     parameters: ParametersDefinition? = null,
 ): T {
-    return stateHolder.getOrPut(qualifier?.value ?: key ?: vmClass.simpleName ?: "") {
+    return stateHolder.getOrPut(qualifier?.value ?: key ?: vmClass.qualifiedName ?: "") {
         scope.get(vmClass, qualifier, parameters)
     }
 }

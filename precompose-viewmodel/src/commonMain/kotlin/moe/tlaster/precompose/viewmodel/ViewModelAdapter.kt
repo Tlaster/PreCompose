@@ -45,7 +45,7 @@ private fun <T : ViewModel> StateHolder.getViewModel(
     modelClass: KClass<T>,
     creator: () -> T,
 ): T {
-    val key = (keys.map { it.hashCode().toString() } + modelClass.simpleName).joinToString()
+    val key = (keys.map { it.hashCode().toString() } + modelClass.qualifiedName).joinToString()
     return this.getOrPut(key) {
         creator()
     }
