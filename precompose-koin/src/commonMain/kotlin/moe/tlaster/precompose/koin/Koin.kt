@@ -1,6 +1,7 @@
 package moe.tlaster.precompose.koin
 
 import androidx.compose.runtime.Composable
+import moe.tlaster.precompose.reflect.canonicalName
 import moe.tlaster.precompose.stateholder.LocalStateHolder
 import moe.tlaster.precompose.stateholder.StateHolder
 import moe.tlaster.precompose.viewmodel.ViewModel
@@ -39,7 +40,7 @@ private fun <T : ViewModel> resolveViewModel(
     scope: Scope,
     parameters: ParametersDefinition? = null,
 ): T {
-    return stateHolder.getOrPut(qualifier?.value ?: key ?: vmClass.qualifiedName ?: "") {
+    return stateHolder.getOrPut(qualifier?.value ?: key ?: vmClass.canonicalName ?: "") {
         scope.get(vmClass, qualifier, parameters)
     }
 }

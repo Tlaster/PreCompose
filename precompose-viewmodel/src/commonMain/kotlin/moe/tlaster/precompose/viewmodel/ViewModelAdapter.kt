@@ -2,6 +2,7 @@ package moe.tlaster.precompose.viewmodel
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import moe.tlaster.precompose.reflect.canonicalName
 import moe.tlaster.precompose.stateholder.LocalSavedStateHolder
 import moe.tlaster.precompose.stateholder.LocalStateHolder
 import moe.tlaster.precompose.stateholder.SavedStateHolder
@@ -45,7 +46,7 @@ private fun <T : ViewModel> StateHolder.getViewModel(
     modelClass: KClass<T>,
     creator: () -> T,
 ): T {
-    val key = (keys.map { it.hashCode().toString() } + modelClass.qualifiedName).joinToString()
+    val key = (keys.map { it.hashCode().toString() } + modelClass.canonicalName).joinToString()
     return this.getOrPut(key) {
         creator()
     }

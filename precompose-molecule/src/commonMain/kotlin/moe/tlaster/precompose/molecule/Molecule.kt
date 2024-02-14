@@ -15,6 +15,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.consumeAsFlow
+import moe.tlaster.precompose.reflect.canonicalName
 import moe.tlaster.precompose.stateholder.LocalStateHolder
 import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.coroutines.CoroutineContext
@@ -55,7 +56,7 @@ private fun <E> rememberAction(
 ): Pair<Channel<E>, Flow<E>> {
     val stateHolder = LocalStateHolder.current
     val key = remember(keys) {
-        (keys.map { it.hashCode().toString() } + ActionViewHolder::class.qualifiedName).joinToString()
+        (keys.map { it.hashCode().toString() } + ActionViewHolder::class.canonicalName).joinToString()
     }
     return stateHolder.getOrPut(key) {
         ActionViewHolder<E>()
@@ -77,7 +78,7 @@ private fun <T> rememberPresenterState(
 ): StateFlow<T> {
     val stateHolder = LocalStateHolder.current
     val key = remember(keys) {
-        (keys.map { it.hashCode().toString() } + PresenterHolder::class.qualifiedName).joinToString()
+        (keys.map { it.hashCode().toString() } + PresenterHolder::class.canonicalName).joinToString()
     }
     return stateHolder.getOrPut(key) {
         PresenterHolder(useImmediateClock, body)
