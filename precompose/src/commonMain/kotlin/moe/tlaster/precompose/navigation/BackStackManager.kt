@@ -188,7 +188,6 @@ internal class BackStackManager : LifecycleObserver {
 
     fun popWithOptions(
         popUpTo: PopUpTo,
-        inclusive: Boolean,
     ) {
         if (!canNavigate) {
             return
@@ -206,7 +205,7 @@ internal class BackStackManager : LifecycleObserver {
                 0
             }
         }.let {
-            if (inclusive) it else it + 1
+            if (popUpTo.inclusive) it else it + 1
         }.let {
             max(it, 0)
         }
