@@ -561,7 +561,7 @@ class BackStackManagerTest {
         manager.push("screen2")
         manager.push("screen3")
 
-        manager.popWithOptions(PopUpTo("screen1"), inclusive = false)
+        manager.popWithOptions(PopUpTo("screen1", inclusive = false))
 
         assertEquals(
             listOf("screen1"),
@@ -598,7 +598,7 @@ class BackStackManagerTest {
         manager.push("screen2")
         manager.push("screen3")
 
-        manager.popWithOptions(PopUpTo("screen2"), inclusive = true)
+        manager.popWithOptions(PopUpTo("screen2", inclusive = true))
 
         assertEquals(
             listOf("screen1"),
