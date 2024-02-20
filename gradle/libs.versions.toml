@@ -15,8 +15,8 @@ kotlinxCoroutinesCore = "1.8.0-RC2"
 moleculeRuntime = "1.3.2"
 savedstateKtx = "1.2.1"
 spotless = "6.25.0"
-jetbrainsComposePlugin = "1.6.0-rc01"
-skiko = "0.7.90"
+jetbrainsComposePlugin = "1.6.0-rc02"
+skiko = "0.7.93"
 koin = "3.6.0-wasm-alpha2"
 
 [libraries]
