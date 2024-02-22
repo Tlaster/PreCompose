@@ -233,6 +233,9 @@ fun NavHost(
             .currentFloatingBackStackEntry.collectAsState(null)
         currentFloatingEntry?.let {
             AnimatedContent(it, transitionSpec = transitionSpec) { entry ->
+                SideEffect {
+                    navigator.stackManager.canNavigate = !transition.isRunning
+                }
                 NavHostContent(composeStateHolder, entry)
             }
         }
