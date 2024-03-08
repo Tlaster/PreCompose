@@ -1,6 +1,7 @@
 package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Composable
+import kotlinx.coroutines.flow.map
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.stateholder.SavedStateHolder
 import moe.tlaster.precompose.stateholder.StateHolder
@@ -148,4 +149,9 @@ class Navigator {
      * @ return Returns the previous navigation back stack entry.
      */
     val previousEntry = stackManager.prevBackStackEntry
+
+    /**
+     * Number of routes in the back stack
+     */
+    val backStackCount = stackManager.backStacks.map { it.size }
 }
