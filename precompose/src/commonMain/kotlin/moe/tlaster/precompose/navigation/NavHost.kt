@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -43,6 +42,7 @@ import kotlinx.coroutines.CancellationException
 import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
 import moe.tlaster.precompose.lifecycle.currentLocalLifecycleOwner
 import moe.tlaster.precompose.navigation.route.ComposeRoute
+import moe.tlaster.precompose.navigation.route.FloatingRoute
 import moe.tlaster.precompose.navigation.route.GroupRoute
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import moe.tlaster.precompose.stateholder.LocalSavedStateHolder
@@ -169,9 +169,9 @@ fun NavHost(
             } else {
                 null
             }
-            val showPrev by remember(state, inPredictiveBack, progress, prevSceneEntry) {
+            val showPrev by remember(state, inPredictiveBack, progress, prevSceneEntry, currentEntry) {
                 derivedStateOf {
-                    if (state == null && !inPredictiveBack && prevSceneEntry == null) {
+                    if (state == null && !inPredictiveBack && prevSceneEntry == null || currentEntry?.route is FloatingRoute) {
                         false
                     } else {
                         (state != null && state.offset > 0f) || progress > 0f
@@ -209,11 +209,6 @@ fun NavHost(
                 rememberTransition(transitionState, label = "entry")
             } else {
                 updateTransition(sceneEntry, label = "entry")
-            }
-            // seems like #226 still can be fixed by this
-            DisposableEffect(transition.isRunning) {
-                navigator.stackManager.canNavigate = !transition.isRunning
-                onDispose { }
             }
             val transitionSpec: AnimatedContentTransitionScope<BackStackEntry>.() -> ContentTransform = {
                 val actualTransaction = run {
@@ -255,10 +250,10 @@ fun NavHost(
         val currentFloatingEntry by navigator.stackManager
             .currentFloatingBackStackEntry.collectAsState(null)
         currentFloatingEntry?.let {
-            AnimatedContent(it) { entry ->
-                SideEffect {
-                    navigator.stackManager.canNavigate = !transition.isRunning
-                }
+            AnimatedContent(
+                it,
+                contentKey = { it.stateId },
+            ) { entry ->
                 NavHostContent(composeStateHolder, entry)
             }
         }

@@ -1,3 +1,6 @@
+import org.jetbrains.compose.ExperimentalComposeLibrary
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import java.util.Properties
 
 plugins {
@@ -20,6 +23,16 @@ kotlin {
     iosSimulatorArm64()
     androidTarget {
         publishLibraryVariants("release", "debug")
+
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        instrumentedTestVariant {
+            sourceSetTree.set(KotlinSourceSetTree.test)
+
+            dependencies {
+                implementation("androidx.compose.ui:ui-test-junit4-android:1.5.4")
+                debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.4")
+            }
+        }
     }
     jvm {
         compilations.all {
@@ -43,6 +56,7 @@ kotlin {
                 compileOnly(compose.animation)
                 compileOnly(compose.material)
                 api(libs.kotlinx.coroutines.core)
+                implementation(libs.uuid)
             }
         }
         val commonTest by getting {
@@ -52,6 +66,8 @@ kotlin {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
                 implementation(libs.kotlinx.coroutines.test)
+                @OptIn(ExperimentalComposeLibrary::class)
+                implementation(compose.uiTest)
                 // @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 // implementation(compose.uiTestJUnit4)
             }
@@ -95,6 +111,7 @@ kotlin {
                 implementation(kotlin("test-junit5"))
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
+                implementation(compose.desktop.currentOs)
             }
         }
         val jsMain by getting {
@@ -135,6 +152,7 @@ android {
     namespace = "moe.tlaster.precompose"
     defaultConfig {
         minSdk = rootProject.extra.get("androidMinSdk") as Int
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.toVersion(rootProject.extra.get("jvmTarget") as String)

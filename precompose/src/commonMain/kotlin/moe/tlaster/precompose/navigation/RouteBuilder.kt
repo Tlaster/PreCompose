@@ -1,9 +1,6 @@
 package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import moe.tlaster.precompose.navigation.route.FloatingRoute
 import moe.tlaster.precompose.navigation.route.GroupRoute
 import moe.tlaster.precompose.navigation.route.Route
@@ -14,24 +11,6 @@ class RouteBuilder(
     private val initialRoute: String,
 ) {
     private val route = arrayListOf<Route>()
-
-    private fun sceneInternal(
-        route: String,
-        deepLinks: List<String>,
-        navTransition: NavTransition?,
-        swipeProperties: SwipeProperties?,
-        content: @Composable (State<BackStackEntry>) -> Unit,
-    ) {
-        addRoute(
-            SceneRoute(
-                route = route,
-                navTransition = navTransition,
-                deepLinks = deepLinks,
-                swipeProperties = swipeProperties,
-                content = { content(remember { mutableStateOf(it) }) },
-            ),
-        )
-    }
 
     /**
      * Add the scene [Composable] to the [RouteBuilder]
@@ -47,12 +26,14 @@ class RouteBuilder(
         swipeProperties: SwipeProperties? = null,
         content: @Composable (BackStackEntry) -> Unit,
     ) {
-        sceneInternal(
-            route = route,
-            navTransition = navTransition,
-            deepLinks = deepLinks,
-            swipeProperties = swipeProperties,
-            content = { content(it.value) },
+        addRoute(
+            SceneRoute(
+                route = route,
+                navTransition = navTransition,
+                deepLinks = deepLinks,
+                swipeProperties = swipeProperties,
+                content = content,
+            ),
         )
     }
 
@@ -95,18 +76,6 @@ class RouteBuilder(
         )
     }
 
-    private fun floatingInternal(
-        route: String,
-        content: @Composable (State<BackStackEntry>) -> Unit,
-    ) {
-        addRoute(
-            FloatingRoute(
-                route = route,
-                content = { content(remember { mutableStateOf(it) }) },
-            ),
-        )
-    }
-
     /**
      * Add the floating [Composable] to the [RouteBuilder], which will show over the scene
      * @param route route for the destination
@@ -116,9 +85,11 @@ class RouteBuilder(
         route: String,
         content: @Composable (BackStackEntry) -> Unit,
     ) {
-        floatingInternal(
-            route = route,
-            content = { content(it.value) },
+        addRoute(
+            FloatingRoute(
+                route = route,
+                content = content,
+            ),
         )
     }
 

@@ -1,5 +1,6 @@
 package moe.tlaster.precompose.navigation
 
+import com.benasher44.uuid.uuid4
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
@@ -23,7 +24,10 @@ class BackStackEntry internal constructor(
         get() = routeInternal
     internal var uiClosable: UiClosable? = null
     private var _destroyAfterTransition = false
-    internal val stateId = "$id-${route.route}"
+    private val IdKey = "$id-SaveableStateHolder_BackStackEntryKey"
+    internal val stateId = parentStateHolder.getOrPut(IdKey) {
+        uuid4().toString()
+    }
     val stateHolder: StateHolder = parentStateHolder.getOrPut(stateId) {
         StateHolder()
     }
@@ -64,6 +68,7 @@ class BackStackEntry internal constructor(
         lifecycleRegistry.updateState(Lifecycle.State.Destroyed)
         stateHolder.close()
         parentStateHolder.remove(stateId)
+        parentStateHolder.remove(IdKey)
         savedStateHolder.close()
         uiClosable?.close(stateId)
     }

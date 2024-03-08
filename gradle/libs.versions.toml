@@ -18,6 +18,7 @@ spotless = "6.25.0"
 jetbrainsComposePlugin = "1.6.0"
 skiko = "0.7.93"
 koin = "3.6.0-alpha3"
+uuid = "0.8.2"
 
 [libraries]
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidxActivityVer" }
@@ -41,6 +42,7 @@ skiko = { module = "org.jetbrains.skiko:skiko", version.ref = "skiko" }
 skiko-js = { module = "org.jetbrains.skiko:skiko-js-wasm-runtime", version.ref = "skiko" }
 koin = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version = "1.2.0-alpha3" }
+uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

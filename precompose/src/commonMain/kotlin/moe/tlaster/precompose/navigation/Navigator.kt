@@ -1,7 +1,6 @@
 package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshotFlow
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.stateholder.SavedStateHolder
 import moe.tlaster.precompose.stateholder.StateHolder
@@ -149,10 +148,4 @@ class Navigator {
      * @ return Returns the previous navigation back stack entry.
      */
     val previousEntry = stackManager.prevBackStackEntry
-
-    /**
-     * Check if navigator can navigate, it will be false when performing navigation animation.
-     * @return Returns true if navigator can perform navigation, false otherwise.
-     */
-    val canNavigate = snapshotFlow { stackManager.canNavigate }
 }
