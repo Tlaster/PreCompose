@@ -122,28 +122,26 @@ fun NavHost(
         var progress by remember { mutableFloatStateOf(0f) }
         var inPredictiveBack by remember { mutableStateOf(false) }
         PredictiveBackHandler(canGoBack) { backEvent ->
-            inPredictiveBack = true
             progress = 0f
             try {
                 backEvent.collect {
                     progress = it
+                    inPredictiveBack = it > 0
                 }
                 if (progress != 1f) {
                     // play the animation to the end
                     progress = 1f
                 }
-                // inPredictiveBack = false
-                // navigator.goBack()
             } catch (e: CancellationException) {
                 inPredictiveBack = false
             }
         }
         currentSceneEntry?.let { sceneEntry ->
             val actualSwipeProperties = sceneEntry.swipeProperties ?: swipeProperties
-            val state = if (actualSwipeProperties != null && !inPredictiveBack) {
+            val state = if (actualSwipeProperties != null) {
                 val density = LocalDensity.current
                 val width = constraints.maxWidth.toFloat()
-                val state = remember {
+                remember {
                     AnchoredDraggableState(
                         initialValue = DragAnchors.Start,
                         anchors = DraggableAnchors {
@@ -154,56 +152,55 @@ fun NavHost(
                         velocityThreshold = { actualSwipeProperties.velocityThreshold.invoke(density) },
                         animationSpec = tween(),
                     )
-                }
-
-                LaunchedEffect(
-                    state.currentValue,
-                    state.isAnimationRunning,
-                ) {
-                    if (state.currentValue == DragAnchors.End && !state.isAnimationRunning) {
-                        navigator.goBack()
-                        state.snapTo(DragAnchors.Start)
+                }.also { state ->
+                    LaunchedEffect(
+                        state.currentValue,
+                        state.isAnimationRunning,
+                    ) {
+                        if (state.currentValue == DragAnchors.End && !state.isAnimationRunning) {
+                            // play the animation to the end
+                            progress = 1f
+                            state.snapTo(DragAnchors.Start)
+                        }
+                    }
+                    LaunchedEffect(state.progress) {
+                        if (state.progress != 1f) {
+                            inPredictiveBack = state.progress > 0f
+                            progress = state.progress
+                        } else if (state.currentValue != DragAnchors.End && inPredictiveBack) {
+                            // reset the state to the initial value
+                            progress = -1f
+                        }
                     }
                 }
-                state
             } else {
                 null
             }
-            val showPrev by remember(state, inPredictiveBack, progress, prevSceneEntry, currentEntry) {
+            val showPrev by remember(inPredictiveBack, prevSceneEntry, currentEntry) {
                 derivedStateOf {
-                    if (state == null && !inPredictiveBack && prevSceneEntry == null || currentEntry?.route is FloatingRoute) {
-                        false
-                    } else {
-                        (state != null && state.offset > 0f) || progress > 0f
-                    }
+                    inPredictiveBack &&
+                        prevSceneEntry != null &&
+                        currentEntry?.route !is FloatingRoute
                 }
             }
-            val transition = if (showPrev && inPredictiveBack) {
+            val transition = if (showPrev) {
                 val transitionState by remember(sceneEntry) {
                     mutableStateOf(SeekableTransitionState(sceneEntry, prevSceneEntry!!))
                 }
                 LaunchedEffect(progress) {
-                    if (progress == 1f && inPredictiveBack) {
+                    if (progress == 1f) {
                         // play the animation to the end
                         transitionState.animateToTargetState()
                         inPredictiveBack = false
                         navigator.goBack()
                         progress = 0f
-                    } else {
+                    } else if (progress >= 0) {
                         transitionState.snapToFraction(progress)
-                    }
-                }
-                rememberTransition(transitionState, label = "entry")
-            } else if (showPrev && state != null) {
-                val transitionState by remember(sceneEntry) {
-                    mutableStateOf(SeekableTransitionState(sceneEntry, prevSceneEntry!!))
-                }
-                LaunchedEffect(state.progress) {
-                    if (state.progress == 1f && state.currentValue != DragAnchors.End) {
+                    } else if (progress == -1f) {
                         // reset the state to the initial value
                         transitionState.animateToCurrentState()
-                    } else {
-                        transitionState.snapToFraction(state.progress)
+                        inPredictiveBack = false
+                        progress = 0f
                     }
                 }
                 rememberTransition(transitionState, label = "entry")
