@@ -1,5 +1,6 @@
 package moe.tlaster.precompose.navigation
 
+import com.benasher44.uuid.uuid4
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.test.Test
@@ -12,7 +13,7 @@ class BackStackEntryTest {
     fun testActive() {
         val parentStateHolder = StateHolder()
         val entry = BackStackEntry(
-            0L,
+            uuid4().toString(),
             TestRoute("foo/bar", "foo/bar"),
             "foo/bar",
             emptyMap(),
@@ -29,7 +30,7 @@ class BackStackEntryTest {
     fun testInActive() {
         val parentStateHolder = StateHolder()
         val entry = BackStackEntry(
-            0L,
+            uuid4().toString(),
             TestRoute("foo/bar", "foo/bar"),
             "foo/bar",
             emptyMap(),
@@ -47,7 +48,7 @@ class BackStackEntryTest {
     fun testDestroy() {
         val parentStateHolder = StateHolder()
         val entry = BackStackEntry(
-            0L,
+            uuid4().toString(),
             TestRoute("foo/bar", "foo/bar"),
             "foo/bar",
             emptyMap(),
@@ -67,7 +68,7 @@ class BackStackEntryTest {
     fun testDestroyAfterTransition() {
         val parentStateHolder = StateHolder()
         val entry = BackStackEntry(
-            0L,
+            uuid4().toString(),
             TestRoute("foo/bar", "foo/bar"),
             "foo/bar",
             emptyMap(),

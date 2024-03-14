@@ -1,6 +1,7 @@
 package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Stable
+import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -119,11 +120,11 @@ internal class BackStackManager : LifecycleObserver {
         ) {
             currentBackStacks.firstOrNull { it.hasRoute(matchResult.route.route, path, options.includePath) }
                 ?.let { entry ->
-                    backStacks.value = backStacks.value.filter { it.id != entry.id } + entry
+                    backStacks.value = backStacks.value.filter { it.stateId != entry.stateId } + entry
                 }
         } else {
             backStacks.value += BackStackEntry(
-                id = (backStacks.value.lastOrNull()?.id ?: 0L) + 1,
+                stateId = uuid4().toString(),
                 routeInternal = matchResult.route,
                 pathMap = matchResult.pathMap,
                 queryString = query.takeIf { it.isNotEmpty() }?.let {
