@@ -728,4 +728,33 @@ class BackStackManagerTest {
         manager.push("screen3")
         assertNotEquals(stateId, manager.backStacks.value.last().stateId)
     }
+
+    @Test
+    fun testStateIdWithoutDestroy() {
+        val manager = BackStackManager()
+        val lifecycleOwner = TestLifecycleOwner()
+        val saveableStateHolder = TestSavedStateHolder()
+        manager.init(
+            stateHolder = StateHolder(),
+            savedStateHolder = saveableStateHolder,
+            lifecycleOwner = lifecycleOwner,
+        )
+        manager.setRouteGraph(
+            routeGraph = RouteGraph(
+                "screen1",
+                listOf(
+                    TestRoute("screen1", "screen1"),
+                    TestRoute("screen2", "screen2"),
+                    TestRoute("screen3", "screen3"),
+                ),
+            ),
+        )
+        manager.push("screen2")
+        manager.push("screen3")
+        val lastEntry = manager.backStacks.value.last()
+        val stateId = lastEntry.stateId
+        manager.pop()
+        manager.push("screen3")
+        assertNotEquals(stateId, manager.backStacks.value.last().stateId)
+    }
 }
