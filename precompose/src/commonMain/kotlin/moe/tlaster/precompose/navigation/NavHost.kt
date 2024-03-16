@@ -3,7 +3,6 @@ package moe.tlaster.precompose.navigation
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.animation.core.SeekableTransitionState
 import androidx.compose.animation.core.rememberTransition
@@ -68,7 +67,6 @@ import moe.tlaster.precompose.stateholder.currentLocalStateHolder
 @OptIn(
     ExperimentalTransitionApi::class,
     ExperimentalFoundationApi::class,
-    ExperimentalAnimationApi::class,
 )
 @Composable
 fun NavHost(
@@ -122,11 +120,11 @@ fun NavHost(
         var progress by remember { mutableFloatStateOf(0f) }
         var inPredictiveBack by remember { mutableStateOf(false) }
         PredictiveBackHandler(canGoBack) { backEvent ->
+            inPredictiveBack = true
             progress = 0f
             try {
                 backEvent.collect {
                     progress = it
-                    inPredictiveBack = it > 0
                 }
                 if (progress != 1f) {
                     // play the animation to the end
@@ -179,6 +177,7 @@ fun NavHost(
             val showPrev by remember(inPredictiveBack, prevSceneEntry, currentEntry) {
                 derivedStateOf {
                     inPredictiveBack &&
+                        progress != 0f &&
                         prevSceneEntry != null &&
                         currentEntry?.route !is FloatingRoute
                 }
