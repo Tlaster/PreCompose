@@ -11,7 +11,7 @@ import moe.tlaster.precompose.stateholder.SavedStateHolder
 import moe.tlaster.precompose.stateholder.StateHolder
 
 class BackStackEntry internal constructor(
-    val id: Long,
+    internal val stateId: String,
     internal var routeInternal: Route,
     val path: String,
     val pathMap: Map<String, String>,
@@ -23,7 +23,6 @@ class BackStackEntry internal constructor(
         get() = routeInternal
     internal var uiClosable: UiClosable? = null
     private var _destroyAfterTransition = false
-    internal val stateId = "$id-${route.route}"
     val stateHolder: StateHolder = parentStateHolder.getOrPut(stateId) {
         StateHolder()
     }

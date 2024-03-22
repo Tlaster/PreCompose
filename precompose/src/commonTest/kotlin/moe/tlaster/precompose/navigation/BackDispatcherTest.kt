@@ -15,10 +15,16 @@ class BackDispatcherTest {
         val handler1 = object : BackHandler {
             override val isEnabled = true
             override fun handleBackPress() {}
+            override fun handleBackProgressed(progress: Float) {}
+            override fun handleBackCancelled() {}
+            override fun handleBackStarted() {}
         }
         val handler2 = object : BackHandler {
             override val isEnabled = true
             override fun handleBackPress() {}
+            override fun handleBackProgressed(progress: Float) {}
+            override fun handleBackCancelled() {}
+            override fun handleBackStarted() {}
         }
         dispatcher.register(handler1)
         dispatcher.register(handler2)
@@ -34,10 +40,16 @@ class BackDispatcherTest {
         val handler1 = object : BackHandler {
             override val isEnabled = true
             override fun handleBackPress() {}
+            override fun handleBackProgressed(progress: Float) {}
+            override fun handleBackCancelled() {}
+            override fun handleBackStarted() {}
         }
         val handler2 = object : BackHandler {
             override val isEnabled = true
             override fun handleBackPress() {}
+            override fun handleBackProgressed(progress: Float) {}
+            override fun handleBackCancelled() {}
+            override fun handleBackStarted() {}
         }
         dispatcher.register(handler1)
         dispatcher.register(handler2)

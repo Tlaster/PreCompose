@@ -3,31 +3,18 @@
 package moe.tlaster.precompose
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.createSkiaLayer
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.native.ComposeLayer
-import androidx.compose.ui.node.LayoutNode
-import androidx.compose.ui.platform.AccessibilityController
-import androidx.compose.ui.platform.DefaultInputModeManager
-import androidx.compose.ui.platform.EmptyFocusManager
 import androidx.compose.ui.platform.MacosTextInputService
-import androidx.compose.ui.platform.Platform
-import androidx.compose.ui.platform.TextToolbar
-import androidx.compose.ui.platform.TextToolbarStatus
-import androidx.compose.ui.platform.ViewConfiguration
+import androidx.compose.ui.platform.PlatformContext
 import androidx.compose.ui.platform.WindowInfoImpl
-import androidx.compose.ui.semantics.SemanticsOwner
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.dp
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
 import kotlinx.cinterop.useContents
+import org.jetbrains.skiko.SkiaLayer
+import org.jetbrains.skiko.SkikoInput
 import platform.AppKit.NSBackingStoreBuffered
 import platform.AppKit.NSWindow
 import platform.AppKit.NSWindowDelegateProtocol
@@ -62,53 +49,22 @@ internal class ComposeWindow(
         )
     }
     private val macosTextInputService = MacosTextInputService()
-    private val platform: Platform = object : Platform {
-        override val windowInfo = WindowInfoImpl().apply {
-            // true is a better default if platform doesn't provide WindowInfo.
-            // otherwise UI will be rendered always in unfocused mode
-            // (hidden textfield cursor, gray titlebar, etc)
-            isWindowFocused = true
-        }
-
-        override var dialogScrimBlendMode by mutableStateOf(BlendMode.SrcOver)
-
-        override val inputModeManager = DefaultInputModeManager()
-        override val focusManager = EmptyFocusManager
-
-        override fun requestFocusForOwner() = false
-
-        override fun accessibilityController(owner: SemanticsOwner) = object : AccessibilityController {
-            override fun onSemanticsChange() = Unit
-            override fun onLayoutChange(layoutNode: LayoutNode) = Unit
-            override suspend fun syncLoop() = Unit
-        }
-
-        override fun setPointerIcon(pointerIcon: PointerIcon) = Unit
-        override val viewConfiguration = object : ViewConfiguration {
-            override val longPressTimeoutMillis: Long = 500
-            override val doubleTapTimeoutMillis: Long = 300
-            override val doubleTapMinTimeMillis: Long = 40
-            override val touchSlop: Float get() = with(density) { 18.dp.toPx() }
-        }
-        override val textToolbar: TextToolbar = object : TextToolbar {
-            override fun hide() = Unit
-            override val status: TextToolbarStatus = TextToolbarStatus.Hidden
-            override fun showMenu(
-                rect: Rect,
-                onCopyRequested: (() -> Unit)?,
-                onPasteRequested: (() -> Unit)?,
-                onCutRequested: (() -> Unit)?,
-                onSelectAllRequested: (() -> Unit)?,
-            ) = Unit
-        }
-
-        override val textInputService = macosTextInputService
+    private val _windowInfo = WindowInfoImpl().apply {
+        isWindowFocused = true
     }
 
-    val layer = ComposeLayer(
-        layer = createSkiaLayer(),
-        platform = platform,
-        input = macosTextInputService.input,
+    @OptIn(InternalComposeUiApi::class)
+    private val platformContext: PlatformContext =
+        object : PlatformContext by PlatformContext.Empty {
+            override val windowInfo get() = _windowInfo
+            override val textInputService get() = macosTextInputService
+        }
+
+    @OptIn(InternalComposeUiApi::class)
+    private val layer = ComposeLayer(
+        layer = SkiaLayer(),
+        platformContext = platformContext,
+        input = SkikoInput.Empty,
     )
     val title: String
         get() = nsWindow.title()

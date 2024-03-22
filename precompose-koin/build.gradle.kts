@@ -12,7 +12,6 @@ group = "moe.tlaster"
 version = rootProject.extra.get("precomposeVersion") as String
 
 kotlin {
-
     applyDefaultHierarchyTemplate {
         common {
             group("jvmAndroid") {
@@ -40,6 +39,10 @@ kotlin {
     iosSimulatorArm64()
     js(IR) {
         browser()
+    }
+    wasmJs {
+        browser()
+        binaries.executable()
     }
     sourceSets {
         val commonMain by getting {
@@ -106,6 +109,10 @@ kotlin {
     }
 }
 
+// adding it here to make sure skiko is unpacked and available in web tests
+compose.experimental {
+    web.application {}
+}
 android {
     compileSdk = rootProject.extra.get("android-compile") as Int
     buildToolsVersion = rootProject.extra.get("android-build-tools") as String
