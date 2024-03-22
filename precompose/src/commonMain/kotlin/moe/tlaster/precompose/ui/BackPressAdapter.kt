@@ -14,29 +14,36 @@ interface BackDispatcherOwner {
 class BackDispatcher {
     // internal for testing
     internal val handlers = arrayListOf<BackHandler>()
+    private var inProgressHandler: BackHandler? = null
 
     fun onBackPress() {
-        handlers.lastOrNull {
-            it.isEnabled
-        }?.handleBackPress()
+        val handler = currentHandler()
+        inProgressHandler = null
+        handler?.handleBackPress()
     }
 
     fun onBackProgressed(progress: Float) {
-        handlers.lastOrNull {
-            it.isEnabled
-        }?.handleBackProgressed(progress)
+        currentHandler()?.handleBackProgressed(progress)
     }
 
     fun onBackCancelled() {
-        handlers.lastOrNull {
-            it.isEnabled
-        }?.handleBackCancelled()
+        val handler = currentHandler()
+        inProgressHandler = null
+        handler?.handleBackCancelled()
     }
 
     fun onBackStarted() {
-        handlers.lastOrNull {
+        val handler = handlers.lastOrNull {
             it.isEnabled
-        }?.handleBackStarted()
+        }
+        inProgressHandler = handler
+        handler?.handleBackStarted()
+    }
+
+    private fun currentHandler(): BackHandler? {
+        return inProgressHandler ?: handlers.lastOrNull {
+            it.isEnabled
+        }
     }
 
     private val canHandleBackPressFlow = MutableStateFlow(0)
