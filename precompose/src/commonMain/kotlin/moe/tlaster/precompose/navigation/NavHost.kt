@@ -119,7 +119,13 @@ fun NavHost(
             .prevSceneBackStackEntry.collectAsState(null)
         var progress by remember { mutableFloatStateOf(0f) }
         var inPredictiveBack by remember { mutableStateOf(false) }
+        //用于判断是否正在执行返回动画
+        var isAnimatedRunning by remember { mutableStateOf(false) }
+
         PredictiveBackHandler(canGoBack) { backEvent ->
+            // 拦截一下，如果动画正在执行，则不响应这个返回事件
+            if (isAnimatedRunning) return@PredictiveBackHandler
+
             inPredictiveBack = true
             progress = 0f
             try {
@@ -187,6 +193,9 @@ fun NavHost(
                     mutableStateOf(SeekableTransitionState(sceneEntry, prevSceneEntry!!))
                 }
                 LaunchedEffect(progress) {
+                    //标记为正在执行动画
+                    isAnimatedRunning = true
+
                     if (progress == 1f) {
                         // play the animation to the end
                         transitionState.animateToTargetState()
@@ -201,6 +210,8 @@ fun NavHost(
                         inPredictiveBack = false
                         progress = 0f
                     }
+                    //标记为动画执行完成
+                    isAnimatedRunning = false
                 }
                 rememberTransition(transitionState, label = "entry")
             } else {
