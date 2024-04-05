@@ -1,4 +1,6 @@
 @file:OptIn(ExperimentalMaterialApi::class)
+// TODO Migrate Material's Swipeable to Foundation's AnchoredDraggable APIs.
+@file:Suppress("DEPRECATION")
 
 package moe.tlaster.precompose.navigation
 
