@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import java.util.Properties
 
 plugins {
@@ -11,6 +12,7 @@ plugins {
 group = "moe.tlaster"
 version = rootProject.extra.get("precomposeVersion") as String
 
+@OptIn(ExperimentalWasmDsl::class)
 kotlin {
     applyDefaultHierarchyTemplate()
     macosArm64()
@@ -30,6 +32,9 @@ kotlin {
         }
     }
     js(IR) {
+        browser()
+    }
+    wasmJs {
         browser()
     }
     sourceSets {
