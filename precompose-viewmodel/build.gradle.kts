@@ -40,6 +40,10 @@ kotlin {
     js(IR) {
         browser()
     }
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -99,9 +103,17 @@ kotlin {
                 implementation(compose.foundation)
             }
         }
+        val wasmJsMain by getting {
+            dependencies {
+                implementation(compose.foundation)
+            }
+        }
     }
 }
-
+// adding it here to make sure skiko is unpacked and available in web tests
+compose.experimental {
+    web.application {}
+}
 android {
     compileSdk = rootProject.extra.get("android-compile") as Int
     buildToolsVersion = rootProject.extra.get("android-build-tools") as String

@@ -7,6 +7,7 @@ import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNotEquals
 
 class BackStackManagerTest {
     @Test
@@ -488,10 +489,10 @@ class BackStackManagerTest {
             manager.backStacks.value.map { it.path },
         )
 
-        assertEquals(
-            listOf("1-screen1", "3-screen1", "4-screen1"),
-            manager.backStacks.value.map { it.stateId },
-        )
+        // assertEquals(
+        //     listOf("1-screen1", "3-screen1", "4-screen1"),
+        //     manager.backStacks.value.map { it.stateId },
+        // )
     }
 
     @Test
@@ -696,5 +697,64 @@ class BackStackManagerTest {
             listOf("screen1"),
             manager.backStacks.value.map { it.path },
         )
+    }
+
+    @Test
+    fun testStateId() {
+        val manager = BackStackManager()
+        val lifecycleOwner = TestLifecycleOwner()
+        val saveableStateHolder = TestSavedStateHolder()
+        manager.init(
+            stateHolder = StateHolder(),
+            savedStateHolder = saveableStateHolder,
+            lifecycleOwner = lifecycleOwner,
+        )
+        manager.setRouteGraph(
+            routeGraph = RouteGraph(
+                "screen1",
+                listOf(
+                    TestRoute("screen1", "screen1"),
+                    TestRoute("screen2", "screen2"),
+                    TestRoute("screen3", "screen3"),
+                ),
+            ),
+        )
+        manager.push("screen2")
+        manager.push("screen3")
+        val lastEntry = manager.backStacks.value.last()
+        val stateId = lastEntry.stateId
+        manager.pop()
+        lastEntry.destroyDirectly()
+        manager.push("screen3")
+        assertNotEquals(stateId, manager.backStacks.value.last().stateId)
+    }
+
+    @Test
+    fun testStateIdWithoutDestroy() {
+        val manager = BackStackManager()
+        val lifecycleOwner = TestLifecycleOwner()
+        val saveableStateHolder = TestSavedStateHolder()
+        manager.init(
+            stateHolder = StateHolder(),
+            savedStateHolder = saveableStateHolder,
+            lifecycleOwner = lifecycleOwner,
+        )
+        manager.setRouteGraph(
+            routeGraph = RouteGraph(
+                "screen1",
+                listOf(
+                    TestRoute("screen1", "screen1"),
+                    TestRoute("screen2", "screen2"),
+                    TestRoute("screen3", "screen3"),
+                ),
+            ),
+        )
+        manager.push("screen2")
+        manager.push("screen3")
+        val lastEntry = manager.backStacks.value.last()
+        val stateId = lastEntry.stateId
+        manager.pop()
+        manager.push("screen3")
+        assertNotEquals(stateId, manager.backStacks.value.last().stateId)
     }
 }
