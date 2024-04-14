@@ -8,18 +8,12 @@ plugins {
 }
 
 kotlin {
-    ios("uikit") {
-        binaries {
-            executable {
-                entryPoint = "moe.tlaster.precompose.molecule.sample.main"
-                freeCompilerArgs += listOf(
-                    "-linker-option", "-framework", "-linker-option", "Metal",
-                    "-linker-option", "-framework", "-linker-option", "CoreText",
-                    "-linker-option", "-framework", "-linker-option", "CoreGraphics",
-                )
-            }
-        }
-    }
+    applyDefaultHierarchyTemplate()
+    listOf(
+        iosSimulatorArm64(),
+        iosArm64(),
+        iosX64(),
+    )
     androidTarget()
     macosX64 {
         binaries {
@@ -68,27 +62,6 @@ kotlin {
             dependencies {
                 implementation(libs.androidx.activity.compose)
             }
-        }
-        val darwinMain by creating {
-            dependsOn(commonMain)
-            dependencies {
-            }
-        }
-        val uikitMain by getting {
-            dependsOn(darwinMain)
-            dependencies {
-            }
-        }
-        val macosMain by creating {
-            dependsOn(darwinMain)
-            dependencies {
-            }
-        }
-        val macosX64Main by getting {
-            dependsOn(macosMain)
-        }
-        val macosArm64Main by getting {
-            dependsOn(macosMain)
         }
     }
 

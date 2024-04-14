@@ -1,9 +1,7 @@
 package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -75,8 +73,6 @@ internal class BackStackManager : LifecycleObserver {
     val currentFloatingBackStackEntry: Flow<BackStackEntry?>
         get() = backStacks.asSharedFlow().map { it.lastOrNull { it.route.isFloatingRoute() } }
 
-    var canNavigate by mutableStateOf(true)
-
     fun init(
         stateHolder: StateHolder,
         savedStateHolder: SavedStateHolder,
@@ -111,9 +107,6 @@ internal class BackStackManager : LifecycleObserver {
     }
 
     fun push(path: String, options: NavOptions? = null) {
-        if (!canNavigate) {
-            return
-        }
         val currentBackStacks = backStacks.value
         val query = path.substringAfter('?', "")
         val routePath = path.substringBefore('?')
@@ -127,11 +120,11 @@ internal class BackStackManager : LifecycleObserver {
         ) {
             currentBackStacks.firstOrNull { it.hasRoute(matchResult.route.route, path, options.includePath) }
                 ?.let { entry ->
-                    backStacks.value = backStacks.value.filter { it.id != entry.id } + entry
+                    backStacks.value = backStacks.value.filter { it.stateId != entry.stateId } + entry
                 }
         } else {
             backStacks.value += BackStackEntry(
-                id = (backStacks.value.lastOrNull()?.id ?: 0L) + 1,
+                stateId = uuid4().toString(),
                 routeInternal = matchResult.route,
                 pathMap = matchResult.pathMap,
                 queryString = query.takeIf { it.isNotEmpty() }?.let {
@@ -174,9 +167,6 @@ internal class BackStackManager : LifecycleObserver {
     }
 
     fun pop(result: Any? = null) {
-        if (!canNavigate) {
-            return
-        }
         val currentBackStacks = backStacks.value
         if (currentBackStacks.size > 1) {
             val last = currentBackStacks.last()
@@ -189,9 +179,6 @@ internal class BackStackManager : LifecycleObserver {
     fun popWithOptions(
         popUpTo: PopUpTo,
     ) {
-        if (!canNavigate) {
-            return
-        }
         val currentBackStacks = backStacks.value
         if (currentBackStacks.size <= 1) {
             return
