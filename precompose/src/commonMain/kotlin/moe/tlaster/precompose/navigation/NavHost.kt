@@ -240,6 +240,7 @@ fun NavHost(
                 DragSlider(
                     state = state,
                     enabled = prevSceneEntry != null,
+                    spaceToSwipe = actualSwipeProperties?.spaceToSwipe ?: 10.dp,
                 )
             }
         }
