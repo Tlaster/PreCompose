@@ -1,5 +1,7 @@
 package moe.tlaster.precompose.navigation
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.runtime.Composable
 import moe.tlaster.precompose.navigation.route.FloatingRoute
 import moe.tlaster.precompose.navigation.route.GroupRoute
@@ -19,12 +21,43 @@ class RouteBuilder(
      * @param swipeProperties swipe back navigation properties for current scene
      * @param content composable for the destination
      */
+    @Deprecated(
+        message = "Deprecated in favor of composable builder that supports AnimatedContent",
+        level = DeprecationLevel.HIDDEN
+    )
     fun scene(
         route: String,
         deepLinks: List<String> = emptyList(),
         navTransition: NavTransition? = null,
         swipeProperties: SwipeProperties? = null,
         content: @Composable (BackStackEntry) -> Unit,
+    ) {
+        addRoute(
+            SceneRoute(
+                route = route,
+                navTransition = navTransition,
+                deepLinks = deepLinks,
+                swipeProperties = swipeProperties,
+                content = { backStackEntry ->
+                    AnimatedContent(Unit) { content(backStackEntry) }
+                },
+            ),
+        )
+    }
+
+    /**
+     * Add the scene [Composable] to the [RouteBuilder]
+     * @param route route for the destination
+     * @param navTransition navigation transition for current scene
+     * @param swipeProperties swipe back navigation properties for current scene
+     * @param content composable for the destination
+     */
+    fun scene(
+        route: String,
+        deepLinks: List<String> = emptyList(),
+        navTransition: NavTransition? = null,
+        swipeProperties: SwipeProperties? = null,
+        content: @Composable AnimatedContentScope.(BackStackEntry) -> Unit,
     ) {
         addRoute(
             SceneRoute(
@@ -88,7 +121,9 @@ class RouteBuilder(
         addRoute(
             FloatingRoute(
                 route = route,
-                content = content,
+                content = { backStackEntry ->
+                    AnimatedContent(Unit) { content(backStackEntry) }
+                },
             ),
         )
     }

@@ -1,6 +1,7 @@
 package moe.tlaster.precompose.navigation
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.core.ExperimentalTransitionApi
@@ -234,7 +235,7 @@ fun NavHost(
                 transitionSpec = transitionSpec,
                 contentKey = { it.stateId },
             ) { entry ->
-                NavHostContent(composeStateHolder, entry)
+                NavHostContent(composeStateHolder, entry, this)
             }
             if (state != null) {
                 DragSlider(
@@ -250,7 +251,7 @@ fun NavHost(
                 it,
                 contentKey = { it.stateId },
             ) { entry ->
-                NavHostContent(composeStateHolder, entry)
+                NavHostContent(composeStateHolder, entry, this)
             }
         }
     }
@@ -260,6 +261,7 @@ fun NavHost(
 private fun NavHostContent(
     stateHolder: SaveableStateHolder,
     entry: BackStackEntry,
+    animatedContentScope: AnimatedContentScope,
 ) {
     stateHolder.SaveableStateProvider(entry.stateId) {
         CompositionLocalProvider(
@@ -267,7 +269,7 @@ private fun NavHostContent(
             LocalSavedStateHolder provides entry.savedStateHolder,
             LocalLifecycleOwner provides entry,
             content = {
-                entry.ComposeContent()
+                entry.ComposeContent(animatedContentScope)
             },
         )
     }
@@ -288,12 +290,12 @@ private fun GroupRoute.composeRoute(): ComposeRoute? {
 }
 
 @Composable
-private fun BackStackEntry.ComposeContent() {
+private fun BackStackEntry.ComposeContent(animatedContentScope: AnimatedContentScope) {
     if (route is GroupRoute) {
         (route as GroupRoute).composeRoute()
     } else {
         route as? ComposeRoute
-    }?.content?.invoke(this)
+    }?.content?.invoke(animatedContentScope, this)
 }
 
 @OptIn(ExperimentalFoundationApi::class)

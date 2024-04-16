@@ -1,5 +1,6 @@
 package moe.tlaster.precompose.navigation.route
 
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.runtime.Composable
 import moe.tlaster.precompose.navigation.BackStackEntry
 import moe.tlaster.precompose.navigation.SwipeProperties
@@ -10,5 +11,5 @@ internal class SceneRoute(
     val deepLinks: List<String>,
     val navTransition: NavTransition?,
     val swipeProperties: SwipeProperties?,
-    override val content: @Composable (BackStackEntry) -> Unit,
+    override val content: @Composable AnimatedContentScope.(BackStackEntry) -> Unit,
 ) : ComposeRoute, ComposeSceneRoute
