@@ -96,7 +96,6 @@ private fun SharedElementsScope.A(
                 color,
                 Modifier
                     .padding(16.dp)
-                    .background(color)
                     .clickable { navigateToB(index) }
                     .sharedElement(this@A, rememberSharedContentState(color.toString()))
             ) {
