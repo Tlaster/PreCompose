@@ -18,6 +18,8 @@ dependencyResolutionManagement {
         maven("https://jitpack.io")
         // TODO: delete when we have all libs in mavenCentral
         maven("https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental")
+        // TODO: remove after shared elements are no longer only in snapshots
+        maven("https://androidx.dev/snapshots/builds/11722689/artifacts/repository")
     }
 }
 rootProject.name = "precompose"
@@ -33,3 +35,4 @@ include(":sample:todo:ios")
 include(":sample:todo:macos")
 include(":sample:todo:js")
 include(":sample:molecule")
+include(":sample:shared-elements")
