@@ -236,10 +236,11 @@ fun NavHost(
             ) { entry ->
                 NavHostContent(composeStateHolder, entry)
             }
-            if (state != null) {
+            if (state != null && actualSwipeProperties != null) {
                 DragSlider(
                     state = state,
                     enabled = prevSceneEntry != null,
+                    spaceToSwipe = actualSwipeProperties.spaceToSwipe,
                 )
             }
         }
