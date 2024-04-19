@@ -1,6 +1,7 @@
 package moe.tlaster.precompose.navigation
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.core.ExperimentalTransitionApi
@@ -258,7 +259,7 @@ fun NavHost(
 }
 
 @Composable
-private fun NavHostContent(
+private fun AnimatedContentScope.NavHostContent(
     stateHolder: SaveableStateHolder,
     entry: BackStackEntry,
 ) {
@@ -268,7 +269,7 @@ private fun NavHostContent(
             LocalSavedStateHolder provides entry.savedStateHolder,
             LocalLifecycleOwner provides entry,
             content = {
-                entry.ComposeContent()
+                entry.ComposeContent(this@NavHostContent)
             },
         )
     }
@@ -289,12 +290,12 @@ private fun GroupRoute.composeRoute(): ComposeRoute? {
 }
 
 @Composable
-private fun BackStackEntry.ComposeContent() {
+private fun BackStackEntry.ComposeContent(animatedContentScope: AnimatedContentScope) {
     if (route is GroupRoute) {
         (route as GroupRoute).composeRoute()
     } else {
         route as? ComposeRoute
-    }?.content?.invoke(this)
+    }?.content?.invoke(animatedContentScope, this)
 }
 
 @OptIn(ExperimentalFoundationApi::class)

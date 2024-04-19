@@ -1,10 +1,12 @@
 package moe.tlaster.precompose.navigation
 
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.runtime.Composable
-import moe.tlaster.precompose.navigation.route.FloatingRoute
 import moe.tlaster.precompose.navigation.route.GroupRoute
 import moe.tlaster.precompose.navigation.route.Route
 import moe.tlaster.precompose.navigation.route.SceneRoute
+import moe.tlaster.precompose.navigation.route.floatingRouteWithoutAnimatedContent
+import moe.tlaster.precompose.navigation.route.sceneRouteWithoutAnimatedContent
 import moe.tlaster.precompose.navigation.transition.NavTransition
 
 class RouteBuilder(
@@ -19,12 +21,43 @@ class RouteBuilder(
      * @param swipeProperties swipe back navigation properties for current scene
      * @param content composable for the destination
      */
+    @Deprecated(
+        message = "Deprecated in favor of scene that supports AnimatedContent",
+        level = DeprecationLevel.HIDDEN,
+    )
     fun scene(
         route: String,
         deepLinks: List<String> = emptyList(),
         navTransition: NavTransition? = null,
         swipeProperties: SwipeProperties? = null,
         content: @Composable (BackStackEntry) -> Unit,
+    ) {
+        addRoute(
+            @Suppress("DEPRECATION")
+            sceneRouteWithoutAnimatedContent(
+                route = route,
+                navTransition = navTransition,
+                deepLinks = deepLinks,
+                swipeProperties = swipeProperties,
+                content = content,
+            ),
+        )
+    }
+
+    /**
+     * Add the scene [Composable] to the [RouteBuilder]
+     * @param route route for the destination
+     * @param navTransition navigation transition for current scene
+     * @param swipeProperties swipe back navigation properties for current scene
+     * @param content composable for the destination. The AnimatedContentScope provided is the
+     *  animation that drives the scene transition. That is either entering or exiting the NavHost
+     */
+    fun scene(
+        route: String,
+        deepLinks: List<String> = emptyList(),
+        navTransition: NavTransition? = null,
+        swipeProperties: SwipeProperties? = null,
+        content: @Composable AnimatedContentScope.(BackStackEntry) -> Unit,
     ) {
         addRoute(
             SceneRoute(
@@ -86,7 +119,8 @@ class RouteBuilder(
         content: @Composable (BackStackEntry) -> Unit,
     ) {
         addRoute(
-            FloatingRoute(
+            @Suppress("DEPRECATION")
+            floatingRouteWithoutAnimatedContent(
                 route = route,
                 content = content,
             ),
