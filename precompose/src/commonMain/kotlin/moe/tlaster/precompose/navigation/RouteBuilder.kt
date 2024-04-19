@@ -2,10 +2,10 @@ package moe.tlaster.precompose.navigation
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.runtime.Composable
-import moe.tlaster.precompose.navigation.route.FloatingRoute
 import moe.tlaster.precompose.navigation.route.GroupRoute
 import moe.tlaster.precompose.navigation.route.Route
 import moe.tlaster.precompose.navigation.route.SceneRoute
+import moe.tlaster.precompose.navigation.route.floatingRouteWithoutAnimatedContent
 import moe.tlaster.precompose.navigation.route.sceneRouteWithoutAnimatedContent
 import moe.tlaster.precompose.navigation.transition.NavTransition
 
@@ -119,7 +119,8 @@ class RouteBuilder(
         content: @Composable (BackStackEntry) -> Unit,
     ) {
         addRoute(
-            FloatingRoute(
+            @Suppress("DEPRECATION")
+            floatingRouteWithoutAnimatedContent(
                 route = route,
                 content = content,
             ),
