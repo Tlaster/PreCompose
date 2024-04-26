@@ -113,146 +113,149 @@ fun NavHost(
         }
     }
 
-    BoxWithConstraints(modifier) {
-        val currentSceneEntry by navigator.stackManager
-            .currentSceneBackStackEntry.collectAsState(null)
-        val prevSceneEntry by navigator.stackManager
-            .prevSceneBackStackEntry.collectAsState(null)
-        var progress by remember { mutableFloatStateOf(0f) }
-        var inPredictiveBack by remember { mutableStateOf(false) }
-        PredictiveBackHandler(canGoBack) { backEvent ->
-            inPredictiveBack = true
-            progress = 0f
-            try {
-                backEvent.collect {
-                    progress = it
-                }
-                if (progress != 1f) {
-                    // play the animation to the end
-                    progress = 1f
-                }
-            } catch (e: CancellationException) {
-                inPredictiveBack = false
+    val currentSceneEntry by navigator.stackManager
+        .currentSceneBackStackEntry.collectAsState(null)
+    val prevSceneEntry by navigator.stackManager
+        .prevSceneBackStackEntry.collectAsState(null)
+    val currentFloatingEntry by navigator.stackManager
+        .currentFloatingBackStackEntry.collectAsState(null)
+    var progress by remember { mutableFloatStateOf(0f) }
+    var inPredictiveBack by remember { mutableStateOf(false) }
+    PredictiveBackHandler(canGoBack) { backEvent ->
+        inPredictiveBack = true
+        progress = 0f
+        try {
+            backEvent.collect {
+                progress = it
             }
+            if (progress != 1f) {
+                // play the animation to the end
+                progress = 1f
+            }
+        } catch (e: CancellationException) {
+            inPredictiveBack = false
         }
-        currentSceneEntry?.let { sceneEntry ->
-            val actualSwipeProperties = sceneEntry.swipeProperties ?: swipeProperties
-            val state = if (actualSwipeProperties != null) {
-                val density = LocalDensity.current
-                val width = constraints.maxWidth.toFloat()
-                remember {
-                    AnchoredDraggableState(
-                        initialValue = DragAnchors.Start,
-                        anchors = DraggableAnchors {
-                            DragAnchors.Start at 0f
-                            DragAnchors.End at width
-                        },
-                        positionalThreshold = actualSwipeProperties.positionalThreshold,
-                        velocityThreshold = { actualSwipeProperties.velocityThreshold.invoke(density) },
-                        animationSpec = tween(),
-                    )
-                }.also { state ->
-                    LaunchedEffect(
-                        state.currentValue,
-                        state.isAnimationRunning,
-                    ) {
-                        if (state.currentValue == DragAnchors.End && !state.isAnimationRunning) {
-                            // play the animation to the end
-                            progress = 1f
-                            state.snapTo(DragAnchors.Start)
+    }
+    if (currentSceneEntry != null || currentFloatingEntry != null) {
+        BoxWithConstraints(modifier) {
+            currentSceneEntry?.let { sceneEntry ->
+                val actualSwipeProperties = sceneEntry.swipeProperties ?: swipeProperties
+                val state = if (actualSwipeProperties != null) {
+                    val density = LocalDensity.current
+                    val width = constraints.maxWidth.toFloat()
+                    remember {
+                        AnchoredDraggableState(
+                            initialValue = DragAnchors.Start,
+                            anchors = DraggableAnchors {
+                                DragAnchors.Start at 0f
+                                DragAnchors.End at width
+                            },
+                            positionalThreshold = actualSwipeProperties.positionalThreshold,
+                            velocityThreshold = { actualSwipeProperties.velocityThreshold.invoke(density) },
+                            animationSpec = tween(),
+                        )
+                    }.also { state ->
+                        LaunchedEffect(
+                            state.currentValue,
+                            state.isAnimationRunning,
+                        ) {
+                            if (state.currentValue == DragAnchors.End && !state.isAnimationRunning) {
+                                // play the animation to the end
+                                progress = 1f
+                                state.snapTo(DragAnchors.Start)
+                            }
+                        }
+                        LaunchedEffect(state.progress) {
+                            if (state.progress != 1f) {
+                                inPredictiveBack = state.progress > 0f
+                                progress = state.progress
+                            } else if (state.currentValue != DragAnchors.End && inPredictiveBack) {
+                                // reset the state to the initial value
+                                progress = -1f
+                            }
                         }
                     }
-                    LaunchedEffect(state.progress) {
-                        if (state.progress != 1f) {
-                            inPredictiveBack = state.progress > 0f
-                            progress = state.progress
-                        } else if (state.currentValue != DragAnchors.End && inPredictiveBack) {
-                            // reset the state to the initial value
-                            progress = -1f
-                        }
-                    }
-                }
-            } else {
-                null
-            }
-            val showPrev by remember(inPredictiveBack, prevSceneEntry, currentEntry) {
-                derivedStateOf {
-                    inPredictiveBack &&
-                        progress != 0f &&
-                        prevSceneEntry != null &&
-                        currentEntry?.route !is FloatingRoute
-                }
-            }
-            val transition = if (showPrev) {
-                val transitionState by remember(sceneEntry) {
-                    mutableStateOf(SeekableTransitionState(sceneEntry, prevSceneEntry!!))
-                }
-                LaunchedEffect(progress) {
-                    if (progress == 1f) {
-                        // play the animation to the end
-                        transitionState.animateToTargetState()
-                        inPredictiveBack = false
-                        navigator.goBack()
-                        progress = 0f
-                    } else if (progress >= 0) {
-                        transitionState.snapToFraction(progress)
-                    } else if (progress == -1f) {
-                        // reset the state to the initial value
-                        transitionState.animateToCurrentState()
-                        inPredictiveBack = false
-                        progress = 0f
-                    }
-                }
-                rememberTransition(transitionState, label = "entry")
-            } else {
-                updateTransition(sceneEntry, label = "entry")
-            }
-            val transitionSpec: AnimatedContentTransitionScope<BackStackEntry>.() -> ContentTransform = {
-                val actualTransaction = run {
-                    if (navigator.stackManager.contains(initialState) && !showPrev) targetState else initialState
-                }.navTransition ?: navTransition
-                if (!navigator.stackManager.contains(initialState) || showPrev) {
-                    ContentTransform(
-                        targetContentEnter = actualTransaction.resumeTransition,
-                        initialContentExit = actualTransaction.destroyTransition,
-                        targetContentZIndex = actualTransaction.enterTargetContentZIndex,
-                        // sizeTransform will cause the content to be resized
-                        // when the transition is running with swipe back
-                        // I have no idea why
-                        // And it cost me weeks to figure it out :(
-                        sizeTransform = null,
-                    )
                 } else {
-                    ContentTransform(
-                        targetContentEnter = actualTransaction.createTransition,
-                        initialContentExit = actualTransaction.pauseTransition,
-                        targetContentZIndex = actualTransaction.exitTargetContentZIndex,
-                        sizeTransform = null,
+                    null
+                }
+                val showPrev by remember(inPredictiveBack, prevSceneEntry, currentEntry) {
+                    derivedStateOf {
+                        inPredictiveBack &&
+                            progress != 0f &&
+                            prevSceneEntry != null &&
+                            currentEntry?.route !is FloatingRoute
+                    }
+                }
+                val transition = if (showPrev) {
+                    val transitionState by remember(sceneEntry) {
+                        mutableStateOf(SeekableTransitionState(sceneEntry, prevSceneEntry!!))
+                    }
+                    LaunchedEffect(progress) {
+                        if (progress == 1f) {
+                            // play the animation to the end
+                            transitionState.animateToTargetState()
+                            inPredictiveBack = false
+                            navigator.goBack()
+                            progress = 0f
+                        } else if (progress >= 0) {
+                            transitionState.snapToFraction(progress)
+                        } else if (progress == -1f) {
+                            // reset the state to the initial value
+                            transitionState.animateToCurrentState()
+                            inPredictiveBack = false
+                            progress = 0f
+                        }
+                    }
+                    rememberTransition(transitionState, label = "entry")
+                } else {
+                    updateTransition(sceneEntry, label = "entry")
+                }
+                val transitionSpec: AnimatedContentTransitionScope<BackStackEntry>.() -> ContentTransform =
+                    {
+                        val actualTransaction = run {
+                            if (navigator.stackManager.contains(initialState) && !showPrev) targetState else initialState
+                        }.navTransition ?: navTransition
+                        if (!navigator.stackManager.contains(initialState) || showPrev) {
+                            ContentTransform(
+                                targetContentEnter = actualTransaction.resumeTransition,
+                                initialContentExit = actualTransaction.destroyTransition,
+                                targetContentZIndex = actualTransaction.enterTargetContentZIndex,
+                                // sizeTransform will cause the content to be resized
+                                // when the transition is running with swipe back
+                                // I have no idea why
+                                // And it cost me weeks to figure it out :(
+                                sizeTransform = null,
+                            )
+                        } else {
+                            ContentTransform(
+                                targetContentEnter = actualTransaction.createTransition,
+                                initialContentExit = actualTransaction.pauseTransition,
+                                targetContentZIndex = actualTransaction.exitTargetContentZIndex,
+                                sizeTransform = null,
+                            )
+                        }
+                    }
+                transition.AnimatedContent(
+                    transitionSpec = transitionSpec,
+                    contentKey = { it.stateId },
+                ) { entry ->
+                    NavHostContent(composeStateHolder, entry)
+                }
+                if (state != null && actualSwipeProperties != null) {
+                    DragSlider(
+                        state = state,
+                        enabled = prevSceneEntry != null,
+                        spaceToSwipe = actualSwipeProperties.spaceToSwipe,
                     )
                 }
             }
-            transition.AnimatedContent(
-                transitionSpec = transitionSpec,
-                contentKey = { it.stateId },
-            ) { entry ->
-                NavHostContent(composeStateHolder, entry)
-            }
-            if (state != null && actualSwipeProperties != null) {
-                DragSlider(
-                    state = state,
-                    enabled = prevSceneEntry != null,
-                    spaceToSwipe = actualSwipeProperties.spaceToSwipe,
-                )
-            }
-        }
-        val currentFloatingEntry by navigator.stackManager
-            .currentFloatingBackStackEntry.collectAsState(null)
-        currentFloatingEntry?.let {
-            AnimatedContent(
-                it,
-                contentKey = { it.stateId },
-            ) { entry ->
-                NavHostContent(composeStateHolder, entry)
+            currentFloatingEntry?.let {
+                AnimatedContent(
+                    it,
+                    contentKey = { it.stateId },
+                ) { entry ->
+                    NavHostContent(composeStateHolder, entry)
+                }
             }
         }
     }
