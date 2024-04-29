@@ -78,7 +78,6 @@ kotlin {
                 implementation(libs.animation)
                 implementation(libs.androidx.material)
                 api(libs.androidx.activity.ktx)
-                api(libs.androidx.appcompat)
                 implementation(libs.androidx.lifecycle.runtime.ktx)
                 api(libs.androidx.savedstate.ktx)
                 implementation(libs.androidx.lifecycle.viewmodel.compose)

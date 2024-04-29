@@ -60,6 +60,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation(libs.androidx.appcompat)
                 implementation(libs.androidx.activity.compose)
             }
         }
