@@ -68,6 +68,6 @@ tasks.withType<ProcessResources> {
 afterEvaluate {
     rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
         versions.webpackCli.version = libs.versions.webpackCliVersion.get()
-        nodeVersion = libs.versions.nodeVersion.get()
+        version = libs.versions.nodeVersion.get()
     }
 }

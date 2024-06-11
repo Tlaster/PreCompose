@@ -24,7 +24,7 @@ skiko = "0.8.4"
 koin = "3.6.0-Beta4"
 uuid = "0.8.4"
 webpackCliVersion = "5.1.4"
-nodeVersion = "16.13.0"
+nodeVersion = "20.14.0"
 ktlint = "0.50.0"
 
 [libraries]
