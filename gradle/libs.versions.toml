@@ -48,7 +48,7 @@ molecule-runtime = { module = "app.cash.molecule:molecule-runtime", version.ref 
 skiko = { module = "org.jetbrains.skiko:skiko", version.ref = "skiko" }
 skiko-js = { module = "org.jetbrains.skiko:skiko-js-wasm-runtime", version.ref = "skiko" }
 koin = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-compose = { module = "io.insert-koin:koin-compose", version = "1.2.0-Beta4" }
+koin-compose = { module = "io.insert-koin:koin-compose", version = "3.6.0-wasm-alpha2" }
 uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
 
 [plugins]
