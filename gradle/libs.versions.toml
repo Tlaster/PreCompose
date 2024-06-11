@@ -21,7 +21,7 @@ savedstateKtx = "1.2.1"
 spotless = "6.25.0"
 jetbrainsComposePlugin = "1.6.10"
 skiko = "0.8.4"
-koin = "3.6.0-alpha3"
+koin = "3.6.0-Beta4"
 uuid = "0.8.4"
 webpackCliVersion = "5.1.4"
 nodeVersion = "16.13.0"
@@ -48,7 +48,7 @@ molecule-runtime = { module = "app.cash.molecule:molecule-runtime", version.ref 
 skiko = { module = "org.jetbrains.skiko:skiko", version.ref = "skiko" }
 skiko-js = { module = "org.jetbrains.skiko:skiko-js-wasm-runtime", version.ref = "skiko" }
 koin = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-compose = { module = "io.insert-koin:koin-compose", version = "1.2.0-alpha3" }
+koin-compose = { module = "io.insert-koin:koin-compose", version = "1.2.0-Beta4" }
 uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
 
 [plugins]
