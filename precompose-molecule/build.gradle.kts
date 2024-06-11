@@ -6,10 +6,11 @@ plugins {
     id("com.android.library")
     id("maven-publish")
     id("signing")
+    alias(libs.plugins.compose.compiler)
 }
 
 group = "moe.tlaster"
-version = rootProject.extra.get("precomposeVersion") as String
+version = libs.versions.libVersion.get()
 
 kotlin {
     applyDefaultHierarchyTemplate()
@@ -17,9 +18,6 @@ kotlin {
         publishLibraryVariants("release", "debug")
     }
     jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = rootProject.extra.get("jvmTarget") as String
-        }
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
         }
@@ -99,15 +97,14 @@ kotlin {
 }
 
 android {
-    compileSdk = rootProject.extra.get("android-compile") as Int
-    buildToolsVersion = rootProject.extra.get("android-build-tools") as String
+    compileSdk = libs.versions.compileSdk.get().toInt()
     namespace = "moe.tlaster.precompose.molecule"
     defaultConfig {
-        minSdk = rootProject.extra.get("androidMinSdk") as Int
+        minSdk = libs.versions.minSdk.get().toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.toVersion(rootProject.extra.get("jvmTarget") as String)
-        targetCompatibility = JavaVersion.toVersion(rootProject.extra.get("jvmTarget") as String)
+        sourceCompatibility = JavaVersion.toVersion(libs.versions.java.get())
+        targetCompatibility = JavaVersion.toVersion(libs.versions.java.get())
     }
 }
 

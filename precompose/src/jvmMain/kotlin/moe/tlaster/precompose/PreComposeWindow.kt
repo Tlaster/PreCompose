@@ -4,10 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowScope
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberWindowState
 import moe.tlaster.precompose.lifecycle.Lifecycle
@@ -19,6 +21,7 @@ import moe.tlaster.precompose.stateholder.StateHolder
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
+import java.awt.Window
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 
@@ -62,50 +65,77 @@ fun PreComposeWindow(
         onPreviewKeyEvent = onPreviewKeyEvent,
         onKeyEvent = onKeyEvent,
         content = {
-            PreComposeApp {
-                content.invoke(this)
+            ProvidePreComposeLocals {
+                PreComposeApp {
+                    content.invoke(this)
+                }
             }
         },
     )
 }
 
-@Suppress("INVISIBLE_MEMBER")
+val LocalWindow = staticCompositionLocalOf<Window> {
+    error("No Window for PreCompose, please use ProvidePreComposeLocals in WindowScope to setup your desktop project")
+}
+
+@Composable
+fun FrameWindowScope.ProvidePreComposeLocals(
+    content: @Composable () -> Unit,
+) {
+    CompositionLocalProvider(
+        LocalWindow provides window,
+        content = content,
+    )
+}
+
 @Composable
 actual fun PreComposeApp(
+    content: @Composable () -> Unit,
+) {
+    val window = LocalWindow.current
+    val scope = remember {
+        object : WindowScope {
+            override val window: Window get() = window
+        }
+    }
+    with(scope) {
+        this.PreComposeApp(content)
+    }
+}
+
+@Composable
+fun WindowScope.PreComposeApp(
     content: @Composable () -> Unit,
 ) {
     val holder = remember {
         PreComposeWindowHolder()
     }
-    val window = androidx.compose.ui.window.LocalWindow.current
-    if (window != null) {
-        val listener = remember {
-            object : WindowAdapter() {
-                override fun windowOpened(e: WindowEvent?) {
-                    holder.lifecycle.updateState(Lifecycle.State.Active)
-                }
-                override fun windowClosed(e: WindowEvent?) {
-                    holder.lifecycle.updateState(Lifecycle.State.Destroyed)
-                }
-                override fun windowStateChanged(e: WindowEvent?) {
-                    when (e?.newState) {
-                        java.awt.Frame.ICONIFIED -> {
-                            holder.lifecycle.updateState(Lifecycle.State.InActive)
-                        }
-                        else -> {
-                            holder.lifecycle.updateState(Lifecycle.State.Active)
-                        }
+    val listener = remember {
+        object : WindowAdapter() {
+            override fun windowOpened(e: WindowEvent?) {
+                holder.lifecycle.updateState(Lifecycle.State.Active)
+            }
+            override fun windowClosed(e: WindowEvent?) {
+                holder.lifecycle.updateState(Lifecycle.State.Destroyed)
+            }
+            override fun windowStateChanged(e: WindowEvent?) {
+                when (e?.newState) {
+                    java.awt.Frame.ICONIFIED -> {
+                        holder.lifecycle.updateState(Lifecycle.State.InActive)
+                    }
+                    else -> {
+                        holder.lifecycle.updateState(Lifecycle.State.Active)
                     }
                 }
             }
         }
-        DisposableEffect(window) {
-            window.addWindowListener(listener)
-            window.addWindowStateListener(listener)
-            onDispose {
-                window.removeWindowListener(listener)
-                window.removeWindowStateListener(listener)
-            }
+    }
+    DisposableEffect(window) {
+        window.addWindowListener(listener)
+        window.addWindowStateListener(listener)
+        onDispose {
+            window.removeWindowListener(listener)
+            window.removeWindowStateListener(listener)
         }
     }
     CompositionLocalProvider(

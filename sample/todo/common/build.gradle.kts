@@ -2,6 +2,7 @@ plugins {
     kotlin("multiplatform")
     alias(libs.plugins.jetbrains.compose)
     id("com.android.library")
+    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
@@ -48,13 +49,12 @@ kotlin {
 }
 
 android {
-    compileSdk = rootProject.extra.get("android-compile") as Int
-    buildToolsVersion = rootProject.extra.get("android-build-tools") as String
+    compileSdk = libs.versions.compileSdk.get().toInt()
     namespace = "moe.tlaster.common"
     defaultConfig {
-        minSdk = rootProject.extra.get("androidMinSdk") as Int
+        minSdk = libs.versions.minSdk.get().toInt()
     }
-    kotlin.jvmToolchain((rootProject.extra.get("jvmTarget") as String).toInt())
+    kotlin.jvmToolchain(libs.versions.java.get().toInt())
 }
 
 compose.experimental {
@@ -67,7 +67,7 @@ tasks.withType<ProcessResources> {
 
 afterEvaluate {
     rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
-        versions.webpackCli.version = rootProject.extra.get("webpackCliVersion") as String
-        nodeVersion = rootProject.extra.get("nodeVersion") as String
+        versions.webpackCli.version = libs.versions.webpackCliVersion.get()
+        version = libs.versions.nodeVersion.get()
     }
 }

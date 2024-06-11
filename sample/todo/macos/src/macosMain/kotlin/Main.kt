@@ -12,9 +12,9 @@ fun main() {
     }
     PreComposeWindow(
         "PreComposeSample",
-        onCloseRequest = {
-            NSApp?.terminate(null)
-        },
+        // onCloseRequest = {
+        //     NSApp?.terminate(null)
+        // },
     ) {
         App()
     }

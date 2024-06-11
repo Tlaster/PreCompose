@@ -9,10 +9,11 @@ plugins {
     alias(libs.plugins.android.library)
     id("maven-publish")
     id("signing")
+    alias(libs.plugins.compose.compiler)
 }
 
 group = "moe.tlaster"
-version = rootProject.extra.get("precomposeVersion") as String
+version = libs.versions.libVersion.get()
 
 kotlin {
     applyDefaultHierarchyTemplate()
@@ -29,15 +30,12 @@ kotlin {
             sourceSetTree.set(KotlinSourceSetTree.test)
 
             dependencies {
-                implementation("androidx.compose.ui:ui-test-junit4-android:1.5.4")
-                debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.4")
+                implementation("androidx.compose.ui:ui-test-junit4-android:1.6.7")
+                debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.7")
             }
         }
     }
     jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = rootProject.extra.get("jvmTarget") as String
-        }
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
         }
@@ -146,16 +144,15 @@ compose.experimental {
     web.application {}
 }
 android {
-    compileSdk = rootProject.extra.get("android-compile") as Int
-    buildToolsVersion = rootProject.extra.get("android-build-tools") as String
+    compileSdk = libs.versions.compileSdk.get().toInt()
     namespace = "moe.tlaster.precompose"
     defaultConfig {
-        minSdk = rootProject.extra.get("androidMinSdk") as Int
+        minSdk = libs.versions.minSdk.get().toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.toVersion(rootProject.extra.get("jvmTarget") as String)
-        targetCompatibility = JavaVersion.toVersion(rootProject.extra.get("jvmTarget") as String)
+        sourceCompatibility = JavaVersion.toVersion(libs.versions.java.get())
+        targetCompatibility = JavaVersion.toVersion(libs.versions.java.get())
     }
 }
 extra.apply {
