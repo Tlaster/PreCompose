@@ -1,20 +1,16 @@
-import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("multiplatform")
     alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.compose.compiler)
 }
 
 group = "moe.tlaster"
 version = "1.0"
 
 kotlin {
-    jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = rootProject.extra.get("jvmTarget") as String
-        }
-    }
+    jvm()
     sourceSets {
         val jvmMain by getting {
             dependencies {

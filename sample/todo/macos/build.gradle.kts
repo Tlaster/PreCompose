@@ -1,10 +1,10 @@
 import org.jetbrains.compose.compose
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("multiplatform")
     alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
@@ -60,10 +60,6 @@ compose.desktop.nativeApplication {
         packageName = "PreComposeSample"
         packageVersion = "1.0.0"
     }
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = rootProject.extra.get("jvmTarget") as String
 }
 
 kotlin {

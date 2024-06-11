@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.jetbrains.compose)
     id("com.android.application")
     kotlin("android")
+    alias(libs.plugins.compose.compiler)
 }
 
 group = "moe.tlaster"
@@ -13,12 +14,11 @@ dependencies {
 }
 
 android {
-    compileSdk = rootProject.extra.get("android-compile") as Int
-    buildToolsVersion = rootProject.extra.get("android-build-tools") as String
+    compileSdk = libs.versions.compileSdk.get().toInt()
     defaultConfig {
         applicationId = "moe.tlaster.android"
-        minSdk = rootProject.extra.get("androidMinSdk") as Int
-        targetSdk = rootProject.extra.get("androidTargetSdk") as Int
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.compileSdk.get().toInt()
         versionCode = 1
         versionName = "0.1.0"
     }
@@ -28,8 +28,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.toVersion(rootProject.extra.get("jvmTarget") as String)
-        targetCompatibility = JavaVersion.toVersion(rootProject.extra.get("jvmTarget") as String)
+        sourceCompatibility = JavaVersion.toVersion(libs.versions.java.get())
+        targetCompatibility = JavaVersion.toVersion(libs.versions.java.get())
     }
     namespace = "moe.tlaster.android"
 }
