@@ -1,6 +1,5 @@
 package moe.tlaster.precompose.viewmodel
 
-@OptIn(ExperimentalStdlibApi::class)
 abstract class ViewModel : AutoCloseable {
     private var disposed = false
     private val bagOfTags = hashMapOf<String, Any>()

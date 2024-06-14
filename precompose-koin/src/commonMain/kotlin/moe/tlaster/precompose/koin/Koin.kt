@@ -12,6 +12,26 @@ import org.koin.core.scope.Scope
 import kotlin.reflect.KClass
 
 @Composable
+inline fun <reified T : ViewModel> koinViewModel(
+    qualifier: Qualifier? = null,
+    stateHolder: StateHolder = checkNotNull(LocalStateHolder.current) {
+        "No StateHolder was provided via LocalStateHolder"
+    },
+    key: String? = null,
+    scope: Scope = LocalKoinScope.current,
+    noinline parameters: ParametersDefinition? = null,
+): T {
+    return koinViewModel(
+        T::class,
+        qualifier,
+        stateHolder,
+        key,
+        scope,
+        parameters,
+    )
+}
+
+@Composable
 fun <T : ViewModel> koinViewModel(
     vmClass: KClass<T>,
     qualifier: Qualifier? = null,
