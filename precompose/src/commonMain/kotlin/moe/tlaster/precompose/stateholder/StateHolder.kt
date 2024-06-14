@@ -8,7 +8,7 @@ import androidx.compose.runtime.compositionLocalOf
 class StateHolder : AutoCloseable {
     private val _states = mutableMapOf<String, Any?>()
 
-    fun <T> set(key: String, value: T) {
+    operator fun <T> set(key: String, value: T) {
         _states[key] = value
     }
 
