@@ -31,7 +31,7 @@ fun NoteEditScene(
     onBack: () -> Unit = {},
 ) {
     val stateHolder = LocalSavedStateHolder.current
-    val viewModel = koinViewModel(NoteEditViewModel::class) { parametersOf(id, stateHolder) }
+    val viewModel = koinViewModel<NoteEditViewModel> { parametersOf(id, stateHolder) }
 
     Scaffold(
         topBar = {
