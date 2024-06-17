@@ -13,14 +13,7 @@ group = "moe.tlaster"
 version = libs.versions.libVersion.get()
 
 kotlin {
-    applyDefaultHierarchyTemplate {
-        common {
-            group("jvmAndroid") {
-                withAndroidTarget()
-                withJvm()
-            }
-        }
-    }
+    applyDefaultHierarchyTemplate()
     androidTarget {
         publishLibraryVariants("release", "debug")
     }
