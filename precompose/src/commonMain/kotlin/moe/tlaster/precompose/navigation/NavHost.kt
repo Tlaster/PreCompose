@@ -17,8 +17,7 @@ import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.snapTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -35,9 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CancellationException
 import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
 import moe.tlaster.precompose.lifecycle.currentLocalLifecycleOwner
@@ -235,18 +232,27 @@ fun NavHost(
                             )
                         }
                     }
-                transition.AnimatedContent(
-                    transitionSpec = transitionSpec,
-                    contentKey = { it.stateId },
-                ) { entry ->
-                    NavHostContent(composeStateHolder, entry)
-                }
+
                 if (state != null && actualSwipeProperties != null) {
-                    DragSlider(
+                    SwipeableContent(
                         state = state,
                         enabled = prevSceneEntry != null,
-                        spaceToSwipe = actualSwipeProperties.spaceToSwipe,
+                        content = {
+                            transition.AnimatedContent(
+                                transitionSpec = transitionSpec,
+                                contentKey = { it.stateId },
+                            ) { entry ->
+                                NavHostContent(composeStateHolder, entry)
+                            }
+                        },
                     )
+                } else {
+                    transition.AnimatedContent(
+                        transitionSpec = transitionSpec,
+                        contentKey = { it.stateId },
+                    ) { entry ->
+                        NavHostContent(composeStateHolder, entry)
+                    }
                 }
             }
             currentFloatingEntry?.let {
@@ -303,24 +309,25 @@ private fun BackStackEntry.ComposeContent(animatedContentScope: AnimatedContentS
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun DragSlider(
+private fun SwipeableContent(
     state: AnchoredDraggableState<DragAnchors>,
     enabled: Boolean = true,
-    spaceToSwipe: Dp = 10.dp,
     modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
 ) {
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     Box(
         modifier = modifier
-            .fillMaxHeight()
-            .width(spaceToSwipe)
+            .fillMaxSize()
             .anchoredDraggable(
                 state = state,
                 orientation = Orientation.Horizontal,
                 enabled = enabled,
                 reverseDirection = isRtl,
             ),
-    )
+    ) {
+        content()
+    }
 }
 
 private enum class DragAnchors {
