@@ -6,6 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.window.CanvasBasedWindow
+import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
 import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
@@ -73,5 +74,9 @@ class PreComposeWindowHolder : LifecycleOwner, BackDispatcherOwner {
     }
     override val backDispatcher by lazy {
         BackDispatcher()
+    }
+
+    init {
+        lifecycle.updateState(Lifecycle.State.Active)
     }
 }
