@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import java.util.Properties
 
 plugins {
@@ -29,6 +30,10 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
     js(IR) {
+        browser()
+    }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
         browser()
     }
     sourceSets {
