@@ -30,8 +30,8 @@ kotlin {
             sourceSetTree.set(KotlinSourceSetTree.test)
 
             dependencies {
-                androidTestImplementation("androidx.compose.ui:ui-test-junit4-android:1.6.8")
-                debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.7")
+                androidTestImplementation("androidx.compose.ui:ui-test-junit4-android:1.7.2")
+                debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.2")
             }
         }
     }

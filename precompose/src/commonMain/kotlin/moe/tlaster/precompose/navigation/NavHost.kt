@@ -9,6 +9,7 @@ import androidx.compose.animation.core.SeekableTransitionState
 import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -140,7 +141,8 @@ fun NavHost(
                 val state = if (actualSwipeProperties != null) {
                     val density = LocalDensity.current
                     val width = constraints.maxWidth.toFloat()
-                    remember {
+                    val decayAnimationSpec = rememberSplineBasedDecay<Float>()
+                    remember(actualSwipeProperties) {
                         AnchoredDraggableState(
                             initialValue = DragAnchors.Start,
                             anchors = DraggableAnchors {
@@ -149,7 +151,8 @@ fun NavHost(
                             },
                             positionalThreshold = actualSwipeProperties.positionalThreshold,
                             velocityThreshold = { actualSwipeProperties.velocityThreshold.invoke(density) },
-                            animationSpec = tween(),
+                            snapAnimationSpec = tween(),
+                            decayAnimationSpec = decayAnimationSpec,
                         )
                     }.also { state ->
                         LaunchedEffect(
@@ -159,13 +162,13 @@ fun NavHost(
                             if (state.currentValue == DragAnchors.End && !state.isAnimationRunning) {
                                 // play the animation to the end
                                 progress = 1f
-                                state.snapTo(DragAnchors.Start)
                             }
                         }
-                        LaunchedEffect(state.progress) {
-                            if (state.progress != 1f) {
-                                inPredictiveBack = state.progress > 0f
-                                progress = state.progress
+                        val stateProgress = state.progress(DragAnchors.Start, DragAnchors.End)
+                        LaunchedEffect(stateProgress) {
+                            if (stateProgress != 1f) {
+                                inPredictiveBack = stateProgress > 0f
+                                progress = stateProgress
                             } else if (state.currentValue != DragAnchors.End && inPredictiveBack) {
                                 // reset the state to the initial value
                                 progress = -1f
@@ -185,20 +188,21 @@ fun NavHost(
                 }
                 val transition = if (showPrev) {
                     val transitionState by remember(sceneEntry) {
-                        mutableStateOf(SeekableTransitionState(sceneEntry, prevSceneEntry!!))
+                        mutableStateOf(SeekableTransitionState(sceneEntry))
                     }
                     LaunchedEffect(progress) {
                         if (progress == 1f) {
                             // play the animation to the end
-                            transitionState.animateToTargetState()
+                            transitionState.animateTo(prevSceneEntry!!)
                             inPredictiveBack = false
                             navigator.goBack()
                             progress = 0f
+                            state?.snapTo(DragAnchors.Start)
                         } else if (progress >= 0) {
-                            transitionState.snapToFraction(progress)
+                            transitionState.seekTo(progress, targetState = prevSceneEntry!!)
                         } else if (progress == -1f) {
                             // reset the state to the initial value
-                            transitionState.animateToCurrentState()
+                            transitionState.seekTo(0f, targetState = prevSceneEntry!!)
                             inPredictiveBack = false
                             progress = 0f
                         }

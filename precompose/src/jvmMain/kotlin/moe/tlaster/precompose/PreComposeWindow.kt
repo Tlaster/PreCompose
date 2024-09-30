@@ -5,13 +5,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowScope
-import androidx.compose.ui.window.WindowState
-import androidx.compose.ui.window.rememberWindowState
 import moe.tlaster.precompose.lifecycle.Lifecycle
 import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.lifecycle.LifecycleRegistry
@@ -24,55 +20,6 @@ import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 import java.awt.Window
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
-
-@Deprecated(
-    message = """
-        Use Window directly instead. And make sure wrap your content with PreComposeApp.
-        PreComposeWindow will be removed in the future release.
-        For migration guide, please refer to https://github.com/Tlaster/PreCompose/releases/tag/1.5.5
-    """,
-    replaceWith = ReplaceWith("PreComposeWindow"),
-)
-@Composable
-fun PreComposeWindow(
-    onCloseRequest: () -> Unit,
-    state: WindowState = rememberWindowState(),
-    visible: Boolean = true,
-    title: String = "Untitled",
-    icon: Painter? = null,
-    undecorated: Boolean = false,
-    transparent: Boolean = false,
-    resizable: Boolean = true,
-    enabled: Boolean = true,
-    focusable: Boolean = true,
-    alwaysOnTop: Boolean = false,
-    onPreviewKeyEvent: (KeyEvent) -> Boolean = { false },
-    onKeyEvent: (KeyEvent) -> Boolean = { false },
-    content: @Composable FrameWindowScope.() -> Unit,
-) {
-    Window(
-        onCloseRequest = onCloseRequest,
-        state = state,
-        visible = visible,
-        title = title,
-        icon = icon,
-        undecorated = undecorated,
-        transparent = transparent,
-        resizable = resizable,
-        enabled = enabled,
-        focusable = focusable,
-        alwaysOnTop = alwaysOnTop,
-        onPreviewKeyEvent = onPreviewKeyEvent,
-        onKeyEvent = onKeyEvent,
-        content = {
-            ProvidePreComposeLocals {
-                PreComposeApp {
-                    content.invoke(this)
-                }
-            }
-        },
-    )
-}
 
 val LocalWindow = staticCompositionLocalOf<Window> {
     error("No Window for PreCompose, please use ProvidePreComposeLocals in WindowScope to setup your desktop project")

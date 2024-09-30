@@ -23,7 +23,7 @@ actual fun PreComposeApp(
 ) {
     val viewModel = androidx.lifecycle.viewmodel.compose.viewModel<PreComposeViewModel>()
 
-    val lifecycle = androidx.compose.ui.platform.LocalLifecycleOwner.current.lifecycle
+    val lifecycle = androidx.lifecycle.compose.LocalLifecycleOwner.current.lifecycle
     val onBackPressedDispatcher = checkNotNull(androidx.activity.compose.LocalOnBackPressedDispatcherOwner.current) {
         "No OnBackPressedDispatcherOwner was provided via LocalOnBackPressedDispatcherOwner"
     }.onBackPressedDispatcher
