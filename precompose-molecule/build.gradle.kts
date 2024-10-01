@@ -40,8 +40,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 compileOnly(compose.foundation)
-                implementation(project(":precompose"))
                 compileOnly(libs.molecule.runtime)
+                compileOnly(libs.jetbrains.viewmodel)
             }
         }
         val commonTest by getting {

@@ -18,7 +18,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.consumeAsFlow
-import moe.tlaster.precompose.reflect.canonicalName
 import kotlin.coroutines.CoroutineContext
 
 internal expect fun providePlatformDispatcher(): CoroutineContext
@@ -51,31 +50,25 @@ private class ActionViewHolder<T> : ViewModel() {
 
 @Composable
 private fun <E> rememberAction(
-    keys: List<Any?>,
+    key: String? = null,
 ): Pair<Channel<E>, Flow<E>> {
-    val key = remember(keys) {
-        (keys.map { it.hashCode().toString() } + ActionViewHolder::class.canonicalName).joinToString()
-    }
     return viewModel<ActionViewHolder<E>>(key = key).pair
 }
 
 /**
  * Return StateFlow, use it in your Compose UI
  * The molecule scope will be managed by the [ViewModel], so it has the same lifecycle as the [ViewModel]
- * @param keys The keys to use to identify the Presenter
+ * @param key The key to use to identify the Presenter
  * @param body The body of the molecule presenter
  * @return StateFlow
  */
 @Composable
 private fun <T> rememberPresenterState(
-    keys: List<Any?> = emptyList(),
+    key: String? = null,
     useImmediateClock: Boolean,
     body: @Composable () -> T,
 ): StateFlow<T> {
-    val key = remember(keys) {
-        (keys.map { it.hashCode().toString() } + PresenterHolder::class.canonicalName).joinToString()
-    }
-    val factory = remember {
+    val factory = remember(key) {
         viewModelFactory {
             addInitializer(PresenterHolder::class) {
                 PresenterHolder(useImmediateClock, body)
@@ -88,18 +81,18 @@ private fun <T> rememberPresenterState(
 /**
  * Return State, use it in your Compose UI
  * The molecule scope will be managed by the [ViewModel], so it has the same lifecycle as the [ViewModel]
- * @param keys The keys to use to identify the Presenter
+ * @param key The key to use to identify the Presenter
  * @param useImmediateClock Use immediate clock or not, for text input, you should set it to true
  * @param body The body of the molecule presenter
  * @return State
  */
 @Composable
 fun <T> producePresenter(
-    keys: List<Any?> = emptyList(),
+    key: String? = null,
     useImmediateClock: Boolean = false,
     body: @Composable () -> T,
 ): State<T> {
-    val presenter = rememberPresenterState(keys = keys, useImmediateClock = useImmediateClock) { body() }
+    val presenter = rememberPresenterState(key = key, useImmediateClock = useImmediateClock) { body() }
     return presenter.collectAsState()
 }
 
@@ -107,19 +100,19 @@ fun <T> producePresenter(
  * Return pair of State and Action Channel, use it in your Compose UI
  * The molecule scope and the Action Channel will be managed by the [ViewModel], so it has the same lifecycle as the [ViewModel]
  *
- * @param keys The keys to use to identify the Presenter
+ * @param key The key to use to identify the Presenter
  * @param useImmediateClock Use immediate clock or not, for text input, you should set it to true
  * @param body The body of the molecule presenter, the flow parameter is the flow of the action channel
  * @return Pair of State and Action channel
  */
 @Composable
 fun <T, E> rememberPresenter(
-    keys: List<Any?> = emptyList(),
+    key: String? = null,
     useImmediateClock: Boolean = false,
     body: @Composable (flow: Flow<E>) -> T,
 ): Pair<T, Channel<E>> {
-    val (channel, action) = rememberAction<E>(keys = keys)
-    val presenter = rememberPresenterState(keys = keys, useImmediateClock = useImmediateClock) { body(action) }
+    val (channel, action) = rememberAction<E>(key = key)
+    val presenter = rememberPresenterState(key = key, useImmediateClock = useImmediateClock) { body(action) }
     val state by presenter.collectAsState()
     return state to channel
 }
