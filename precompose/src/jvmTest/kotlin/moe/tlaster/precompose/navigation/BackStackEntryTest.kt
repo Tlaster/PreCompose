@@ -3,14 +3,20 @@ package moe.tlaster.precompose.navigation
 import androidx.lifecycle.Lifecycle
 import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import kotlinx.coroutines.withContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@OptIn(ExperimentalCoroutinesApi::class)
 fun runMainTest(block: () -> Unit) = runTest {
+    val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+    Dispatchers.setMain(testDispatcher)
     withContext(Dispatchers.Main.immediate) {
         block()
     }
