@@ -1,7 +1,7 @@
 package moe.tlaster.common.viewmodel
 
+import androidx.lifecycle.ViewModel
 import moe.tlaster.common.repository.FakeRepository
-import moe.tlaster.precompose.viewmodel.ViewModel
 
 class NoteDetailViewModel(
     private val id: Int,

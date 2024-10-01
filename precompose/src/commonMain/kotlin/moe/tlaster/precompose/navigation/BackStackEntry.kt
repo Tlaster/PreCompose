@@ -1,32 +1,27 @@
 package moe.tlaster.precompose.navigation
 
-import moe.tlaster.precompose.lifecycle.Lifecycle
-import moe.tlaster.precompose.lifecycle.LifecycleOwner
-import moe.tlaster.precompose.lifecycle.LifecycleRegistry
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.ViewModelStoreOwner
 import moe.tlaster.precompose.navigation.route.GroupRoute
 import moe.tlaster.precompose.navigation.route.Route
 import moe.tlaster.precompose.navigation.route.toSceneRoute
 import moe.tlaster.precompose.navigation.transition.NavTransition
-import moe.tlaster.precompose.stateholder.SavedStateHolder
-import moe.tlaster.precompose.stateholder.StateHolder
 
 class BackStackEntry internal constructor(
     internal val stateId: String,
     internal var routeInternal: Route,
     val path: String,
     val pathMap: Map<String, String>,
-    private val parentStateHolder: StateHolder,
-    parentSavedStateHolder: SavedStateHolder,
+    private val provider: ViewModelStoreProvider,
     val queryString: QueryString? = null,
-) : LifecycleOwner {
+) : LifecycleOwner,
+    ViewModelStoreOwner {
     val route: Route
         get() = routeInternal
     internal var uiClosable: UiClosable? = null
     private var _destroyAfterTransition = false
-    val stateHolder: StateHolder = parentStateHolder.getOrPut(stateId) {
-        StateHolder()
-    }
-    val savedStateHolder: SavedStateHolder = parentSavedStateHolder.child(stateId)
     internal val swipeProperties: SwipeProperties?
         get() = route.toSceneRoute()?.swipeProperties
 
@@ -34,25 +29,29 @@ class BackStackEntry internal constructor(
         get() = route.toSceneRoute()?.navTransition
 
     private val lifecycleRegistry by lazy {
-        LifecycleRegistry()
+        LifecycleRegistry(this)
     }
 
     override val lifecycle: Lifecycle
         get() = lifecycleRegistry
 
+    init {
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    }
+
     fun active() {
-        lifecycleRegistry.updateState(Lifecycle.State.Active)
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
     }
 
     fun inActive() {
-        lifecycleRegistry.updateState(Lifecycle.State.InActive)
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
         if (_destroyAfterTransition) {
             destroy()
         }
     }
 
     fun destroy() {
-        if (lifecycleRegistry.currentState != Lifecycle.State.InActive) {
+        if (lifecycleRegistry.currentState.isAtLeast(Lifecycle.State.STARTED)) {
             _destroyAfterTransition = true
         } else {
             destroyDirectly()
@@ -60,15 +59,28 @@ class BackStackEntry internal constructor(
     }
 
     internal fun destroyDirectly() {
-        lifecycleRegistry.updateState(Lifecycle.State.Destroyed)
-        stateHolder.close()
-        parentStateHolder.remove(stateId)
-        savedStateHolder.close()
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+        provider.clear(stateId)
         uiClosable?.close(stateId)
     }
 
     fun hasRoute(route: String): Boolean {
         return this.route.route == route || (this.route as? GroupRoute)?.hasRoute(route) == true
+    }
+
+    fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        when (event) {
+            Lifecycle.Event.ON_DESTROY -> {
+                destroy()
+            }
+            else -> {
+                lifecycleRegistry.handleLifecycleEvent(event)
+            }
+        }
+    }
+
+    override val viewModelStore by lazy {
+        provider.getViewModelStore(stateId)
     }
 }
 

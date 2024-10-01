@@ -1,17 +1,15 @@
 package moe.tlaster.precompose.navigation
 
-import moe.tlaster.precompose.lifecycle.TestLifecycleOwner
-import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.test.Test
 import kotlin.test.assertEquals
+
 class NavigatorTest {
     @Test
-    fun testNavigate() {
+    fun testNavigate() = runMainTest {
         val navigator = Navigator()
         navigator.init(
-            StateHolder(),
-            TestSavedStateHolder(),
             TestLifecycleOwner(),
+            TestViewModelStoreOwner(),
         )
         navigator.setRouteGraph(
             RouteGraph(
@@ -31,14 +29,13 @@ class NavigatorTest {
     }
 
     @Test
-    fun testPendingNavigate() {
+    fun testPendingNavigate() = runMainTest {
         val navigator = Navigator()
         navigator.navigate("foo/bar/1")
         assertEquals(0, navigator.stackManager.backStacks.value.size)
         navigator.init(
-            StateHolder(),
-            TestSavedStateHolder(),
             TestLifecycleOwner(),
+            TestViewModelStoreOwner(),
         )
         navigator.setRouteGraph(
             RouteGraph(

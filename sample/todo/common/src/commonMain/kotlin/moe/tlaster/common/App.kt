@@ -1,9 +1,5 @@
 package moe.tlaster.common
 
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -14,7 +10,6 @@ import moe.tlaster.precompose.PreComposeApp
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.rememberNavigator
-import moe.tlaster.precompose.navigation.transition.NavTransition
 import org.koin.compose.KoinContext
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -54,15 +49,8 @@ fun App() {
                             )
                         }
                     }
-                    scene(
+                    dialog(
                         "/edit/{id:[0-9]+}?",
-                        navTransition = NavTransition(
-                            createTransition = slideInVertically(initialOffsetY = { it }),
-                            destroyTransition = slideOutVertically(targetOffsetY = { it }),
-                            pauseTransition = scaleOut(targetScale = 0.9f),
-                            resumeTransition = scaleIn(initialScale = 0.9f),
-                            exitTargetContentZIndex = 1f,
-                        ),
                     ) { backStackEntry ->
                         val id = backStackEntry.path<Int>("id")
                         NoteEditScene(

@@ -30,8 +30,8 @@ kotlin {
             sourceSetTree.set(KotlinSourceSetTree.test)
 
             dependencies {
-                androidTestImplementation("androidx.compose.ui:ui-test-junit4-android:1.7.2")
-                debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.2")
+                androidTestImplementation(libs.androidx.ui.test.junit4.android)
+                debugImplementation(libs.androidx.ui.test.manifest)
             }
         }
     }
@@ -55,6 +55,8 @@ kotlin {
                 compileOnly(compose.material)
                 api(libs.kotlinx.coroutines.core)
                 implementation(libs.uuid)
+                api(libs.jetbrains.lifecycle)
+                api(libs.jetbrains.viewmodel)
             }
         }
         val commonTest by getting {

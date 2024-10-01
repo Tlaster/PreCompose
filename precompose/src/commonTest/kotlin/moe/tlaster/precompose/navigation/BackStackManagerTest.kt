@@ -1,9 +1,7 @@
 package moe.tlaster.precompose.navigation
 
-import moe.tlaster.precompose.lifecycle.Lifecycle
-import moe.tlaster.precompose.lifecycle.TestLifecycleOwner
+import androidx.lifecycle.Lifecycle
 import moe.tlaster.precompose.navigation.route.GroupRoute
-import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -11,12 +9,11 @@ import kotlin.test.assertNotEquals
 
 class BackStackManagerTest {
     @Test
-    fun testInitialRoute() {
+    fun testInitialRoute() = runMainTest {
         val manager = BackStackManager()
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = TestSavedStateHolder(),
             lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             RouteGraph(
@@ -36,12 +33,11 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testPush() {
+    fun testPush() = runMainTest {
         val manager = BackStackManager()
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = TestSavedStateHolder(),
             lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             RouteGraph(
@@ -63,12 +59,11 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testPop() {
+    fun testPop() = runMainTest {
         val manager = BackStackManager()
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = TestSavedStateHolder(),
             lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             RouteGraph(
@@ -92,12 +87,11 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testLaunchSingleTop() {
+    fun testLaunchSingleTop() = runMainTest {
         val manager = BackStackManager()
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = TestSavedStateHolder(),
             lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteGraph(
@@ -128,12 +122,11 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testLaunchSingleTopWithIncludePath() {
+    fun testLaunchSingleTopWithIncludePath() = runMainTest {
         val manager = BackStackManager()
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = TestSavedStateHolder(),
             lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteGraph(
@@ -161,12 +154,11 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testPopUpTo() {
+    fun testPopUpTo() = runMainTest {
         val manager = BackStackManager()
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = TestSavedStateHolder(),
             lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteGraph(
@@ -194,12 +186,11 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testPopUpToWithInclusiveLast() {
+    fun testPopUpToWithInclusiveLast() = runMainTest {
         val manager = BackStackManager()
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = TestSavedStateHolder(),
             lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteGraph(
@@ -227,12 +218,11 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testPopUpToWithInclusive() {
+    fun testPopUpToWithInclusive() = runMainTest {
         val manager = BackStackManager()
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = TestSavedStateHolder(),
             lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteGraph(
@@ -261,12 +251,11 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testLaunchSingleTopWithPopUpToWithInclusive() {
+    fun testLaunchSingleTopWithPopUpToWithInclusive() = runMainTest {
         val manager = BackStackManager()
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = TestSavedStateHolder(),
             lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteGraph(
@@ -293,12 +282,11 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testMultipleLaunchSingleTopWithPopUpTo() {
+    fun testMultipleLaunchSingleTopWithPopUpTo() = runMainTest {
         val manager = BackStackManager()
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = TestSavedStateHolder(),
             lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             RouteGraph(
@@ -310,7 +298,7 @@ class BackStackManagerTest {
             ),
         )
 
-        fun navigate(path: String, navOptions: NavOptions) {
+        fun navigate(path: String, navOptions: NavOptions) = runMainTest {
             val previousEntry = manager.backStacks.value.lastOrNull()
             manager.push(path, navOptions)
             // Mark the previous entry as inactive to simulate the lifecycle change by the NavHost
@@ -328,13 +316,12 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testLifecycle() {
+    fun testLifecycle() = runMainTest {
         val manager = BackStackManager()
         val lifecycleOwner = TestLifecycleOwner()
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = TestSavedStateHolder(),
             lifecycleOwner = lifecycleOwner,
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteGraph(
@@ -347,23 +334,22 @@ class BackStackManagerTest {
             ),
         )
         val entry = manager.backStacks.value[0]
-        lifecycleOwner.lifecycle.updateState(Lifecycle.State.Active)
-        assertEquals(Lifecycle.State.Active, entry.lifecycle.currentState)
-        lifecycleOwner.lifecycle.updateState(Lifecycle.State.InActive)
-        assertEquals(Lifecycle.State.InActive, entry.lifecycle.currentState)
-        lifecycleOwner.lifecycle.updateState(Lifecycle.State.Destroyed)
+        lifecycleOwner.lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+        assertEquals(Lifecycle.State.RESUMED, entry.lifecycle.currentState)
+        lifecycleOwner.lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
+        assertEquals(Lifecycle.State.CREATED, entry.lifecycle.currentState)
+        lifecycleOwner.lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         assertEquals(0, manager.backStacks.value.size)
-        assertEquals(Lifecycle.State.Destroyed, entry.lifecycle.currentState)
+        assertEquals(Lifecycle.State.DESTROYED, entry.lifecycle.currentState)
     }
 
     @Test
-    fun testGroupNavigation() {
+    fun testGroupNavigation() = runMainTest {
         val manager = BackStackManager()
         val lifecycleOwner = TestLifecycleOwner()
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = TestSavedStateHolder(),
-            lifecycleOwner = lifecycleOwner,
+            lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteBuilder("/home").apply {
@@ -383,13 +369,12 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testNestedGroupNavigation() {
+    fun testNestedGroupNavigation() = runMainTest {
         val manager = BackStackManager()
         val lifecycleOwner = TestLifecycleOwner()
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = TestSavedStateHolder(),
-            lifecycleOwner = lifecycleOwner,
+            lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteBuilder("/home").apply {
@@ -420,13 +405,12 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testGroupNavigationWithPopUpTo() {
+    fun testGroupNavigationWithPopUpTo() = runMainTest {
         val manager = BackStackManager()
         val lifecycleOwner = TestLifecycleOwner()
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = TestSavedStateHolder(),
-            lifecycleOwner = lifecycleOwner,
+            lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteBuilder("/home").apply {
@@ -453,15 +437,11 @@ class BackStackManagerTest {
      * #146
      */
     @Test
-    fun testNavigateWithPopupToWithDuplicateScene() {
+    fun testNavigateWithPopupToWithDuplicateScene() = runMainTest {
         val manager = BackStackManager()
-        val lifecycleOwner = TestLifecycleOwner()
-        val saveableStateHolder = TestSavedStateHolder()
-
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = saveableStateHolder,
-            lifecycleOwner = lifecycleOwner,
+            lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteGraph(
@@ -473,7 +453,7 @@ class BackStackManagerTest {
             ),
         )
 
-        fun navigate(path: String, navOptions: NavOptions) {
+        fun navigate(path: String, navOptions: NavOptions) = runMainTest {
             val previousEntry = manager.backStacks.value.lastOrNull()
             manager.push(path, navOptions)
             // Mark the previous entry as inactive to simulate the lifecycle change by the NavHost
@@ -496,15 +476,11 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testGoBackTwiceImmediately() {
+    fun testGoBackTwiceImmediately() = runMainTest {
         val manager = BackStackManager()
-        val lifecycleOwner = TestLifecycleOwner()
-        val saveableStateHolder = TestSavedStateHolder()
-
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = saveableStateHolder,
-            lifecycleOwner = lifecycleOwner,
+            lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteGraph(
@@ -534,15 +510,11 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testGoBackWithPopupTo() {
+    fun testGoBackWithPopupTo() = runMainTest {
         val manager = BackStackManager()
-        val lifecycleOwner = TestLifecycleOwner()
-        val saveableStateHolder = TestSavedStateHolder()
-
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = saveableStateHolder,
-            lifecycleOwner = lifecycleOwner,
+            lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteGraph(
@@ -571,15 +543,11 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testGoBackWithPopupToInclusive() {
+    fun testGoBackWithPopupToInclusive() = runMainTest {
         val manager = BackStackManager()
-        val lifecycleOwner = TestLifecycleOwner()
-        val saveableStateHolder = TestSavedStateHolder()
-
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = saveableStateHolder,
-            lifecycleOwner = lifecycleOwner,
+            lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteGraph(
@@ -608,15 +576,11 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testRouteGraphUpdateWithSameRoute() {
+    fun testRouteGraphUpdateWithSameRoute() = runMainTest {
         val manager = BackStackManager()
-        val lifecycleOwner = TestLifecycleOwner()
-        val saveableStateHolder = TestSavedStateHolder()
-
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = saveableStateHolder,
-            lifecycleOwner = lifecycleOwner,
+            lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteGraph(
@@ -654,15 +618,12 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testRouteGraphUpdateWithDifferentRoute() {
+    fun testRouteGraphUpdateWithDifferentRoute() = runMainTest {
         val manager = BackStackManager()
-        val lifecycleOwner = TestLifecycleOwner()
-        val saveableStateHolder = TestSavedStateHolder()
 
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = saveableStateHolder,
-            lifecycleOwner = lifecycleOwner,
+            lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteGraph(
@@ -700,14 +661,11 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testStateId() {
+    fun testStateId() = runMainTest {
         val manager = BackStackManager()
-        val lifecycleOwner = TestLifecycleOwner()
-        val saveableStateHolder = TestSavedStateHolder()
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = saveableStateHolder,
-            lifecycleOwner = lifecycleOwner,
+            lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteGraph(
@@ -730,14 +688,11 @@ class BackStackManagerTest {
     }
 
     @Test
-    fun testStateIdWithoutDestroy() {
+    fun testStateIdWithoutDestroy() = runMainTest {
         val manager = BackStackManager()
-        val lifecycleOwner = TestLifecycleOwner()
-        val saveableStateHolder = TestSavedStateHolder()
         manager.init(
-            stateHolder = StateHolder(),
-            savedStateHolder = saveableStateHolder,
-            lifecycleOwner = lifecycleOwner,
+            lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
         )
         manager.setRouteGraph(
             routeGraph = RouteGraph(

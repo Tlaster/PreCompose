@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.animation.core.SeekableTransitionState
 import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
@@ -36,17 +35,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import kotlinx.coroutines.CancellationException
-import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
-import moe.tlaster.precompose.lifecycle.currentLocalLifecycleOwner
 import moe.tlaster.precompose.navigation.route.ComposeRoute
 import moe.tlaster.precompose.navigation.route.FloatingRoute
 import moe.tlaster.precompose.navigation.route.GroupRoute
 import moe.tlaster.precompose.navigation.transition.NavTransition
-import moe.tlaster.precompose.stateholder.LocalSavedStateHolder
-import moe.tlaster.precompose.stateholder.LocalStateHolder
-import moe.tlaster.precompose.stateholder.currentLocalSavedStateHolder
-import moe.tlaster.precompose.stateholder.currentLocalStateHolder
 
 /**
  * Provides in place in the Compose hierarchy for self-contained navigation to occur.
@@ -64,7 +59,6 @@ import moe.tlaster.precompose.stateholder.currentLocalStateHolder
  * @param builder the builder used to construct the graph
  */
 @OptIn(
-    ExperimentalTransitionApi::class,
     ExperimentalFoundationApi::class,
 )
 @Composable
@@ -76,16 +70,16 @@ fun NavHost(
     swipeProperties: SwipeProperties? = null,
     builder: RouteBuilder.() -> Unit,
 ) {
-    val lifecycleOwner = currentLocalLifecycleOwner
-    val stateHolder = currentLocalStateHolder
-    val savedStateHolder = currentLocalSavedStateHolder
+    val lifecycleOwner = LocalLifecycleOwner.current
     val composeStateHolder = rememberSaveableStateHolder()
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+    }
 
     // true for assuming that lifecycleOwner, stateHolder and composeStateHolder are not changing during the lifetime of the NavHost
     LaunchedEffect(true) {
         navigator.init(
-            stateHolder = stateHolder,
-            savedStateHolder = savedStateHolder,
+            viewModelStoreOwner = viewModelStoreOwner,
             lifecycleOwner = lifecycleOwner,
         )
     }
@@ -278,9 +272,8 @@ private fun AnimatedContentScope.NavHostContent(
 ) {
     stateHolder.SaveableStateProvider(entry.stateId) {
         CompositionLocalProvider(
-            LocalStateHolder provides entry.stateHolder,
-            LocalSavedStateHolder provides entry.savedStateHolder,
             LocalLifecycleOwner provides entry,
+            LocalViewModelStoreOwner provides entry,
             content = {
                 entry.ComposeContent(this@NavHostContent)
             },

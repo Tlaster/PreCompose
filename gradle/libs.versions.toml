@@ -22,6 +22,8 @@ spotless = "6.25.0"
 jetbrainsComposePlugin = "1.7.0-beta02"
 skiko = "0.8.12"
 koin = "4.0.0"
+uiTestJunit4Android = "1.7.2"
+uiTestManifest = "1.7.2"
 uuid = "0.8.4"
 webpackCliVersion = "5.1.4"
 nodeVersion = "20.14.0"
@@ -36,6 +38,8 @@ androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtim
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-savedstate-ktx = { module = "androidx.savedstate:savedstate-ktx", version.ref = "savedstateKtx" }
+androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifest" }
+androidx-ui-test-junit4-android = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
 animation = { module = "androidx.compose.animation:animation", version.ref = "androidx-animation" }
 foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-foundation" }
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -49,7 +53,10 @@ skiko = { module = "org.jetbrains.skiko:skiko", version.ref = "skiko" }
 skiko-js = { module = "org.jetbrains.skiko:skiko-js-wasm-runtime", version.ref = "skiko" }
 koin = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
+jetbrains-lifecycle = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version = "2.8.2" }
+jetbrains-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version = "2.8.2" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

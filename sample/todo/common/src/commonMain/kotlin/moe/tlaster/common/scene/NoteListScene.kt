@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import moe.tlaster.common.model.Note
 import moe.tlaster.common.viewmodel.NoteListViewModel
-import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @ExperimentalMaterialApi
 @Composable

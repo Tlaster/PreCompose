@@ -1,20 +1,17 @@
 package moe.tlaster.precompose
 
+import androidx.activity.BackEventCompat
+import androidx.activity.OnBackPressedCallback
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
 import androidx.lifecycle.DefaultLifecycleObserver
-import moe.tlaster.precompose.lifecycle.Lifecycle
-import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
-import moe.tlaster.precompose.lifecycle.PreComposeViewModel
-import moe.tlaster.precompose.stateholder.LocalSavedStateHolder
-import moe.tlaster.precompose.stateholder.LocalStateHolder
-import moe.tlaster.precompose.stateholder.SavedStateHolder
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import moe.tlaster.precompose.ui.BackDispatcher
+import moe.tlaster.precompose.ui.BackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 
 @Composable
@@ -23,7 +20,7 @@ actual fun PreComposeApp(
 ) {
     val viewModel = androidx.lifecycle.viewmodel.compose.viewModel<PreComposeViewModel>()
 
-    val lifecycle = androidx.lifecycle.compose.LocalLifecycleOwner.current.lifecycle
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
     val onBackPressedDispatcher = checkNotNull(androidx.activity.compose.LocalOnBackPressedDispatcherOwner.current) {
         "No OnBackPressedDispatcherOwner was provided via LocalOnBackPressedDispatcherOwner"
     }.onBackPressedDispatcher
@@ -34,23 +31,6 @@ actual fun PreComposeApp(
                 super.onCreate(owner)
                 onBackPressedDispatcher.addCallback(owner, viewModel.backPressedCallback)
             }
-
-            override fun onResume(owner: androidx.lifecycle.LifecycleOwner) {
-                super.onResume(owner)
-                viewModel.lifecycleRegistry.updateState(Lifecycle.State.Active)
-            }
-
-            override fun onPause(owner: androidx.lifecycle.LifecycleOwner) {
-                super.onPause(owner)
-                viewModel.lifecycleRegistry.updateState(Lifecycle.State.InActive)
-            }
-
-            // override fun onDestroy(owner: androidx.lifecycle.LifecycleOwner) {
-            //     super.onDestroy(owner)
-            //     if (!isChangingConfigurations) {
-            //         viewModel.lifecycleRegistry.currentState = Lifecycle.State.Destroyed
-            //     }
-            // }
         }
         lifecycle.addObserver(observer)
         onDispose {
@@ -60,23 +40,38 @@ actual fun PreComposeApp(
 
     val state by viewModel.backDispatcher.canHandleBackPress.collectAsState(false)
 
-    val saveableStateRegistry = LocalSaveableStateRegistry.current
-    val savedStateHolder = remember(saveableStateRegistry) {
-        SavedStateHolder(
-            "root",
-            saveableStateRegistry,
-        )
-    }
-
     LaunchedEffect(state) {
         viewModel.backPressedCallback.isEnabled = state
     }
     CompositionLocalProvider(
-        LocalLifecycleOwner provides viewModel,
-        LocalStateHolder provides viewModel.stateHolder,
         LocalBackDispatcherOwner provides viewModel,
-        LocalSavedStateHolder provides savedStateHolder,
     ) {
         content.invoke()
+    }
+}
+
+internal class PreComposeViewModel :
+    androidx.lifecycle.ViewModel(),
+    BackDispatcherOwner {
+    override val backDispatcher by lazy {
+        BackDispatcher()
+    }
+
+    val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            backDispatcher.onBackPress()
+        }
+
+        override fun handleOnBackStarted(backEvent: BackEventCompat) {
+            backDispatcher.onBackStarted()
+        }
+
+        override fun handleOnBackProgressed(backEvent: BackEventCompat) {
+            backDispatcher.onBackProgressed(backEvent.progress)
+        }
+
+        override fun handleOnBackCancelled() {
+            backDispatcher.onBackCancelled()
+        }
     }
 }

@@ -1,86 +1,93 @@
 package moe.tlaster.precompose.navigation
 
+import androidx.lifecycle.Lifecycle
 import com.benasher44.uuid.uuid4
-import moe.tlaster.precompose.lifecycle.Lifecycle
-import moe.tlaster.precompose.stateholder.StateHolder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+fun runMainTest(block: () -> Unit) = runTest {
+    withContext(Dispatchers.Main.immediate) {
+        block()
+    }
+}
+
 class BackStackEntryTest {
     @Test
-    fun testActive() {
-        val parentStateHolder = StateHolder()
+    fun testActive() = runMainTest {
+        val parentStateHolder = TestViewModelStoreProvider()
         val entry = BackStackEntry(
             uuid4().toString(),
             TestRoute("foo/bar", "foo/bar"),
             "foo/bar",
             emptyMap(),
             parentStateHolder,
-            TestSavedStateHolder(),
         )
+        entry.viewModelStore
         assertTrue(parentStateHolder.contains(entry.stateId))
-        assertEquals(Lifecycle.State.Initialized, entry.lifecycle.currentState)
+        assertEquals(Lifecycle.State.CREATED, entry.lifecycle.currentState)
         entry.active()
-        assertEquals(Lifecycle.State.Active, entry.lifecycle.currentState)
+        assertEquals(Lifecycle.State.RESUMED, entry.lifecycle.currentState)
     }
 
     @Test
-    fun testInActive() {
-        val parentStateHolder = StateHolder()
+    fun testInActive() = runMainTest {
+        val parentStateHolder = TestViewModelStoreProvider()
         val entry = BackStackEntry(
             uuid4().toString(),
             TestRoute("foo/bar", "foo/bar"),
             "foo/bar",
             emptyMap(),
             parentStateHolder,
-            TestSavedStateHolder(),
         )
+        entry.viewModelStore
         entry.active()
-        assertEquals(Lifecycle.State.Active, entry.lifecycle.currentState)
+        assertEquals(Lifecycle.State.RESUMED, entry.lifecycle.currentState)
         entry.inActive()
-        assertEquals(Lifecycle.State.InActive, entry.lifecycle.currentState)
+        assertEquals(Lifecycle.State.CREATED, entry.lifecycle.currentState)
         assertTrue(parentStateHolder.contains(entry.stateId))
     }
 
     @Test
-    fun testDestroy() {
-        val parentStateHolder = StateHolder()
+    fun testDestroy() = runMainTest {
+        val parentStateHolder = TestViewModelStoreProvider()
         val entry = BackStackEntry(
             uuid4().toString(),
             TestRoute("foo/bar", "foo/bar"),
             "foo/bar",
             emptyMap(),
             parentStateHolder,
-            TestSavedStateHolder(),
         )
         entry.active()
-        assertEquals(Lifecycle.State.Active, entry.lifecycle.currentState)
+        assertEquals(Lifecycle.State.RESUMED, entry.lifecycle.currentState)
         entry.inActive()
-        assertEquals(Lifecycle.State.InActive, entry.lifecycle.currentState)
+        assertEquals(Lifecycle.State.CREATED, entry.lifecycle.currentState)
         entry.destroy()
-        assertEquals(Lifecycle.State.Destroyed, entry.lifecycle.currentState)
+        assertEquals(Lifecycle.State.DESTROYED, entry.lifecycle.currentState)
         assertFalse(parentStateHolder.contains(entry.stateId))
     }
 
     @Test
-    fun testDestroyAfterTransition() {
-        val parentStateHolder = StateHolder()
+    fun testDestroyAfterTransition() = runMainTest {
+        val parentStateHolder = TestViewModelStoreProvider()
         val entry = BackStackEntry(
             uuid4().toString(),
             TestRoute("foo/bar", "foo/bar"),
             "foo/bar",
             emptyMap(),
             parentStateHolder,
-            TestSavedStateHolder(),
         )
+        entry.viewModelStore
         entry.active()
         entry.destroy()
-        assertEquals(Lifecycle.State.Active, entry.lifecycle.currentState)
+        assertEquals(Lifecycle.State.RESUMED, entry.lifecycle.currentState)
         assertTrue(parentStateHolder.contains(entry.stateId))
         entry.inActive()
-        assertEquals(Lifecycle.State.Destroyed, entry.lifecycle.currentState)
+        assertEquals(Lifecycle.State.DESTROYED, entry.lifecycle.currentState)
         assertFalse(parentStateHolder.contains(entry.stateId))
     }
 }

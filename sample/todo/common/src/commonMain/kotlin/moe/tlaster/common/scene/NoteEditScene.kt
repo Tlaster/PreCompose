@@ -17,10 +17,9 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import moe.tlaster.common.viewmodel.NoteEditViewModel
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.koin.koinViewModel
-import moe.tlaster.precompose.stateholder.LocalSavedStateHolder
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @ExperimentalMaterialApi
@@ -30,8 +29,7 @@ fun NoteEditScene(
     onDone: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
-    val stateHolder = LocalSavedStateHolder.current
-    val viewModel = koinViewModel<NoteEditViewModel> { parametersOf(id, stateHolder) }
+    val viewModel = koinViewModel<NoteEditViewModel> { parametersOf(id) }
 
     Scaffold(
         topBar = {

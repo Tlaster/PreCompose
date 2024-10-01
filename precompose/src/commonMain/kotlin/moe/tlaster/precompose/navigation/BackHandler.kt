@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
@@ -15,7 +16,6 @@ import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
-import moe.tlaster.precompose.lifecycle.currentLocalLifecycleOwner
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackHandler
 import moe.tlaster.precompose.ui.DefaultBackHandler
@@ -37,7 +37,7 @@ fun BackHandler(enabled: Boolean = true, onBack: () -> Unit) {
         }
         backCallback.isEnabled = enabled
     }
-    val lifecycleOwner = currentLocalLifecycleOwner
+    val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner, backDispatcher) {
         // Add callback to the backDispatcher
         backDispatcher.register(backCallback)
@@ -140,7 +140,7 @@ fun PredictiveBackHandler(
         }
         backCallback.isEnabled = enabled
     }
-    val lifecycleOwner = currentLocalLifecycleOwner
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     DisposableEffect(lifecycleOwner, backDispatcher) {
         backDispatcher.register(backCallback)
