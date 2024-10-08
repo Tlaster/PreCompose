@@ -52,7 +52,9 @@ private class ActionViewHolder<T> : ViewModel() {
 private fun <E> rememberAction(
     key: String? = null,
 ): Pair<Channel<E>, Flow<E>> {
-    return viewModel<ActionViewHolder<E>>(key = key).pair
+    return viewModel<ActionViewHolder<E>>(key = key) {
+        ActionViewHolder()
+    }.pair
 }
 
 /**
