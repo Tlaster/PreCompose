@@ -14,7 +14,9 @@ import kotlinx.coroutines.flow.map
  */
 @Composable
 fun rememberNavigator(key: String? = null): Navigator {
-    val viewModel = viewModel<NavigatorViewModel>(key = key)
+    val viewModel = viewModel<NavigatorViewModel>(key = key) {
+        NavigatorViewModel()
+    }
     return viewModel.navigator
 }
 
