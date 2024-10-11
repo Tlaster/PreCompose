@@ -1,5 +1,5 @@
 [versions] # also check project root build.gradle.kts for versions
-libVersion = "1.7.0-alpha02"
+libVersion = "1.7.0-alpha03"
 compileSdk = "34"
 minSdk = "21"
 java = "11"
