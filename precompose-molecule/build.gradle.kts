@@ -39,9 +39,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                compileOnly(compose.foundation)
+                implementation(compose.foundation)
                 compileOnly(libs.molecule.runtime)
-                compileOnly(libs.jetbrains.viewmodel)
+                implementation(libs.jetbrains.viewmodel)
             }
         }
         val commonTest by getting {
