@@ -1,6 +1,6 @@
 [versions] # also check project root build.gradle.kts for versions
 libVersion = "1.7.0"
-compileSdk = "34"
+compileSdk = "35"
 minSdk = "21"
 java = "11"
 androidx-animation = "1.7.5"
