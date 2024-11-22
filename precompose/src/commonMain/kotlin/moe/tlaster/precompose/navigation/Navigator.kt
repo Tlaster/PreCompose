@@ -1,11 +1,11 @@
 package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.map
-import moe.tlaster.precompose.lifecycle.LifecycleOwner
-import moe.tlaster.precompose.stateholder.SavedStateHolder
-import moe.tlaster.precompose.stateholder.StateHolder
-import moe.tlaster.precompose.stateholder.currentLocalStateHolder
 
 /**
  * Creates or returns an existing [Navigator] that controls the [NavHost].
@@ -13,9 +13,15 @@ import moe.tlaster.precompose.stateholder.currentLocalStateHolder
  * @return Returns an instance of Navigator.
  */
 @Composable
-fun rememberNavigator(name: String = ""): Navigator {
-    val stateHolder = currentLocalStateHolder
-    return stateHolder.getOrPut("${name}Navigator") {
+fun rememberNavigator(key: String? = null): Navigator {
+    val viewModel = viewModel<NavigatorViewModel>(key = key) {
+        NavigatorViewModel()
+    }
+    return viewModel.navigator
+}
+
+internal class NavigatorViewModel : ViewModel() {
+    val navigator by lazy {
         Navigator()
     }
 }
@@ -28,23 +34,20 @@ class Navigator {
 
     /**
      * Initializes the navigator with a set parameters.
-     * @param stateHolder: stateHolder object
-     * @param savedStateHolder: savedStateHolder object
      * @param lifecycleOwner: lifecycleOwner object
+     * @param viewModelStoreOwner: viewModelStoreOwner object
      */
     internal fun init(
-        stateHolder: StateHolder,
-        savedStateHolder: SavedStateHolder,
         lifecycleOwner: LifecycleOwner,
+        viewModelStoreOwner: ViewModelStoreOwner,
     ) {
         if (_initialized) {
             return
         }
         _initialized = true
         stackManager.init(
-            stateHolder = stateHolder,
-            savedStateHolder = savedStateHolder,
             lifecycleOwner = lifecycleOwner,
+            viewModelStoreOwner = viewModelStoreOwner,
         )
     }
 

@@ -1,27 +1,29 @@
 [versions] # also check project root build.gradle.kts for versions
-libVersion = "1.6.2"
-compileSdk = "34"
+libVersion = "1.7.0"
+compileSdk = "35"
 minSdk = "21"
 java = "11"
-androidx-animation = "1.6.8"
-androidx-foundation = "1.6.8"
+androidx-animation = "1.7.5"
+androidx-foundation = "1.7.5"
 androidx-appcompat = "1.7.0"
-androidx-coreKtx = "1.13.1"
-androidxActivityVer = "1.9.2"
-androidGradlePlugin = "8.6.0"
+androidx-coreKtx = "1.15.0"
+androidxActivityVer = "1.9.3"
+androidGradlePlugin = "8.6.1"
 junit = "4.13.2"
 junitJupiterEngine = "5.11.0"
 junitJupiterApi = "5.11.0"
-kotlin = "2.0.0"
-lifecycleRuntimeKtx = "2.8.5"
-material = "1.6.8"
-kotlinxCoroutinesCore = "1.8.1"
+kotlin = "2.0.20"
+lifecycleRuntimeKtx = "2.8.7"
+material = "1.7.5"
+kotlinxCoroutinesCore = "1.9.0"
 moleculeRuntime = "2.0.0"
 savedstateKtx = "1.2.1"
 spotless = "6.25.0"
-jetbrainsComposePlugin = "1.6.11"
-skiko = "0.8.12"
-koin = "4.0.0-RC2"
+jetbrainsComposePlugin = "1.7.1"
+skiko = "0.8.18"
+koin = "4.0.0"
+uiTestJunit4Android = "1.7.5"
+uiTestManifest = "1.7.5"
 uuid = "0.8.4"
 webpackCliVersion = "5.1.4"
 nodeVersion = "20.14.0"
@@ -36,6 +38,8 @@ androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtim
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-savedstate-ktx = { module = "androidx.savedstate:savedstate-ktx", version.ref = "savedstateKtx" }
+androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifest" }
+androidx-ui-test-junit4-android = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
 animation = { module = "androidx.compose.animation:animation", version.ref = "androidx-animation" }
 foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-foundation" }
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -48,8 +52,11 @@ molecule-runtime = { module = "app.cash.molecule:molecule-runtime", version.ref 
 skiko = { module = "org.jetbrains.skiko:skiko", version.ref = "skiko" }
 skiko-js = { module = "org.jetbrains.skiko:skiko-js-wasm-runtime", version.ref = "skiko" }
 koin = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-compose = { module = "io.insert-koin:koin-compose", version = "4.0.0-RC2" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
+jetbrains-lifecycle = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version = "2.8.4" }
+jetbrains-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version = "2.8.4" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

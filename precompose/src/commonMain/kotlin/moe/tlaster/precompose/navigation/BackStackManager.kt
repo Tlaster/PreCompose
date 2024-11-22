@@ -1,28 +1,26 @@
 package moe.tlaster.precompose.navigation
 
 import androidx.compose.runtime.Stable
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModelStoreOwner
 import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
-import moe.tlaster.precompose.lifecycle.Lifecycle
-import moe.tlaster.precompose.lifecycle.LifecycleObserver
-import moe.tlaster.precompose.lifecycle.LifecycleOwner
 import moe.tlaster.precompose.navigation.route.SceneRoute
 import moe.tlaster.precompose.navigation.route.isFloatingRoute
 import moe.tlaster.precompose.navigation.route.isSceneRoute
-import moe.tlaster.precompose.stateholder.SavedStateHolder
-import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.math.max
 
 @Stable
-internal class BackStackManager : LifecycleObserver {
-    private lateinit var _stateHolder: StateHolder
-    private lateinit var _savedStateHolder: SavedStateHolder
+internal class BackStackManager : LifecycleEventObserver {
+    private lateinit var _navControllerViewModel: NavControllerViewModel
 
     // internal for testing
     internal val backStacks = MutableStateFlow(listOf<BackStackEntry>())
@@ -74,12 +72,10 @@ internal class BackStackManager : LifecycleObserver {
         get() = backStacks.asSharedFlow().map { it.lastOrNull { it.route.isFloatingRoute() } }
 
     fun init(
-        stateHolder: StateHolder,
-        savedStateHolder: SavedStateHolder,
         lifecycleOwner: LifecycleOwner,
+        viewModelStoreOwner: ViewModelStoreOwner,
     ) {
-        _stateHolder = stateHolder
-        _savedStateHolder = savedStateHolder
+        _navControllerViewModel = NavControllerViewModel.getInstance(viewModelStoreOwner.viewModelStore)
         lifecycleOwner.lifecycle.addObserver(this)
     }
 
@@ -131,8 +127,7 @@ internal class BackStackManager : LifecycleObserver {
                     QueryString(it)
                 },
                 path = path,
-                parentStateHolder = _stateHolder,
-                parentSavedStateHolder = _savedStateHolder,
+                provider = _navControllerViewModel,
             )
         }
 
@@ -216,24 +211,17 @@ internal class BackStackManager : LifecycleObserver {
         }
     }
 
-    override fun onStateChanged(state: Lifecycle.State) {
-        when (state) {
-            Lifecycle.State.Initialized -> Unit
-            Lifecycle.State.Active -> {
-                val currentEntry = backStacks.value.lastOrNull()
-                currentEntry?.active()
-            }
-
-            Lifecycle.State.InActive -> {
-                val currentEntry = backStacks.value.lastOrNull()
-                currentEntry?.inActive()
-            }
-
-            Lifecycle.State.Destroyed -> {
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        when (event) {
+            Lifecycle.Event.ON_DESTROY -> {
                 backStacks.value.forEach {
                     it.destroy()
                 }
                 backStacks.value = emptyList()
+            }
+            else -> {
+                val currentEntry = backStacks.value.lastOrNull()
+                currentEntry?.onStateChanged(source, event)
             }
         }
     }

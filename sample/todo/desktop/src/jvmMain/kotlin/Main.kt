@@ -3,7 +3,6 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import moe.tlaster.common.App
 import moe.tlaster.common.di.AppModule
-import moe.tlaster.precompose.ProvidePreComposeLocals
 import org.koin.core.context.startKoin
 
 fun main() {
@@ -17,9 +16,7 @@ fun main() {
                 exitApplication()
             },
         ) {
-            ProvidePreComposeLocals {
-                App()
-            }
+            App()
         }
     }
 }

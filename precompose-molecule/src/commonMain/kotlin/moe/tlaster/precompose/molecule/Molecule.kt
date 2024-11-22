@@ -7,6 +7,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.viewModelFactory
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import kotlinx.coroutines.CoroutineScope
@@ -15,18 +18,14 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.consumeAsFlow
-import moe.tlaster.precompose.reflect.canonicalName
-import moe.tlaster.precompose.stateholder.LocalStateHolder
-import moe.tlaster.precompose.stateholder.StateHolder
 import kotlin.coroutines.CoroutineContext
 
 internal expect fun providePlatformDispatcher(): CoroutineContext
 
-@OptIn(ExperimentalStdlibApi::class)
 private class PresenterHolder<T>(
     useImmediateClock: Boolean,
     body: @Composable () -> T,
-) : AutoCloseable {
+) : ViewModel() {
     private val dispatcher = providePlatformDispatcher()
     private val clock = if (useImmediateClock || dispatcher[MonotonicFrameClock] == null) {
         RecompositionMode.Immediate
@@ -36,97 +35,93 @@ private class PresenterHolder<T>(
     private val scope = CoroutineScope(dispatcher)
     val state = scope.launchMolecule(mode = clock, body = body)
 
-    override fun close() {
+    override fun onCleared() {
         scope.cancel()
     }
 }
 
-@OptIn(ExperimentalStdlibApi::class)
-private class ActionViewHolder<T> : AutoCloseable {
+private class ActionViewHolder<T> : ViewModel() {
     val channel = Channel<T>(Channel.UNLIMITED)
     val pair = channel to channel.consumeAsFlow()
-    override fun close() {
+    override fun onCleared() {
         channel.close()
     }
 }
 
 @Composable
 private fun <E> rememberAction(
-    keys: List<Any?>,
+    key: String? = null,
 ): Pair<Channel<E>, Flow<E>> {
-    val stateHolder = LocalStateHolder.current
-    val key = remember(keys) {
-        (keys.map { it.hashCode().toString() } + ActionViewHolder::class.canonicalName).joinToString()
-    }
-    return stateHolder.getOrPut(key) {
-        ActionViewHolder<E>()
+    return viewModel<ActionViewHolder<E>>(key = key) {
+        ActionViewHolder()
     }.pair
 }
 
 /**
  * Return StateFlow, use it in your Compose UI
- * The molecule scope will be managed by the [StateHolder], so it has the same lifecycle as the [StateHolder]
- * @param keys The keys to use to identify the Presenter
+ * The molecule scope will be managed by the [ViewModel], so it has the same lifecycle as the [ViewModel]
+ * @param key The key to use to identify the Presenter
  * @param body The body of the molecule presenter
  * @return StateFlow
  */
 @Composable
 private fun <T> rememberPresenterState(
-    keys: List<Any?> = emptyList(),
+    key: String? = null,
     useImmediateClock: Boolean,
     body: @Composable () -> T,
 ): StateFlow<T> {
-    val stateHolder = LocalStateHolder.current
-    val key = remember(keys) {
-        (keys.map { it.hashCode().toString() } + PresenterHolder::class.canonicalName).joinToString()
+    val factory = remember(key) {
+        viewModelFactory {
+            addInitializer(PresenterHolder::class) {
+                PresenterHolder(useImmediateClock, body)
+            }
+        }
     }
-    return stateHolder.getOrPut(key) {
-        PresenterHolder(useImmediateClock, body)
-    }.state
+    return viewModel<PresenterHolder<T>>(key = key, factory = factory).state
 }
 
 /**
  * Return State, use it in your Compose UI
- * The molecule scope will be managed by the [StateHolder], so it has the same lifecycle as the [StateHolder]
- * @param keys The keys to use to identify the Presenter
+ * The molecule scope will be managed by the [ViewModel], so it has the same lifecycle as the [ViewModel]
+ * @param key The key to use to identify the Presenter
  * @param useImmediateClock Use immediate clock or not, for text input, you should set it to true
  * @param body The body of the molecule presenter
  * @return State
  */
 @Composable
 fun <T> producePresenter(
-    keys: List<Any?> = emptyList(),
+    key: String? = null,
     useImmediateClock: Boolean = false,
     body: @Composable () -> T,
 ): State<T> {
-    val presenter = rememberPresenterState(keys = keys, useImmediateClock = useImmediateClock) { body() }
+    val presenter = rememberPresenterState(key = key, useImmediateClock = useImmediateClock) { body() }
     return presenter.collectAsState()
 }
 
 /**
  * Return pair of State and Action Channel, use it in your Compose UI
- * The molecule scope and the Action Channel will be managed by the [StateHolder], so it has the same lifecycle as the [StateHolder]
+ * The molecule scope and the Action Channel will be managed by the [ViewModel], so it has the same lifecycle as the [ViewModel]
  *
- * @param keys The keys to use to identify the Presenter
+ * @param key The key to use to identify the Presenter
  * @param useImmediateClock Use immediate clock or not, for text input, you should set it to true
  * @param body The body of the molecule presenter, the flow parameter is the flow of the action channel
  * @return Pair of State and Action channel
  */
 @Composable
 fun <T, E> rememberPresenter(
-    keys: List<Any?> = emptyList(),
+    key: String? = null,
     useImmediateClock: Boolean = false,
     body: @Composable (flow: Flow<E>) -> T,
 ): Pair<T, Channel<E>> {
-    val (channel, action) = rememberAction<E>(keys = keys)
-    val presenter = rememberPresenterState(keys = keys, useImmediateClock = useImmediateClock) { body(action) }
+    val (channel, action) = rememberAction<E>(key = key)
+    val presenter = rememberPresenterState(key = key, useImmediateClock = useImmediateClock) { body(action) }
     val state by presenter.collectAsState()
     return state to channel
 }
 
 /**
  * Return pair of State and Action Channel, use it in your Compose UI
- * The molecule scope and the Action Channel will be managed by the [StateHolder], so it has the same lifecycle as the [StateHolder]
+ * The molecule scope and the Action Channel will be managed by the [ViewModel], so it has the same lifecycle as the [ViewModel]
  *
  * @param body The body of the molecule presenter, the flow parameter is the flow of the action channel
  * @return Pair of State and Action channel

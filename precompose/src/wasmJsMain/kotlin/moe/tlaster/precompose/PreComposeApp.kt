@@ -2,13 +2,11 @@ package moe.tlaster.precompose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import moe.tlaster.precompose.lifecycle.Lifecycle
-import moe.tlaster.precompose.lifecycle.LifecycleOwner
-import moe.tlaster.precompose.lifecycle.LifecycleRegistry
-import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
-import moe.tlaster.precompose.stateholder.LocalStateHolder
-import moe.tlaster.precompose.stateholder.StateHolder
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import moe.tlaster.precompose.ui.BackDispatcher
 import moe.tlaster.precompose.ui.BackDispatcherOwner
 import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
@@ -17,39 +15,27 @@ import moe.tlaster.precompose.ui.LocalBackDispatcherOwner
 actual fun PreComposeApp(
     content: @Composable () -> Unit,
 ) {
-    ProvidePreComposeCompositionLocals {
-        content.invoke()
-    }
-}
-
-@Composable
-fun ProvidePreComposeCompositionLocals(
-    holder: PreComposeWindowHolder = remember {
+    val holder = remember {
         PreComposeWindowHolder()
-    },
-    content: @Composable () -> Unit,
-) {
+    }
+    DisposableEffect(holder) {
+        onDispose {
+            holder.viewModelStore.clear()
+        }
+    }
     CompositionLocalProvider(
-        LocalLifecycleOwner provides holder,
-        LocalStateHolder provides holder.stateHolder,
+        LocalViewModelStoreOwner provides holder,
         LocalBackDispatcherOwner provides holder,
     ) {
         content.invoke()
     }
 }
 
-class PreComposeWindowHolder : LifecycleOwner, BackDispatcherOwner {
-    override val lifecycle by lazy {
-        LifecycleRegistry()
-    }
-    val stateHolder by lazy {
-        StateHolder()
+class PreComposeWindowHolder : BackDispatcherOwner, ViewModelStoreOwner {
+    override val viewModelStore by lazy {
+        ViewModelStore()
     }
     override val backDispatcher by lazy {
         BackDispatcher()
-    }
-
-    init {
-        lifecycle.updateState(Lifecycle.State.Active)
     }
 }

@@ -1,8 +1,8 @@
 package moe.tlaster.common.viewmodel
 
+import androidx.lifecycle.ViewModel
 import moe.tlaster.common.model.Note
 import moe.tlaster.common.repository.FakeRepository
-import moe.tlaster.precompose.viewmodel.ViewModel
 
 class NoteListViewModel(
     private val fakeRepository: FakeRepository,

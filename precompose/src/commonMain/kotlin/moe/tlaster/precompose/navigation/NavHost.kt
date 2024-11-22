@@ -4,11 +4,11 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.animation.core.SeekableTransitionState
 import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -35,17 +35,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import kotlinx.coroutines.CancellationException
-import moe.tlaster.precompose.lifecycle.LocalLifecycleOwner
-import moe.tlaster.precompose.lifecycle.currentLocalLifecycleOwner
 import moe.tlaster.precompose.navigation.route.ComposeRoute
 import moe.tlaster.precompose.navigation.route.FloatingRoute
 import moe.tlaster.precompose.navigation.route.GroupRoute
 import moe.tlaster.precompose.navigation.transition.NavTransition
-import moe.tlaster.precompose.stateholder.LocalSavedStateHolder
-import moe.tlaster.precompose.stateholder.LocalStateHolder
-import moe.tlaster.precompose.stateholder.currentLocalSavedStateHolder
-import moe.tlaster.precompose.stateholder.currentLocalStateHolder
 
 /**
  * Provides in place in the Compose hierarchy for self-contained navigation to occur.
@@ -63,7 +59,6 @@ import moe.tlaster.precompose.stateholder.currentLocalStateHolder
  * @param builder the builder used to construct the graph
  */
 @OptIn(
-    ExperimentalTransitionApi::class,
     ExperimentalFoundationApi::class,
 )
 @Composable
@@ -75,16 +70,16 @@ fun NavHost(
     swipeProperties: SwipeProperties? = null,
     builder: RouteBuilder.() -> Unit,
 ) {
-    val lifecycleOwner = currentLocalLifecycleOwner
-    val stateHolder = currentLocalStateHolder
-    val savedStateHolder = currentLocalSavedStateHolder
+    val lifecycleOwner = LocalLifecycleOwner.current
     val composeStateHolder = rememberSaveableStateHolder()
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+    }
 
     // true for assuming that lifecycleOwner, stateHolder and composeStateHolder are not changing during the lifetime of the NavHost
     LaunchedEffect(true) {
         navigator.init(
-            stateHolder = stateHolder,
-            savedStateHolder = savedStateHolder,
+            viewModelStoreOwner = viewModelStoreOwner,
             lifecycleOwner = lifecycleOwner,
         )
     }
@@ -140,7 +135,8 @@ fun NavHost(
                 val state = if (actualSwipeProperties != null) {
                     val density = LocalDensity.current
                     val width = constraints.maxWidth.toFloat()
-                    remember {
+                    val decayAnimationSpec = rememberSplineBasedDecay<Float>()
+                    remember(actualSwipeProperties) {
                         AnchoredDraggableState(
                             initialValue = DragAnchors.Start,
                             anchors = DraggableAnchors {
@@ -149,7 +145,8 @@ fun NavHost(
                             },
                             positionalThreshold = actualSwipeProperties.positionalThreshold,
                             velocityThreshold = { actualSwipeProperties.velocityThreshold.invoke(density) },
-                            animationSpec = tween(),
+                            snapAnimationSpec = tween(),
+                            decayAnimationSpec = decayAnimationSpec,
                         )
                     }.also { state ->
                         LaunchedEffect(
@@ -159,13 +156,13 @@ fun NavHost(
                             if (state.currentValue == DragAnchors.End && !state.isAnimationRunning) {
                                 // play the animation to the end
                                 progress = 1f
-                                state.snapTo(DragAnchors.Start)
                             }
                         }
-                        LaunchedEffect(state.progress) {
-                            if (state.progress != 1f) {
-                                inPredictiveBack = state.progress > 0f
-                                progress = state.progress
+                        val stateProgress = state.progress(DragAnchors.Start, DragAnchors.End)
+                        LaunchedEffect(stateProgress) {
+                            if (stateProgress != 1f) {
+                                inPredictiveBack = stateProgress > 0f
+                                progress = stateProgress
                             } else if (state.currentValue != DragAnchors.End && inPredictiveBack) {
                                 // reset the state to the initial value
                                 progress = -1f
@@ -185,20 +182,21 @@ fun NavHost(
                 }
                 val transition = if (showPrev) {
                     val transitionState by remember(sceneEntry) {
-                        mutableStateOf(SeekableTransitionState(sceneEntry, prevSceneEntry!!))
+                        mutableStateOf(SeekableTransitionState(sceneEntry))
                     }
                     LaunchedEffect(progress) {
                         if (progress == 1f) {
                             // play the animation to the end
-                            transitionState.animateToTargetState()
+                            transitionState.animateTo(prevSceneEntry!!)
                             inPredictiveBack = false
                             navigator.goBack()
                             progress = 0f
+                            state?.snapTo(DragAnchors.Start)
                         } else if (progress >= 0) {
-                            transitionState.snapToFraction(progress)
+                            transitionState.seekTo(progress, targetState = prevSceneEntry!!)
                         } else if (progress == -1f) {
                             // reset the state to the initial value
-                            transitionState.animateToCurrentState()
+                            transitionState.seekTo(0f, targetState = prevSceneEntry!!)
                             inPredictiveBack = false
                             progress = 0f
                         }
@@ -274,9 +272,8 @@ private fun AnimatedContentScope.NavHostContent(
 ) {
     stateHolder.SaveableStateProvider(entry.stateId) {
         CompositionLocalProvider(
-            LocalStateHolder provides entry.stateHolder,
-            LocalSavedStateHolder provides entry.savedStateHolder,
             LocalLifecycleOwner provides entry,
+            LocalViewModelStoreOwner provides entry,
             content = {
                 entry.ComposeContent(this@NavHostContent)
             },
