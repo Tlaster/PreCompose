@@ -16,7 +16,6 @@ import moe.tlaster.precompose.navigation.route.isSceneRoute
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import kotlin.math.max
 
 @Stable
 internal class BackStackManager : LifecycleEventObserver {
@@ -137,27 +136,7 @@ internal class BackStackManager : LifecycleEventObserver {
             } else {
                 currentBackStacks
             }
-
-            val popUpTo = options.popUpTo
-            val index = when (popUpTo) {
-                PopUpTo.None -> -1
-                PopUpTo.Prev -> backStack.lastIndex - 1
-                is PopUpTo.Route -> if (popUpTo.route.isNotEmpty()) {
-                    backStack.indexOfLast { it.hasRoute(popUpTo.route, path, options.includePath) }
-                } else {
-                    0
-                }
-            }
-            if (index != -1) {
-                val stacksToDrop = backStack.subList(
-                    if (popUpTo.inclusive) index else index + 1,
-                    backStack.size,
-                )
-                backStacks.value -= stacksToDrop
-                stacksToDrop.forEach {
-                    it.destroy()
-                }
-            }
+            popWithOptions(options.popUpTo, backStack)
         }
     }
 
@@ -175,6 +154,13 @@ internal class BackStackManager : LifecycleEventObserver {
         popUpTo: PopUpTo,
     ) {
         val currentBackStacks = backStacks.value
+        popWithOptions(popUpTo, currentBackStacks)
+    }
+
+    private fun popWithOptions(
+        popUpTo: PopUpTo,
+        currentBackStacks: List<BackStackEntry>,
+    ) {
         if (currentBackStacks.size <= 1) {
             return
         }
@@ -182,18 +168,23 @@ internal class BackStackManager : LifecycleEventObserver {
             PopUpTo.None -> -1
             PopUpTo.Prev -> currentBackStacks.lastIndex - 1
             is PopUpTo.Route -> if (popUpTo.route.isNotEmpty()) {
-                currentBackStacks.indexOfLast { it.hasRoute(popUpTo.route, "", false) }
+                currentBackStacks.indexOfLast { it.hasRoute(popUpTo.route, "", false) }.let {
+                    if (it == -1) {
+                        // route not found
+                        0
+                    } else {
+                        it
+                    }
+                }
             } else {
                 0
             }
         }.let {
             if (popUpTo.inclusive) it else it + 1
-        }.let {
-            max(it, 0)
         }
         if (index != -1) {
             val stacksToDrop = currentBackStacks.subList(
-                index,
+                index.coerceAtLeast(1), // make sure not remove the initial route
                 currentBackStacks.size,
             )
             backStacks.value -= stacksToDrop
