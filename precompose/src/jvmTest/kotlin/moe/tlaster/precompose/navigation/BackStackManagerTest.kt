@@ -712,4 +712,30 @@ class BackStackManagerTest {
         manager.push("screen3")
         assertNotEquals(stateId, manager.backStacks.value.last().stateId)
     }
+
+    @Test
+    fun testPopUpToWithInvalidPath() = runMainTest {
+        val manager = BackStackManager()
+        manager.init(
+            lifecycleOwner = TestLifecycleOwner(),
+            viewModelStoreOwner = TestViewModelStoreOwner(),
+        )
+        manager.setRouteGraph(
+            routeGraph = RouteGraph(
+                "screen1",
+                listOf(
+                    TestRoute("screen1", "screen1"),
+                    TestRoute("screen2", "screen2"),
+                    TestRoute("screen3", "screen3"),
+                ),
+            ),
+        )
+        manager.push("screen2")
+        manager.push("screen3")
+        manager.popWithOptions(PopUpTo("screen4", inclusive = true))
+        assertEquals(
+            listOf("screen1"),
+            manager.backStacks.value.map { it.path },
+        )
+    }
 }
